@@ -13,13 +13,15 @@ public class MySqlConnector {
         }
     }
 
-    // Instead of kitkat use your own database name
-    private static final String URL =
-            "jdbc:mysql://localhost:3306/kitkat?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
-    // Please enter your personal credentials :
+    // Update these for your own setup
+    private static final String DATABASE_NAME = "kitkat";
     private static final String USER = "root";
     private static final String PASS = "root";
+
+    private static final String URL =
+            "jdbc:mysql://localhost:3306/" + DATABASE_NAME +
+                    "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
     public static Connection getConnection() {
         try {
@@ -37,4 +39,6 @@ public class MySqlConnector {
             catch (SQLException ignored) {}
         }
     }
+
+
 }
