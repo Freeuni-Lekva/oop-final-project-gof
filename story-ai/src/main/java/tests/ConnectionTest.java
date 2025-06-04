@@ -1,6 +1,4 @@
 package tests;
-// mysql connector is in data package same dir
-
 import data.MySqlConnector;
 import junit.framework.TestCase;
 
