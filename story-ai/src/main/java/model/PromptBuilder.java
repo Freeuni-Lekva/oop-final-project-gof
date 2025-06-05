@@ -46,8 +46,6 @@ public class PromptBuilder {
     public String build() {
         StringBuilder prompt = new StringBuilder();
 
-        prompt.append("\n NOTHING IN MIND YET ");
-
         prompt.append("World Information:\n")
                 .append(worldInfo)
                 .append("\n\n");
@@ -66,7 +64,6 @@ public class PromptBuilder {
                     .append(character.getDescription())
                     .append("\n");
         }
-
 
         return prompt.toString();
     }
