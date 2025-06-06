@@ -1,5 +1,6 @@
 package gemini;
 
+import com.google.genai.Chat;
 import com.google.genai.Client;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
@@ -24,11 +25,11 @@ public class GeminiAPI {
 
         GenerateContentConfig config = GenerateContentConfig.builder()
                 .systemInstruction(Content.fromParts(
-                        Part.fromText(Prompts.SYSTEM_PROMPT)))
+                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(0.5F)
+
                 .build();
 
         Content userContent = Content.fromParts(Part.fromText(prompt));
-
         GenerateContentResponse response =
                 geminiClient.models.generateContent(DEFAULT_MODEL, userContent, config);
 
@@ -41,5 +42,10 @@ public class GeminiAPI {
         }
     }
 
+    public String generateAnswer(String prompt) throws Exception {
+        GeminiAPI api = new GeminiAPI();
+        String userPrompt = "story prompt, what is the world like and info about characters ";
+        return api.generateContent(userPrompt);
+    }
 
 }
