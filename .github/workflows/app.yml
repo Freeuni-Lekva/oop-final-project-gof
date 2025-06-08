@@ -48,4 +48,4 @@ jobs:
         run: mvn clean install
 
       - name: Run JUnit Tests with Maven
-        run: mvn -Dtest="story-ai.src.main.java.tests.*Test" test
+        run: mvn test
