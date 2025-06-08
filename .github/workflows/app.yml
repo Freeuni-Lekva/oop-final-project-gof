@@ -16,7 +16,7 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: kitkat
+          MYSQL_DATABASE: story-ai-db
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
