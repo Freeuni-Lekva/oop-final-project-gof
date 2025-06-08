@@ -44,8 +44,7 @@ public class GeminiAPI {
 
     public String generateAnswer(String prompt) throws Exception {
         GeminiAPI api = new GeminiAPI();
-        String userPrompt = "story prompt, what is the world like and info about characters ";
-        return api.generateContent(userPrompt);
+        return api.generateContent(prompt);
     }
 
 }
