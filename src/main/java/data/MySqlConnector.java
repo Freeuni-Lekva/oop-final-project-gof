@@ -15,7 +15,7 @@ public class MySqlConnector {
         }
     }
 
-    private static final Dotenv dotenv = Dotenv.load();
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
     private static final String DATABASE_NAME = dotenv.get("DB_NAME", "story-ai-db");
     private static final String USER = dotenv.get("DB_USER", "root");
     private static final String PASS = dotenv.get("DB_PASS", "root");
