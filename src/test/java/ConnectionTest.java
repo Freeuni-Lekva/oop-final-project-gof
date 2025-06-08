@@ -1,4 +1,3 @@
-package tests;
 import data.MySqlConnector;
 import junit.framework.TestCase;
 
