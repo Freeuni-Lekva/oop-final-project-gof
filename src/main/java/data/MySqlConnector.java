@@ -1,5 +1,7 @@
 package data;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.sql.*;
 
 public class MySqlConnector {
@@ -13,11 +15,10 @@ public class MySqlConnector {
         }
     }
 
-
-    // Update these for your own setup
-    private static final String DATABASE_NAME = "kitkat";
-    private static final String USER = "root";
-    private static final String PASS = "root";
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    private static final String DATABASE_NAME = dotenv.get("DB_NAME", "story-ai-db");
+    private static final String USER = dotenv.get("DB_USER", "root");
+    private static final String PASS = dotenv.get("DB_PASS", "root");
 
     private static final String URL =
             "jdbc:mysql://localhost:3306/" + DATABASE_NAME +

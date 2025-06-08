@@ -16,7 +16,7 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: kitkat
+          MYSQL_DATABASE: story-ai-db
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -48,4 +48,4 @@ jobs:
         run: mvn clean install
 
       - name: Run JUnit Tests with Maven
-        run: mvn test
+        run: mvn test -e
