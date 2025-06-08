@@ -44,5 +44,8 @@ jobs:
             sleep 2
           done
 
+      - name: Run Maven Install
+        run: mvn clean install
+
       - name: Run JUnit Tests with Maven
-        run: mvn test
+        run: mvn -Dtest="story-ai.src.main.java.tests.*Test" test
