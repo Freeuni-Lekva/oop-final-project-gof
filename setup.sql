@@ -1,19 +1,19 @@
 -- USE YOUR DATABASE --
-use enter_your_database_name;
+USE ai_stories;
 
 -- DROP UNNECESSARY TABLES --
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS followers;
-DROP TABLE IF EXISTS stories;
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS likes;
-DROP TABLE IF EXISTS bookmarks;
-DROP TABLE IF EXISTS read_history;
-DROP TABLE IF EXISTS tags;
-DROP TABLE IF EXISTS story_tags;
-DROP TABLE IF EXISTS chats;
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS chats;
+DROP TABLE IF EXISTS story_tags;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS read_history;
+DROP TABLE IF EXISTS bookmarks;
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS stories;
+DROP TABLE IF EXISTS followers;
+DROP TABLE IF EXISTS users;
 
 -- CREATE TABLES ---
 CREATE TABLE users (
@@ -24,7 +24,8 @@ CREATE TABLE users (
         register_time DATETIME DEFAULT CURRENT_TIMESTAMP,
         active BOOLEAN DEFAULT TRUE,
         last_login DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        is_creator BOOLEAN DEFAULT FALSE
+        is_creator BOOLEAN DEFAULT FALSE,
+        image_name VARCHAR(256)
 );
 
 CREATE TABLE followers (
@@ -47,7 +48,7 @@ CREATE TABLE stories (
 CREATE TABLE posts (
         post_id INT AUTO_INCREMENT PRIMARY KEY,
         story_id INT NOT NULL,
-        image_url VARCHAR(256),
+        image_name VARCHAR(256),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         like_count INT DEFAULT 0,
         comment_count INT DEFAULT 0,
@@ -59,6 +60,7 @@ CREATE TABLE comments (
         author_id INT NOT NULL,
         post_id INT NOT NULL,
         comment TEXT NOT NULL,
+        like_count INT DEFAULT 0,
         FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE,
         FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 );
@@ -69,8 +71,8 @@ CREATE TABLE likes (
         post_id INT,
         comment_id INT,
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-        FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE SET NULL,
-        FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE SET NULL,
+        FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+        FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE,
 
         CHECK (
             (post_id IS NOT NULL AND comment_id IS NULL) OR
@@ -128,30 +130,33 @@ CREATE TABLE messages (
 -- INSERT INTO TABLES --
 
 -- Insert users
-INSERT INTO users (username, password_hash, age, is_creator, active)
+INSERT INTO users (username, password_hash, age, is_creator, active, image_name)
 VALUES
-    ('creator_john', 'hash_john_123', 35, TRUE, TRUE),
-    ('user_jane', 'hash_jane_456', 28, FALSE, TRUE),
-    ('creator_alex', 'hash_alex_789', 40, TRUE, FALSE),
-    ('user_emily', 'hash_emily_101', 22, FALSE, TRUE);
+    ('lsana', 'hash_tikaluka2', 21, TRUE, TRUE, 'image1.jpg'),
+    ('chichia', 'hash_kitketa', 20, TRUE, TRUE, 'image2.jpg');
 
 -- Insert stories for creators
 INSERT INTO stories (creator_id, title, prompt)
 VALUES
     (1, 'The Mystery of the Lost Artifact', 'A suspenseful journey to uncover hidden secrets.'),
-    (3, 'Adventures in the Digital Age', 'Exploring the vast world of cyberspace.');
+    (2, 'Adventures in the Digital Age', 'Exploring the vast world of cyberspace.');
 
 -- Insert posts for stories
-INSERT INTO posts (story_id, image_url, like_count, comment_count)
+INSERT INTO posts (story_id, image_name, like_count, comment_count)
 VALUES
-    (1, 'http://example.com/artifact1.jpg', 120, 15),
-    (2, 'http://example.com/digitalage1.jpg', 85, 20);
+    (1, 'image1.jpg', 2, 1),
+    (2, 'image2.jpg', 1, 0);
 
 -- Insert comments from users
-INSERT INTO comments (author_id, post_id, comment)
+INSERT INTO comments (author_id, post_id, comment, like_count)
 VALUES
-    (2, 1, 'Amazing post!'),
-    (4, 2, 'Great insights on the topic!');
+    (2, 1, 'Amazing post!', 0),
+    (1, 2, 'Great insights on the topic!', 1);
+
+INSERT INTO likes (user_id, post_id, comment_id)
+VALUES
+    (2, 1, NULL),
+    (1, NULL, 2);
 
 -- Insert tags and associate them with stories
 INSERT INTO tags (name)
@@ -164,14 +169,3 @@ VALUES
     (1, 1),
     (1, 2),
     (2, 3);
-
--- Insert chats and messages
-INSERT INTO chats (story_id, user_id)
-VALUES
-    (1, 2),
-    (2, 4);
-
-INSERT INTO messages (chat_id, message, is_user)
-VALUES
-    (1, 'This story is amazing!', TRUE),
-    (2, 'I have some questions about the plot.', TRUE);
