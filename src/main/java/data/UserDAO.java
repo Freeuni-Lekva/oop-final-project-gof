@@ -8,6 +8,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserDAO {
+    private MySqlConnector connector;
+
+    public UserDAO(MySqlConnector sqlConnector) {
+        connector = sqlConnector;
+    }
+
+    public UserDAO(){}
 
     public User findUserById(int user_id) {
         // TODO: Implement method to get data from SQL database
