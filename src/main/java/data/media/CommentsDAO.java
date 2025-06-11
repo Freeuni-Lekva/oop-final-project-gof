@@ -1,4 +1,4 @@
-package data;
+package data.media;
 
 /**
  * Handles comment operations on posts, including likes.

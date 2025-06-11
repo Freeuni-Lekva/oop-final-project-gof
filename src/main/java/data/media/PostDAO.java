@@ -1,4 +1,4 @@
-package data;
+package data.media;
 
 /**
  * Manages post creation within a story, including image handling.

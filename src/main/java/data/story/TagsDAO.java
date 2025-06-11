@@ -1,4 +1,4 @@
-package data;
+package data.story;
 
 /**
  * Manages creation and retrieval of tags used to label stories.

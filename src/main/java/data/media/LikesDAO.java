@@ -1,4 +1,4 @@
-package data;
+package data.media;
 
 /**
  * Manages likes on posts and comments.
