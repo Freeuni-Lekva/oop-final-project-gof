@@ -10,8 +10,8 @@ public class ChatHistory {
         this.chatHistory = chatHistory;
     }
 
-    public void generateChat(){
-
+    public String generateChat(){
+        return "";
     }
 
 
