@@ -68,6 +68,16 @@ public class MessageDAO {
         return -1;
     }
 
+    public boolean updateMessageContent(int message_id, String newMessageContent) throws SQLException {
+        String sql = "UPDATE messages SET message = ? WHERE message_id = ?";
+        try (Connection conn = connector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newMessageContent);
+            stmt.setInt(2, message_id);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 }
 
 
