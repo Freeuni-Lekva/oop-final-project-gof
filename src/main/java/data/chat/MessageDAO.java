@@ -1,6 +1,7 @@
 package data.chat;
 
 import data.MySqlConnector;
+import data.story.StoryDAO;
 import model.chat.Message;
 
 import java.sql.*;
@@ -35,6 +36,10 @@ public class MessageDAO {
         String sql = "SELECT message_id, message, is_user FROM messages WHERE chat_id = ? ORDER BY message_id ASC";
         ArrayList<Message> messages = new ArrayList<>();
 
+        StoryDAO storyDao = new StoryDAO(connector);
+        String prompt = storyDao.getPrompt(chat_id);
+        messages.add(new Message(prompt, false, 0,false));
+
         try (Connection conn = connector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, chat_id);
@@ -43,7 +48,7 @@ public class MessageDAO {
                 String msg = rs.getString("message");
                 boolean isUser = rs.getBoolean("is_user");
                 int id = rs.getInt("message_id");
-                messages.add(new Message(msg, isUser, id));
+                messages.add(new Message(msg, isUser, id,false));
             }
         }
 
