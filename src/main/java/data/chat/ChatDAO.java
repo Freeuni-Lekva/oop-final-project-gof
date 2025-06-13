@@ -29,7 +29,6 @@ public class ChatDAO {
             }
         }
 
-
         return -1;
     }
 
@@ -76,7 +75,7 @@ public class ChatDAO {
             }
         }
 
-        return -1;
+        return 0;
     }
 
     public int createChat(int user_id, int story_id) throws SQLException {
@@ -105,6 +104,5 @@ public class ChatDAO {
             return rowsAffected > 0;
         }
     }
-
 }
 
