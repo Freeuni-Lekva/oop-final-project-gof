@@ -1,5 +1,5 @@
 -- USE YOUR DATABASE --
-USE enter_your_database_name;
+USE kitkat;
 
 -- DROP UNNECESSARY TABLES --
 DROP TABLE IF EXISTS messages;

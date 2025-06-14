@@ -47,7 +47,7 @@ public class ChatDAO {
         return -1;
     }
 
-    public Integer getChatId(int user_id, int story_id) throws SQLException {
+    public int getChatId(int user_id, int story_id) throws SQLException {
         String sql = "SELECT chat_id FROM chats WHERE user_id = ? AND story_id = ?";
 
         Connection conn = connector.getConnection();
@@ -59,8 +59,7 @@ public class ChatDAO {
             return rs.getInt("chat_id");
         }
 
-
-        return null;
+        return -1;
     }
 
     public int messageCount(int chat_id) throws SQLException {
