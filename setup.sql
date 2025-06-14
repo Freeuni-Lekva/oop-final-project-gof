@@ -1,5 +1,5 @@
 -- USE YOUR DATABASE --
-USE enter_your_database_name;
+USE oop_final;
 
 -- DROP UNNECESSARY TABLES --
 DROP TABLE IF EXISTS messages;

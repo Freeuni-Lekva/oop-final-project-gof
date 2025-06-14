@@ -1,6 +1,6 @@
 package data.media;
 
-import model.Post;
+import model.media.Post;
 import data.MySqlConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

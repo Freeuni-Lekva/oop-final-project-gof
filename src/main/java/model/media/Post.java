@@ -1,6 +1,4 @@
-package model;
-
-import data.media.CommentsDAO;
+package model.media;
 
 import java.time.LocalDateTime;
 
@@ -49,10 +47,6 @@ public class Post {
         return commentCount;
     }
 
-
-    public void setStoryId(int storyId) {
-
-    }
 
     public void setImageName(String imageName) {
         this.imageName = imageName;

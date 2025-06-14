@@ -2,12 +2,13 @@ import data.MySqlConnector;
 import junit.framework.TestCase;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ConnectionTest extends TestCase{
     private Connection conn;
 
     @Override
-    public void setUp() {
+    public void setUp() throws SQLException {
         conn = MySqlConnector.getConnection();
     }
 
