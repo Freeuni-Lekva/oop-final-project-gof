@@ -75,19 +75,7 @@ public class Post {
 //        return this.comments;
 //    }
 
-    //two post objects are same if they have same id
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Post other = (Post) obj;
-        return postId == other.postId;
-    }
-    //hash them based on their id
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(postId);
-    }
+
 
 
 }

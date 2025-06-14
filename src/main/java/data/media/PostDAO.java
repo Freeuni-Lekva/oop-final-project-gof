@@ -28,7 +28,8 @@ public class PostDAO {
 
             stmt.executeUpdate();
 
-        } catch (SQLException ignored) {
+        }catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     public void incrementLikeCount(int postId) {
@@ -40,7 +41,8 @@ public class PostDAO {
             stmt.setInt(1, postId);
             stmt.executeUpdate();
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     public void incrementCommentCount(int postId) {
@@ -51,7 +53,8 @@ public class PostDAO {
             stmt.setInt(1, postId);
             stmt.executeUpdate();
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
     }
@@ -78,7 +81,8 @@ public class PostDAO {
                 posts.add(post);
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return posts;
@@ -105,7 +109,8 @@ public class PostDAO {
                 );
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return null;
