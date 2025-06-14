@@ -1,7 +1,11 @@
 package data;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.checkerframework.checker.units.qual.C;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 
 public class MySqlConnector {
@@ -41,5 +45,44 @@ public class MySqlConnector {
         }
     }
 
+    public static void setupSQL() throws SQLException, IOException {
+        Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+
+        String path = "setup.sql";
+        BufferedReader br = new BufferedReader(new FileReader(path));
+
+        StringBuilder currentStatement = new StringBuilder();
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            String trimmedLine = line.trim();
+
+            if (trimmedLine.isEmpty() || trimmedLine.startsWith("--")) {
+                continue;
+            }
+
+            currentStatement.append(trimmedLine);
+
+            if (trimmedLine.endsWith(";")) {
+                String sqlCommand = currentStatement.substring(0, currentStatement.length() - 1).trim();
+
+                if (!sqlCommand.isEmpty()) {
+                    System.out.println("Executing: " + sqlCommand);
+                    stmt.execute(sqlCommand);
+                }
+                currentStatement.setLength(0);
+            } else {
+                currentStatement.append(" ");
+            }
+        }
+
+        String finalStatement = currentStatement.toString().trim();
+        if (!finalStatement.isEmpty()) {
+            System.out.println("Executing final: " + finalStatement);
+            stmt.execute(finalStatement);
+        }
+
+    }
 
 }
