@@ -1,6 +1,6 @@
 package model.chat;
 
-public class Message {
+public class Message implements Comparable<Message> {
 
     private boolean isUser;
     private String message;
@@ -28,6 +28,11 @@ public class Message {
 
     public boolean isPrompt() {
         return isPrompt;
+    }
+
+    @Override
+    public int compareTo(Message other) {
+        return Integer.compare(this.id, other.id);
     }
 
 }

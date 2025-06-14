@@ -24,13 +24,13 @@ public class MySqlConnector {
             "jdbc:mysql://localhost:3306/" + DATABASE_NAME +
                     "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException {
         try {
             return DriverManager.getConnection(URL, USER, PASS);
         } catch (SQLException e) {
             System.err.println("Database connection failed in webapp");
             e.printStackTrace();
-            return null;
+            throw e;
         }
     }
 

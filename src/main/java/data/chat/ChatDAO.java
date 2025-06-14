@@ -20,14 +20,14 @@ public class ChatDAO {
     public int getUserId(int chat_id) throws SQLException {
         String sql = "SELECT user_id FROM chats WHERE chat_id = ?";
 
-        try (Connection conn = connector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, chat_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("user_id");
-            }
+        Connection conn = connector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, chat_id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("user_id");
         }
+
 
         return -1;
     }
@@ -35,14 +35,14 @@ public class ChatDAO {
     public int getStoryId(int chat_id) throws SQLException {
         String sql = "SELECT story_id FROM chats WHERE chat_id = ?";
 
-        try (Connection conn = connector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, chat_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("story_id");
-            }
+        Connection conn = connector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, chat_id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("story_id");
         }
+
 
         return -1;
     }
@@ -50,15 +50,15 @@ public class ChatDAO {
     public Integer getChatId(int user_id, int story_id) throws SQLException {
         String sql = "SELECT chat_id FROM chats WHERE user_id = ? AND story_id = ?";
 
-        try (Connection conn = connector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, user_id);
-            stmt.setInt(2, story_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("chat_id");
-            }
+        Connection conn = connector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, user_id);
+        stmt.setInt(2, story_id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("chat_id");
         }
+
 
         return null;
     }
@@ -66,13 +66,12 @@ public class ChatDAO {
     public int messageCount(int chat_id) throws SQLException {
         String sql = "SELECT COUNT(*) FROM messages WHERE chat_id = ?";
 
-        try (Connection conn = connector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, chat_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
+        Connection conn = connector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, chat_id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1);
         }
 
         return 0;
@@ -81,15 +80,14 @@ public class ChatDAO {
     public int createChat(int user_id, int story_id) throws SQLException {
         String sql = "INSERT INTO chats (user_id, story_id) VALUES (?, ?)";
 
-        try (Connection conn = connector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, user_id);
-            stmt.setInt(2, story_id);
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
+        Connection conn = connector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        stmt.setInt(1, user_id);
+        stmt.setInt(2, story_id);
+        stmt.executeUpdate();
+        ResultSet rs = stmt.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1);
         }
 
         return -1;
@@ -97,12 +95,12 @@ public class ChatDAO {
 
     public boolean deleteChat(int chat_id) throws SQLException {
         String sql = "DELETE FROM chats WHERE chat_id = ?";
-        try (Connection conn = connector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, chat_id);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        }
+        Connection conn = connector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, chat_id);
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
     }
+
 }
 
