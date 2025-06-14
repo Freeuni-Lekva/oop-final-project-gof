@@ -37,7 +37,7 @@ public class MessageDAO {
 
         StoryDAO storyDao = new StoryDAO(connector);
         String prompt = storyDao.getPrompt(chat_id);
-        messages.add(new Message(prompt, false, 0,false));
+        messages.add(new Message(prompt, false, 0,true));
 
         Connection conn = connector.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql);

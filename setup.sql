@@ -1,5 +1,6 @@
 -- USE YOUR DATABASE --
-USE kitkat;
+USE `story-ai-db`;
+-- story-ai-db for workflow testing
 
 -- DROP UNNECESSARY TABLES --
 DROP TABLE IF EXISTS messages;

@@ -68,7 +68,6 @@ public class MySqlConnector {
                 String sqlCommand = currentStatement.substring(0, currentStatement.length() - 1).trim();
 
                 if (!sqlCommand.isEmpty()) {
-                    System.out.println("Executing: " + sqlCommand);
                     stmt.execute(sqlCommand);
                 }
                 currentStatement.setLength(0);
