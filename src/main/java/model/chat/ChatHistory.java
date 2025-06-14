@@ -5,13 +5,10 @@ import java.util.Collections;
 
 public class ChatHistory {
 
-    private ArrayList<Message> chatHistory;
 
-    public ChatHistory(ArrayList<Message> chatHistory) {
-        this.chatHistory = chatHistory;
-    }
+    public ChatHistory() {}
 
-    public String generateChat() {
+    public String generateChat(ArrayList<Message> chatHistory) {
         if (chatHistory.isEmpty()) return "";
 
         Collections.sort(chatHistory);
@@ -31,7 +28,7 @@ public class ChatHistory {
                 continue;
             }
 
-            sb.append("Narrator :");
+            sb.append("Narrator : ");
             sb.append(message.getMessage()).append("\n");
 
         }
