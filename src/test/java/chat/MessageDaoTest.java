@@ -22,8 +22,8 @@ public class MessageDaoTest extends TestCase {
         conn = MySqlConnector.getConnection();
         MySqlConnector.setupSQL();
 
-        chatDao = new ChatDAO(new MySqlConnector());
-        messageDao = new MessageDAO(new MySqlConnector());
+        chatDao = new ChatDAO();
+        messageDao = new MessageDAO();
     }
 
     public void testAddMessage() throws SQLException {
@@ -73,9 +73,9 @@ public class MessageDaoTest extends TestCase {
 
 
     @Override
-    public void tearDown() {
+    public void tearDown() throws SQLException {
         MySqlConnector.close(conn);
-        assertTrue("Connection should be closed after test", true);
+        assertTrue("Connection should be closed after test", conn.isClosed());
     }
 
     // ------------- helper methods ---------------
