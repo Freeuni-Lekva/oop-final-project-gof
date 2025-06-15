@@ -46,42 +46,42 @@ public class MySqlConnector {
     }
 
     public static void setupSQL() throws SQLException, IOException {
-        Connection conn = getConnection();
-        Statement stmt = conn.createStatement();
+        try(Connection conn = getConnection();
+        Statement stmt = conn.createStatement()) {
 
-        String path = "setup.sql";
-        BufferedReader br = new BufferedReader(new FileReader(path));
+            String path = "setup.sql";
+            BufferedReader br = new BufferedReader(new FileReader(path));
 
-        StringBuilder currentStatement = new StringBuilder();
-        String line;
+            StringBuilder currentStatement = new StringBuilder();
+            String line;
 
-        while ((line = br.readLine()) != null) {
-            String trimmedLine = line.trim();
+            while ((line = br.readLine()) != null) {
+                String trimmedLine = line.trim();
 
-            if (trimmedLine.isEmpty() || trimmedLine.startsWith("--")) {
-                continue;
-            }
-
-            currentStatement.append(trimmedLine);
-
-            if (trimmedLine.endsWith(";")) {
-                String sqlCommand = currentStatement.substring(0, currentStatement.length() - 1).trim();
-
-                if (!sqlCommand.isEmpty()) {
-                    stmt.execute(sqlCommand);
+                if (trimmedLine.isEmpty() || trimmedLine.startsWith("--")) {
+                    continue;
                 }
-                currentStatement.setLength(0);
-            } else {
-                currentStatement.append(" ");
+
+                currentStatement.append(trimmedLine);
+
+                if (trimmedLine.endsWith(";")) {
+                    String sqlCommand = currentStatement.substring(0, currentStatement.length() - 1).trim();
+
+                    if (!sqlCommand.isEmpty()) {
+                        stmt.execute(sqlCommand);
+                    }
+                    currentStatement.setLength(0);
+                } else {
+                    currentStatement.append(" ");
+                }
+            }
+
+            String finalStatement = currentStatement.toString().trim();
+            if (!finalStatement.isEmpty()) {
+                System.out.println("Executing final: " + finalStatement);
+                stmt.execute(finalStatement);
             }
         }
-
-        String finalStatement = currentStatement.toString().trim();
-        if (!finalStatement.isEmpty()) {
-            System.out.println("Executing final: " + finalStatement);
-            stmt.execute(finalStatement);
-        }
-
     }
 
 }

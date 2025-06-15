@@ -12,8 +12,7 @@ import java.sql.SQLException;
  */
 public class ChatDAO {
 
-    public ChatDAO() {
-    }
+    public ChatDAO() {}
 
     public int getUserId(int chat_id) throws SQLException {
         String sql = "SELECT user_id FROM chats WHERE chat_id = ?";
