@@ -40,14 +40,17 @@ public class MySqlConnector {
 
     public static void close(Connection c) {
         if (c != null) {
-            try { c.close(); }
-            catch (SQLException ignored) {}
+            try {
+                c.close();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
     public static void setupSQL() throws SQLException, IOException {
-        try(Connection conn = getConnection();
-            Statement stmt = conn.createStatement()) {
+        try (Connection conn = getConnection();
+
+             Statement stmt = conn.createStatement()) {
 
             String path = "setup.sql";
             BufferedReader br = new BufferedReader(new FileReader(path));
@@ -83,5 +86,4 @@ public class MySqlConnector {
             }
         }
     }
-
 }
