@@ -37,7 +37,7 @@ public class MessageDAO {
         String sql = "SELECT message_id, message, is_user FROM messages WHERE chat_id = ? ORDER BY message_id ASC";
         ArrayList<Message> messages = new ArrayList<>();
 
-        StoryDAO storyDao = new StoryDAO(connector);
+        StoryDAO storyDao = new StoryDAO();
         String prompt = storyDao.getPrompt(chat_id);
         messages.add(new Message(prompt, false, 0,true));
 
