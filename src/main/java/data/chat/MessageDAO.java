@@ -38,7 +38,8 @@ public class MessageDAO {
         ArrayList<Message> messages = new ArrayList<>();
 
         StoryDAO storyDao = new StoryDAO(connector);
-        String prompt = storyDao.getPrompt(chat_id);
+        ChatDAO chatDao = new ChatDAO();
+        String prompt = storyDao.getPrompt(chatDao.getStoryId(chat_id));
         messages.add(new Message(prompt, false, 0,true));
 
         try (Connection conn = MySqlConnector.getConnection();
