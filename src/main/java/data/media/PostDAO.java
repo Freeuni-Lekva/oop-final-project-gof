@@ -12,15 +12,13 @@ import java.util.*;
  * Manages post creation within a story, including image handling.
  * */
 public class PostDAO {
-    private MySqlConnector connector;
 
-    public PostDAO(MySqlConnector sqlConnector) {
-        connector = sqlConnector;
-    }
-    public void addPost(Post post) {
+
+    public PostDAO() {}
+    public void addPost(Post post) throws SQLException {
         String sql = "INSERT INTO posts (story_id, image_name) VALUES (?, ?)";
 
-        try (Connection conn = connector.getConnection();
+        try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, post.getStoryId());
@@ -30,12 +28,13 @@ public class PostDAO {
 
         }catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
     }
-    public void incrementLikeCount(int postId) {
+    public void incrementLikeCount(int postId) throws SQLException {
         String sql = "UPDATE posts SET like_count = like_count + 1 WHERE post_id = ?";
 
-        try (Connection conn = connector.getConnection();
+        try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, postId);
@@ -43,11 +42,12 @@ public class PostDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
     }
-    public void incrementCommentCount(int postId) {
+    public void incrementCommentCount(int postId) throws SQLException {
         String sql = "UPDATE posts SET comment_count = comment_count + 1 WHERE post_id = ?";
-        try (Connection conn = connector.getConnection();
+        try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, postId);
@@ -55,15 +55,16 @@ public class PostDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
 
     }
 
-    public List<Post> getPostsByStoryId(int storyId) {
+    public List<Post> getPostsByStoryId(int storyId) throws SQLException {
         List<Post> posts = new ArrayList<>();
         String sql = "SELECT post_id, story_id, image_name, created_at, like_count, comment_count FROM posts WHERE story_id = ?";
 
-        try (Connection conn = connector.getConnection();
+        try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, storyId);
@@ -83,16 +84,17 @@ public class PostDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
 
         return posts;
     }
 
 
-    public Post getPostById(int postId) {
+    public Post getPostById(int postId) throws SQLException {
         String sql = "SELECT post_id, story_id, image_name, created_at, like_count, comment_count FROM posts WHERE post_id = ?";
 
-        try (Connection conn = connector.getConnection();
+        try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, postId);
@@ -111,6 +113,7 @@ public class PostDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
 
         return null;

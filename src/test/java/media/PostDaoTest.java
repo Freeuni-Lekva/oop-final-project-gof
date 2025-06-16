@@ -23,7 +23,7 @@ public class PostDaoTest extends TestCase {
         conn = MySqlConnector.getConnection();
         MySqlConnector.setupSQL();
 
-        postDao = new PostDAO( new MySqlConnector());
+        postDao = new PostDAO();
     }
 
     public void testAddAndGetPostsByStoryId() throws SQLException {
@@ -77,7 +77,7 @@ public class PostDaoTest extends TestCase {
 
 
     // --------- Helper method ---------
-    private void initPosts() {
+    private void initPosts() throws SQLException {
         // Use dummy postId values; actual DB will auto-increment if set up that way
         postDao.addPost(new Post(3, 1, "src/main/webapp/images/posts/image1.jpg", LocalDateTime.now(), 0, 0));
         postDao.addPost(new Post(4, 2, "src/main/webapp/images/posts/image2.jpg", LocalDateTime.now(), 0, 0));
