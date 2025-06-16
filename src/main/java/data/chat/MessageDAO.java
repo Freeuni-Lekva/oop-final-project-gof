@@ -36,9 +36,9 @@ public class MessageDAO {
     public ArrayList<Message> getMessages(int chat_id) throws SQLException {
         String sql = "SELECT message_id, message, is_user FROM messages WHERE chat_id = ? ORDER BY message_id ASC";
         ArrayList<Message> messages = new ArrayList<>();
-
         StoryDAO storyDao = new StoryDAO();
-        String prompt = storyDao.getPrompt(chat_id);
+        ChatDAO chatDao = new ChatDAO();
+        String prompt = storyDao.getPrompt(chatDao.getStoryId(chat_id));
         messages.add(new Message(prompt, false, 0,true));
 
         try (Connection conn = MySqlConnector.getConnection();
