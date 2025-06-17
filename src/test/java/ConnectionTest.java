@@ -9,7 +9,7 @@ public class ConnectionTest extends TestCase{
     private Connection conn;
 
     @Override
-    public void setUp() throws SQLException{
+    public void setUp() throws SQLException {
         conn = MySqlConnector.getConnection();
     }
 
