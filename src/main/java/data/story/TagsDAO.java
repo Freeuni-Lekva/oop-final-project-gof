@@ -55,6 +55,13 @@ public class TagsDAO {
             if (Tags.isValidTag(storyTag)) {
                 StoryTagsCopy.add(storyTag);
             }
+            else {
+                counter++;
+            }
+        }
+
+        if (counter == storyTags.size()) {
+            return Collections.emptyList();
         }
 
         String placeholders = String.join(", ", Collections.nCopies(StoryTagsCopy.size(), "?"));
