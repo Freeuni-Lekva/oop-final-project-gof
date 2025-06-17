@@ -21,14 +21,13 @@ public class TagsDAO {
 
     public TagsDAO() {}
 
-    public List<String> getStoryTags(String storyId) throws SQLException {
+    public List<String> getStoryTags(int storyId) throws SQLException {
         String sql = "SELECT t.name FROM tags t JOIN story_tags st ON t.tag_id = st.tag_id WHERE st.story_id = ?";
         List<String> tags = new ArrayList<>();
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            int storyIdInt = Integer.parseInt(storyId);
-            stmt.setInt(1, storyIdInt);
+            stmt.setInt(1, storyId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -57,7 +56,6 @@ public class TagsDAO {
                 StoryTagsCopy.add(storyTag);
             }
         }
-
 
         String placeholders = String.join(", ", Collections.nCopies(StoryTagsCopy.size(), "?"));
         String sql = "SELECT s.story_id, s.creator_id, s.title, s.prompt, s.created_at " +
@@ -90,7 +88,7 @@ public class TagsDAO {
             e.printStackTrace();
             throw e;
         }
-
         return stories;
     }
+
 }

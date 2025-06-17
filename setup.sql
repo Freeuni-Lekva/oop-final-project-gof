@@ -173,4 +173,5 @@ INSERT INTO story_tags (story_id, tag_id)
 VALUES
     (1, 1),
     (1, 2),
+    (2, 1),
     (2, 3);
