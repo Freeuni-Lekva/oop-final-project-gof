@@ -6,6 +6,7 @@ import model.story.Story;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -90,6 +91,34 @@ public class StoryDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error finding stories: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return stories;
+    }
+
+    public List<Story> getStoriesByIds(List<Integer> storyIds) {
+        List<Story> stories = new ArrayList<>();
+        if (storyIds == null || storyIds.isEmpty()) {
+            return stories;
+        }
+
+        String placeholders = String.join(",", Collections.nCopies(storyIds.size(), "?"));
+        String sql = "SELECT * FROM stories WHERE story_id IN (" + placeholders + ")";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < storyIds.size(); i++) {
+                preparedStatement.setInt(i + 1, storyIds.get(i));
+            }
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    stories.add(populateStory(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching stories by IDs: " + e.getMessage());
             e.printStackTrace();
         }
         return stories;

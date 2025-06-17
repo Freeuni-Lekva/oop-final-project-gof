@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class StoryDaoTest extends TestCase {
@@ -56,6 +58,23 @@ public class StoryDaoTest extends TestCase {
         List<Story> storiesForCreator99 = storyDao.getStoriesList(99);
         assertNotNull(storiesForCreator99);
         assertTrue(storiesForCreator99.isEmpty());
+    }
+
+    public void testGetStoriesByIds() {
+        createInitialStories();
+
+        List<Integer> idsToFetch = Arrays.asList(1, 3, 5);
+        List<Story> foundStories = storyDao.getStoriesByIds(idsToFetch);
+
+        assertEquals(3, foundStories.size());
+        assertTrue(foundStories.stream().anyMatch(s -> s.getStoryId() == 1));
+        assertTrue(foundStories.stream().anyMatch(s -> s.getStoryId() == 5));
+
+        List<Story> emptyResult = storyDao.getStoriesByIds(new ArrayList<>());
+        assertTrue(emptyResult.isEmpty());
+
+        List<Story> nonExistentResult = storyDao.getStoriesByIds(Arrays.asList(98, 99));
+        assertTrue(nonExistentResult.isEmpty());
     }
 
     public void testUpdateStory() {
