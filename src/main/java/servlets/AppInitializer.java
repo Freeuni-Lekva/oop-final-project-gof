@@ -22,7 +22,7 @@ public class AppInitializer implements ServletContextListener, HttpSessionListen
         context.setAttribute("postDao", new PostDAO());
         context.setAttribute("commentDao", new CommentsDAO(mySqlConnector));
         context.setAttribute("likeDao", new LikesDAO(mySqlConnector));
-        context.setAttribute("tagDao", new TagsDAO(mySqlConnector));
+        context.setAttribute("tagDao", new TagsDAO());
 
         context.setAttribute("mySqlConnector", mySqlConnector);
     }
