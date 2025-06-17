@@ -15,6 +15,7 @@ public class AppInitializer implements ServletContextListener, HttpSessionListen
         MySqlConnector mySqlConnector = new MySqlConnector();
 
         context.setAttribute("userDao", new UserDAO());
+        context.setAttribute("historyDao", new HistoryDAO());
         context.setAttribute("storyDao", new StoryDAO());
         context.setAttribute("chatDao", new ChatDAO());
         context.setAttribute("messageDao", new MessageDAO());
