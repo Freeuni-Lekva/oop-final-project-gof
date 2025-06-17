@@ -79,6 +79,21 @@ public class UserDaoTest extends TestCase {
         assertEquals(2, followers.get(0).getUserId());
     }
 
+    public void testAddFollowing() {
+        assertTrue(userDao.findFollowing(1).isEmpty());
+        assertTrue(userDao.findFollowers(2).isEmpty());
+
+        userDao.addFollowing(1, 2);
+
+        List<User> followingList = userDao.findFollowing(1);
+        assertEquals(1, followingList.size());
+        assertEquals(2, followingList.get(0).getUserId());
+
+        List<User> followersList = userDao.findFollowers(2);
+        assertEquals(1, followersList.size());
+        assertEquals(1, followersList.get(0).getUserId());
+    }
+
     public void testAddBookmark() {
         data.story.StoryDAO storyDao = new data.story.StoryDAO();
         Story storyToBookmark = storyDao.getStory(2);

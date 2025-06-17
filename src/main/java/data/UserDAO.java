@@ -129,6 +129,22 @@ public class UserDAO {
         }
     }
 
+    public void addFollowing(int userId, int followingId) {
+        String sql = "INSERT IGNORE INTO followers (follower_id, following_id) VALUES (?, ?)";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, followingId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error following user: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Helper method to create a User object from a ResultSet row.
      */
