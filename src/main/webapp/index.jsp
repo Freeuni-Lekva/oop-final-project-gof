@@ -90,7 +90,6 @@
       <h1 class="text-3xl font-bold font-orbitron tracking-widest text-white">StoryAI</h1>
       <nav class="flex items-center space-x-6">
          <a href="login" class="text-gray-300 hover:text-white transition-colors duration-300">Login</a>
-         <a href="logout" class="text-gray-300 hover:text-white transition-colors duration-300">Logout</a>
          <a href="register" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300">
             Join Now
          </a>

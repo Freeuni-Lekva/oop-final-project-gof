@@ -17,13 +17,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        System.out.println("RegisterServlet.doGet()");
         HttpSession session = req.getSession(false);
-        if(session != null && session.getAttribute("user") != null) {
-            res.sendRedirect(req.getContextPath() + "/index.jsp");
-            return;
-        }
-
         req.getRequestDispatcher("/register.jsp").forward(req, res);
     }
 
@@ -31,31 +25,32 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         RequestDispatcher reqDispatcher = req.getRequestDispatcher("/register.jsp");
         HttpSession session = req.getSession(false);
-        System.out.println("RegisterServlet.doPost()");
-        if(session != null && session.getAttribute("user") != null) {
-            session.setAttribute("error", "You are already logged in!");
-            res.sendRedirect(req.getContextPath() + "/index.jsp");
-            return;
-        }
-        session = req.getSession();
 
         String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirmPassword");
         int age;
-        try {
-            age = Integer.parseInt(req.getParameter("age"));
-            if(age < 0 || age > 130) {
-                throw new IllegalArgumentException("Invalid age.");
-            } else if(age < 16) {
-                throw new IllegalArgumentException("You must be 16 years old or older to use this website.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            req.setAttribute("error", e.getMessage());
+
+        if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
+            req.setAttribute("error", "Username and password cannot be empty.");
             reqDispatcher.forward(req, res);
             return;
         }
-        String password = req.getParameter("password");
-        String confirmPassword = req.getParameter("confirmPassword");
+
+
+        try {
+            age = Integer.parseInt(req.getParameter("age"));
+            if (age < 16) {
+                req.setAttribute("error", "You must be at least 16 years old to register.");
+                reqDispatcher.forward(req, res);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            req.setAttribute("error", "Please enter a valid age.");
+            reqDispatcher.forward(req, res);
+            return;
+        }
+
 
         System.out.println("paswsord: " + password);
         System.out.println("confirmPassword: " + confirmPassword);
@@ -73,11 +68,13 @@ public class RegisterServlet extends HttpServlet {
 
         ServletContext context = getServletContext();
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
+
         if(userDAO.findUser(user.getUsername()) != null) {
             req.setAttribute("error", "Username is already taken.");
-            req.getRequestDispatcher("/register.jsp").forward(req, res);
+            reqDispatcher.forward(req, res);
             return;
         }
+
         userDAO.saveUser(user);
         session.setAttribute("user", user);
         res.sendRedirect(req.getContextPath() + "/index.jsp");
