@@ -10,32 +10,33 @@ import java.sql.SQLException;
  * Manages likes on posts and comments.
  */
 public class LikesDAO {
-    private MySqlConnector connector;
 
-    public LikesDAO(MySqlConnector sqlConnector) {
-        this.connector = sqlConnector;
-    }
+    public LikesDAO() { }
 
     public void addLikeToPost(int postId, int userId) throws SQLException {
-        String insertLikeQuery = "INSERT INTO likes (user_id, post_id) VALUES (?, ?)";
+        String insertLikeQuery = "INSERT IGNORE INTO likes (user_id, post_id) VALUES (?, ?)";
         String updateLikeCountQuery = "UPDATE posts " +
                 "SET like_count = like_count + 1 WHERE post_id = ?";
 
         Connection conn = null;
+        int rowsAffected = 0;
         try {
-            conn = connector.getConnection();
+            conn = MySqlConnector.getConnection();
             conn.setAutoCommit(false);
             try {
                 PreparedStatement stmt = conn.prepareStatement(insertLikeQuery);
                 stmt.setInt(1, userId);
                 stmt.setInt(2, postId);
-                stmt.executeUpdate();
+                rowsAffected = stmt.executeUpdate();
             } catch (SQLException ignored) {}
-            try {
-                PreparedStatement stmt = conn.prepareStatement(updateLikeCountQuery);
-                stmt.setInt(1, postId);
-                stmt.executeUpdate();
-            } catch (SQLException ignored) {}
+            if (rowsAffected > 0) {
+                try {
+                    PreparedStatement stmt = conn.prepareStatement(updateLikeCountQuery);
+                    stmt.setInt(1, postId);
+                    stmt.executeUpdate();
+                } catch (SQLException ignored) {
+                }
+            }
             conn.commit();
         } catch (SQLException e) {
             if(conn != null) conn.rollback();
@@ -49,26 +50,30 @@ public class LikesDAO {
 
 
     public void addLikeToComment(int commentId, int userId) throws SQLException {
-        String insertLikeQuery = "INSERT INTO likes (user_id, comment_id) VALUES (?, ?)";
+        String insertLikeQuery = "INSERT IGNORE INTO likes (user_id, comment_id) VALUES (?, ?)";
         String updateLikeCountQuery = "UPDATE comments " +
                 "SET like_count = like_count + 1 WHERE comment_id = ?";
 
         Connection conn = null;
+        int rowsAffected = 0;
         try {
-            conn = connector.getConnection();
+            conn = MySqlConnector.getConnection();
             conn.setAutoCommit(false);
             try {
                 PreparedStatement stmt = conn.prepareStatement(insertLikeQuery);
                 stmt.setInt(1, userId);
                 stmt.setInt(2, commentId);
-                stmt.executeUpdate();
+                rowsAffected = stmt.executeUpdate();
             } catch (SQLException ignored) {}
-            try {
-                PreparedStatement stmt = conn.prepareStatement(updateLikeCountQuery);
-                stmt.setInt(1, commentId);
-                stmt.executeUpdate();
-            } catch (SQLException ignored) {}
-            conn.commit();
+            if (rowsAffected > 0) {
+                try {
+                    PreparedStatement stmt = conn.prepareStatement(updateLikeCountQuery);
+                    stmt.setInt(1, commentId);
+                    stmt.executeUpdate();
+                } catch (SQLException ignored) {
+                }
+                conn.commit();
+            }
         } catch (SQLException e) {
             if(conn != null) conn.rollback();
             throw new SQLException("rolled back");
@@ -81,7 +86,7 @@ public class LikesDAO {
     }
 
     public void removeLikePost(int postId, int userId) throws SQLException {
-        Connection conn = connector.getConnection();
+        Connection conn = MySqlConnector.getConnection();
         try{
             conn.setAutoCommit(false);
 
@@ -90,16 +95,19 @@ public class LikesDAO {
                     " WHERE post_id = ?";
 
             boolean removed = false;
+            int rowsAffected = 0;
             try(PreparedStatement stmt = conn.prepareStatement(removeQuery);) {
                 stmt.setInt(1, userId);
                 stmt.setInt(2, postId);
-                stmt.executeUpdate();
+                rowsAffected = stmt.executeUpdate();
                 removed = true;
             }
-            try(PreparedStatement stmt = conn.prepareStatement(decreaseLikeCount);) {
-                if(removed) {
-                    stmt.setInt(1, postId);
-                    stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                try (PreparedStatement stmt = conn.prepareStatement(decreaseLikeCount);) {
+                    if (removed) {
+                        stmt.setInt(1, postId);
+                        stmt.executeUpdate();
+                    }
                 }
             }
 
@@ -118,7 +126,7 @@ public class LikesDAO {
     public void removeLikeComment(int commentId, int userId) throws SQLException {
         Connection conn = null;
         try{
-            conn = connector.getConnection();
+            conn = MySqlConnector.getConnection();
             conn.setAutoCommit(false);
 
             String removeQuery = "DELETE FROM likes WHERE user_id = ? AND comment_id = ?";
@@ -126,16 +134,19 @@ public class LikesDAO {
                     " WHERE comment_id = ?";
 
             boolean removed = false;
+            int rowsAffected = 0;
             try(PreparedStatement stmt = conn.prepareStatement(removeQuery);) {
                 stmt.setInt(1, userId);
                 stmt.setInt(2, commentId);
-                stmt.executeUpdate();
+                rowsAffected = stmt.executeUpdate();
                 removed = true;
             }
-            try(PreparedStatement stmt = conn.prepareStatement(decreaseLikeCount)) {
-                if(removed) {
-                    stmt.setInt(1, commentId);
-                    stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                try (PreparedStatement stmt = conn.prepareStatement(decreaseLikeCount)) {
+                    if (removed) {
+                        stmt.setInt(1, commentId);
+                        stmt.executeUpdate();
+                    }
                 }
             }
 
