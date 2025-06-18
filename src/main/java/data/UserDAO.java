@@ -15,7 +15,27 @@ public class UserDAO {
 
     public UserDAO() { }
 
-    public User findUser(int userId) {
+    public User findUser(String username) {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        User user = null;
+
+        try (Connection conn = MySqlConnector.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    user = populateUser(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding user by username: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    public User findUserById(int userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
         User user = null;
 
