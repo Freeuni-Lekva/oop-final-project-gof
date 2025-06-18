@@ -17,16 +17,22 @@ public class CommentsDAO {
 
     public CommentsDAO() { }
 
-    public void addComment(String commmentContent, int authorId, int postId)
+    public void addComment(String commentContent, int authorId, int postId)
     throws SQLException {
         String insertQuery = "INSERT INTO comments (comment, author_id, post_id) VALUES (?, ?, ?)";
         String updateQuery = "UPDATE posts SET comment_count = comment_count + 1 WHERE post_id = ?";
 
-        Connection conn = MySqlConnector.getConnection();
+        Connection conn = null;
+        try {
+            conn = MySqlConnector.getConnection();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         try {
             conn.setAutoCommit(false);
             try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
-                stmt.setString(1, commmentContent);
+                stmt.setString(1, commentContent);
                 stmt.setInt(2, authorId);
                 stmt.setInt(3, postId);
                 stmt.executeUpdate();
