@@ -3,10 +3,14 @@ import data.*;
 import data.chat.*;
 import data.media.*;
 import data.story.*;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
+@WebListener
 public class AppInitializer implements ServletContextListener, HttpSessionListener {
 
     @Override

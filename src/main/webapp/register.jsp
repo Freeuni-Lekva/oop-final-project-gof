@@ -23,7 +23,7 @@
     <label for="password">Password:</label>
     <input id="password" name="password" type="password" placeholder="password" /> <br><br>
     <label for="confirm_password">Confirm Password:</label>
-    <input id="confirm_password" name="confirm_password" type="password" placeholder="confirm password" required />
+    <input id="confirm_password" name="confirmPassword" type="password" placeholder="confirm password" required />
     <button type="submit">Register</button>
 </form>
 <p>Already have an account? <a href="login">Log in</a></p>
