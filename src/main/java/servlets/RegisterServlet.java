@@ -18,6 +18,10 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
+        if (session != null && session.getAttribute("user") != null) {
+            res.sendRedirect(req.getContextPath() + "/home.jsp");
+            return;
+        }
         req.getRequestDispatcher("/register.jsp").forward(req, res);
     }
 
@@ -51,10 +55,6 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-
-        System.out.println("paswsord: " + password);
-        System.out.println("confirmPassword: " + confirmPassword);
-
         if(!password.equals(confirmPassword)) {
             req.setAttribute("error", "Passwords do not match!");
             reqDispatcher.forward(req, res);
@@ -76,7 +76,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         userDAO.saveUser(user);
-        session.setAttribute("user", user);
-        res.sendRedirect(req.getContextPath() + "/index.jsp");
+        session.setAttribute("user", user.getUsername());
+        res.sendRedirect(req.getContextPath() + "/home.jsp");
     }
 }
