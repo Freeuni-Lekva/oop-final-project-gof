@@ -6,6 +6,7 @@ import data.story.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.sql.SQLException;
 
 public class AppInitializer implements ServletContextListener, HttpSessionListener {
 
@@ -20,8 +21,8 @@ public class AppInitializer implements ServletContextListener, HttpSessionListen
         context.setAttribute("chatDao", new ChatDAO());
         context.setAttribute("messageDao", new MessageDAO());
         context.setAttribute("postDao", new PostDAO());
-        context.setAttribute("commentDao", new CommentsDAO(mySqlConnector));
-        context.setAttribute("likeDao", new LikesDAO(mySqlConnector));
+        context.setAttribute("commentDao", new CommentsDAO());
+        context.setAttribute("likeDao", new LikesDAO());
         context.setAttribute("tagDao", new TagsDAO());
 
         context.setAttribute("mySqlConnector", mySqlConnector);
