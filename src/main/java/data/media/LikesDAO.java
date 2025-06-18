@@ -86,7 +86,13 @@ public class LikesDAO {
     }
 
     public void removeLikePost(int postId, int userId) throws SQLException {
-        Connection conn = MySqlConnector.getConnection();
+        Connection conn = null;
+        try {
+            conn = MySqlConnector.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         try{
             conn.setAutoCommit(false);
 
