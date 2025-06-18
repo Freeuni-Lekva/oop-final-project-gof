@@ -1,6 +1,6 @@
 package servlets;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 public class HomeServlet extends HttpServlet {
 }

@@ -89,8 +89,8 @@
    <div class="container mx-auto px-6 flex justify-between items-center">
       <h1 class="text-3xl font-bold font-orbitron tracking-widest text-white">StoryAI</h1>
       <nav class="flex items-center space-x-6">
-         <a href="login.jsp" class="text-gray-300 hover:text-white transition-colors duration-300">Login</a>
-         <a href="register.jsp" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300">
+         <a href="login" class="text-gray-300 hover:text-white transition-colors duration-300">Login</a>
+         <a href="register" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300">
             Join Now
          </a>
       </nav>
@@ -105,7 +105,7 @@
       <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 animate-[fadeInUp_1.5s_ease-out]">
          Infinite adventures, powered by AI. Your imagination is the only limit.
       </p>
-      <a href="register.jsp" class="join-button-animated bg-purple-600 text-white font-bold py-4 px-10 rounded-full text-xl uppercase tracking-wider transition-transform duration-300 ease-in-out">
+      <a href="register" class="join-button-animated bg-purple-600 text-white font-bold py-4 px-10 rounded-full text-xl uppercase tracking-wider transition-transform duration-300 ease-in-out">
          Join the Adventure
       </a>
    </div>

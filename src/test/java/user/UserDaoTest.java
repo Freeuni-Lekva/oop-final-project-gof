@@ -25,7 +25,7 @@ public class UserDaoTest extends TestCase {
     }
 
     public void testFindExistingUser() {
-        User user = userDao.findUser(1);
+        User user = userDao.findUserById(1);
 
         assertNotNull(user);
         assertEquals("lsana", user.getUsername());
@@ -37,7 +37,7 @@ public class UserDaoTest extends TestCase {
         User newUser = new User(0, "newUser", "new_hash", 33, null, false);
         userDao.saveUser(newUser);
 
-        User foundUser = userDao.findUser(3);
+        User foundUser = userDao.findUserById(3);
         assertNotNull(foundUser);
         assertEquals("newUser", foundUser.getUsername());
         assertEquals(33, foundUser.getAge());

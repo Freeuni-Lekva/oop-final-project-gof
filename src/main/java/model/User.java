@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDateTime;
 
 public class User {
-    private final int userId;
+    private int userId;
     private String username;
     private String passwordHash;
     private int age;
@@ -12,6 +12,14 @@ public class User {
 
     public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator) {
         this.userId = userId;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.age = age;
+        this.registerTime = registerTime;
+        this.isCreator = isCreator;
+    }
+
+    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.age = age;
