@@ -14,19 +14,16 @@ import java.util.List;
  * Handles comment operations on posts, including likes.
  */
 public class CommentsDAO {
-    private Connection conn;
 
-    public CommentsDAO(MySqlConnector sqlConnector) throws SQLException {
-    }
+    public CommentsDAO() { }
 
     public void addComment(String commmentContent, int authorId, int postId)
     throws SQLException {
         String insertQuery = "INSERT INTO comments (comment, author_id, post_id) VALUES (?, ?, ?)";
         String updateQuery = "UPDATE posts SET comment_count = comment_count + 1 WHERE post_id = ?";
 
-        conn = null;
+        Connection conn = MySqlConnector.getConnection();
         try {
-            conn = MySqlConnector.getConnection();
             conn.setAutoCommit(false);
             try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
                 stmt.setString(1, commmentContent);
@@ -41,10 +38,8 @@ public class CommentsDAO {
             }
             conn.commit();
         } catch (SQLException e) {
-            if(conn != null) {
                 conn.rollback();
-            };
-            throw new SQLException("rolled back");
+            throw new SQLException("rolled back", e);
         } finally {
             if(conn != null) {
                 conn.setAutoCommit(true);
@@ -53,11 +48,42 @@ public class CommentsDAO {
         }
     }
 
+    public void deleteComment(int commentId) throws SQLException {
+        int postId = getPostId(commentId);
+        if (postId == -1) {
+            return;
+        }
+
+        String deleteQuery = "DELETE FROM comments WHERE comment_id = ?";
+        String updateQuery = "UPDATE posts SET comment_count = GREATEST(comment_count - 1, 0) WHERE post_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery)) {
+                deleteStmt.setInt(1, commentId);
+                int rowsAffected = deleteStmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                        updateStmt.setInt(1, postId);
+                        updateStmt.executeUpdate();
+                    }
+                }
+            }
+
+            conn.commit();
+
+        } catch (SQLException e) {
+            throw new SQLException("Transaction failed for deleteComment.", e);
+        }
+    }
+
     public List<Comment> getCommentsForPost(int postId) throws SQLException {
         List<Comment> comments = new ArrayList<>();
         String query =  "SELECT comment_id, post_id, author_id, comment, like_count" +
                 " FROM comments  WHERE post_id = ? ORDER BY comment_id";
-        conn = null;
+
         try(Connection conn = MySqlConnector.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)){
 
@@ -86,7 +112,7 @@ public class CommentsDAO {
 
     public int getAuthorId(int commentId) throws SQLException {
         String query =  "SELECT author_id FROM comments WHERE comment_id = ?";
-        conn = null;
+
         try (Connection conn = MySqlConnector.getConnection();
         PreparedStatement stmt = conn.prepareStatement(query)){
 
@@ -108,7 +134,7 @@ public class CommentsDAO {
 
     public int getPostId(int commentId) throws SQLException {
         String query =  "SELECT post_id FROM comments WHERE comment_id = ?";
-        conn = null;
+
         try(Connection conn = MySqlConnector.getConnection();
         PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -130,7 +156,7 @@ public class CommentsDAO {
 
     public int getLikeCount(int commentId) throws SQLException {
         String query =  "SELECT like_count FROM comments WHERE comment_id = ?";
-        conn = null;
+
         try (Connection conn = MySqlConnector.getConnection();
         PreparedStatement stmt = conn.prepareStatement(query)){
 
