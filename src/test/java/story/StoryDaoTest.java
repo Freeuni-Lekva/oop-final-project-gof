@@ -24,7 +24,7 @@ public class StoryDaoTest extends TestCase {
         MySqlConnector.setupSQL();
         storyDao = new StoryDAO();
     }
-
+// nothing much
     public void testCreateAndGetStory() {
         storyDao.createStory("New Story", "Prompt for New Story", 1);
         Story retrievedStory = storyDao.getStory(3);
