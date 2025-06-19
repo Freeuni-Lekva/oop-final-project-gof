@@ -122,20 +122,4 @@ public class PostDAO {
         return null;
     }
 
-
-    public static void main(String[] args) throws SQLException {
-        PostDAO postDAO = new PostDAO();
-        LikesDAO likesDAO = new LikesDAO();
-        CommentsDAO commentsDAO = new CommentsDAO();
-
-        Post post = postDAO.getPostsByStoryId(2);
-        System.out.println(post.getPostId());
-
-        likesDAO.addLikeToPost(2,2);
-        System.out.println(postDAO.getPostsByStoryId(2).getLikeCount());
-
-        Comment comment = commentsDAO.getCommentsForPost(1).get(0);
-        likesDAO.addLikeToComment(comment.getCommentId(),2);
-    }
-
 }

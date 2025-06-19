@@ -3,7 +3,7 @@ package user;
 import data.MySqlConnector;
 import junit.framework.TestCase;
 import model.User;
-import data.UserDAO;
+import data.user.UserDAO;
 import model.story.Story;
 
 import java.io.IOException;

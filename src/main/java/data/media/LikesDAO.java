@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 public class LikesDAO {
 
-    public LikesDAO() { }
+    public LikesDAO() {}
 
     public void addLikeToPost(int postId, int userId) throws SQLException {
 
