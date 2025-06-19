@@ -29,11 +29,8 @@ public class PostDaoTest extends TestCase {
     public void testAddAndGetPostsByStoryId() throws SQLException {
         initPosts();
 
-        List<Post> posts = postDao.getPostsByStoryId(1);
-        assertEquals(2, posts.size());
-
-        assertEquals("image1.jpg", posts.get(0).getImageName());
-        assertEquals("src/main/webapp/images/posts/image1.jpg", posts.get(1).getImageName());
+        Post posts = postDao.getPostsByStoryId(1);
+        assertEquals("image1.jpg", posts.getImageName());
     }
 
     public void testGetPostById() throws SQLException {
