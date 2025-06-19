@@ -17,5 +17,7 @@
 <h1>Successfully logged in, <%= username %>!</h1>
 <a href="logout">Logout</a>
 <a href="profile" class="text-purple-300 hover:text-pink transition-colors duration-300">Go To Profile</a>
+<a href="postcreation" class="text-purple-300 hover:text-pink transition-colors duration-300"> CREATE A POST : 3 </a>
+
 </body>
 </html>
