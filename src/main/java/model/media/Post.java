@@ -4,18 +4,23 @@ import java.time.LocalDateTime;
 
 
 public class Post {
-    private final int postId;
+    private int postId;
     private final int storyId;
     private String imageName;
     private final LocalDateTime createdAt;
     private int likeCount;
     private int commentCount;
 
-    // waiting comments object to be created
-   // private List<Comment> comments;
-
     public Post(int postId, int storyId, String imageName, LocalDateTime createdAt, int likeCount, int commentCount) {
         this.postId = postId;
+        this.storyId = storyId;
+        this.imageName = imageName;
+        this.createdAt = createdAt;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
+    }
+
+    private Post(int storyId, String imageName, LocalDateTime createdAt, int likeCount, int commentCount) {
         this.storyId = storyId;
         this.imageName = imageName;
         this.createdAt = createdAt;
@@ -59,16 +64,6 @@ public class Post {
     public void setCommentCount(int commentCount) {
         this.commentCount = commentCount;
     }
-
-    //Waiting for findCommentsByPostId method in commentsDao
-//    public List<Comment> getComments() {
-//        if (this.comments == null) {
-//            CommentDAO commentDAO = new CommentDAO();
-//            this.comments = commentDAO.findCommentsByPostId(this.postId);
-//        }
-//        return this.comments;
-//    }
-
 
 
 

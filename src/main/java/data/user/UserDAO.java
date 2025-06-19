@@ -1,5 +1,6 @@
-package data;
+package data.user;
 
+import data.MySqlConnector;
 import model.User;
 import model.story.Story;
 
@@ -116,7 +117,6 @@ public class UserDAO {
     }
 
     public void addBookmark(int userId, Story story) {
-        // INSERT IGNORE prevents an error if the bookmark already exists.
         String sql = "INSERT IGNORE INTO bookmarks (user_id, story_id) VALUES (?, ?)";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -133,14 +133,13 @@ public class UserDAO {
     }
 
     public void addFollower(int userId, int followerId) {
-        // INSERT IGNORE prevents an error if the relationship already exists.
         String sql = "INSERT IGNORE INTO followers (follower_id, following_id) VALUES (?, ?)";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-            preparedStatement.setInt(1, followerId); // The user doing the following
-            preparedStatement.setInt(2, userId);     // The user being followed
+            preparedStatement.setInt(1, followerId);
+            preparedStatement.setInt(2, userId);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {

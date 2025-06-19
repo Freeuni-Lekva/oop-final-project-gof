@@ -4,6 +4,7 @@ import data.MySqlConnector;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -11,9 +12,14 @@ import java.sql.SQLException;
  */
 public class LikesDAO {
 
-    public LikesDAO() { }
+    public LikesDAO() {}
 
     public void addLikeToPost(int postId, int userId) throws SQLException {
+
+        if (postLikeExists(postId, userId)) {
+            return;
+        }
+
         String insertLikeQuery = "INSERT IGNORE INTO likes (user_id, post_id) VALUES (?, ?)";
         String updateLikeCountQuery = "UPDATE posts " +
                 "SET like_count = like_count + 1 WHERE post_id = ?";
@@ -50,6 +56,11 @@ public class LikesDAO {
 
 
     public void addLikeToComment(int commentId, int userId) throws SQLException {
+
+        if (commentLikeExists(commentId, userId)) {
+            return;
+        }
+
         String insertLikeQuery = "INSERT IGNORE INTO likes (user_id, comment_id) VALUES (?, ?)";
         String updateLikeCountQuery = "UPDATE comments " +
                 "SET like_count = like_count + 1 WHERE comment_id = ?";
@@ -168,5 +179,48 @@ public class LikesDAO {
         }
     }
 
+    // ---------- helpers ----------
 
+    private boolean postLikeExists(int postId, int userId) throws SQLException {
+        String sql = "SELECT EXISTS(SELECT 1 FROM likes WHERE post_id = ? AND user_id = ?)";
+
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, postId);
+            pstmt.setInt(2, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return false;
+    }
+
+    private  boolean commentLikeExists(int commentId, int userId) throws SQLException {
+        String sql = "SELECT EXISTS(SELECT 1 FROM likes WHERE comment_id = ? AND user_id = ?)";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, commentId);
+            pstmt.setInt(2, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return false;
+    }
 }

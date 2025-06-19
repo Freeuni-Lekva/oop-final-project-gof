@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import data.HistoryDAO;
+import data.user.HistoryDAO;
 import data.MySqlConnector;
 
 public class HistoryDaoTest extends TestCase {

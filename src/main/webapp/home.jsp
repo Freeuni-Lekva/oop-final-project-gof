@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 <%
@@ -15,5 +16,6 @@
 %>
 <h1>Successfully logged in, <%= username %>!</h1>
 <a href="logout">Logout</a>
+<a href="profile" class="text-purple-300 hover:text-pink transition-colors duration-300">Go To Profile</a>
 </body>
 </html>

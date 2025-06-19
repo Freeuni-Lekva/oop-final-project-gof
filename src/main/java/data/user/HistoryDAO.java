@@ -1,5 +1,6 @@
-package data;
+package data.user;
 
+import data.MySqlConnector;
 import model.story.Story;
 import data.story.StoryDAO;
 
@@ -58,8 +59,6 @@ public class HistoryDAO {
         }
 
         List<Story> unorderedStories = storyDao.getStoriesByIds(orderedStoryIds);
-        // Converts unorderedStories into a Map
-        // With "storyId" as key and "Story" as value
         Map<Integer, Story> storyMap = unorderedStories.stream()
                 .collect(Collectors.toMap(Story::getStoryId, story -> story));
 

@@ -17,8 +17,7 @@ public class CommentsDAO {
 
     public CommentsDAO() { }
 
-    public void addComment(String commentContent, int authorId, int postId)
-    throws SQLException {
+    public void addComment(String commentContent, int authorId, int postId) throws SQLException {
         String insertQuery = "INSERT INTO comments (comment, author_id, post_id) VALUES (?, ?, ?)";
         String updateQuery = "UPDATE posts SET comment_count = comment_count + 1 WHERE post_id = ?";
 
@@ -42,7 +41,9 @@ public class CommentsDAO {
                 stmt.setInt(1, postId);
                 stmt.executeUpdate();
             }
+
             conn.commit();
+
         } catch (SQLException e) {
                 conn.rollback();
             throw new SQLException("rolled back", e);
@@ -87,7 +88,7 @@ public class CommentsDAO {
 
     public List<Comment> getCommentsForPost(int postId) throws SQLException {
         List<Comment> comments = new ArrayList<>();
-        String query =  "SELECT comment_id, post_id, author_id, comment, like_count" +
+        String query = "SELECT comment_id, post_id, author_id, comment, like_count" +
                 " FROM comments  WHERE post_id = ? ORDER BY comment_id";
 
         try(Connection conn = MySqlConnector.getConnection();

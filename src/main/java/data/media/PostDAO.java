@@ -1,5 +1,6 @@
 package data.media;
 
+import model.media.Comment;
 import model.media.Post;
 import data.MySqlConnector;
 import java.sql.Connection;
@@ -15,6 +16,7 @@ public class PostDAO {
 
 
     public PostDAO() {}
+
     public void addPost(Post post) throws SQLException {
         String sql = "INSERT INTO posts (story_id, image_name) VALUES (?, ?)";
 
@@ -31,6 +33,7 @@ public class PostDAO {
             throw e;
         }
     }
+
     public void incrementLikeCount(int postId) throws SQLException {
         String sql = "UPDATE posts SET like_count = like_count + 1 WHERE post_id = ?";
 
@@ -45,6 +48,7 @@ public class PostDAO {
             throw e;
         }
     }
+
     public void incrementCommentCount(int postId) throws SQLException {
         String sql = "UPDATE posts SET comment_count = comment_count + 1 WHERE post_id = ?";
         try (Connection conn = MySqlConnector.getConnection();
@@ -60,8 +64,7 @@ public class PostDAO {
 
     }
 
-    public List<Post> getPostsByStoryId(int storyId) throws SQLException {
-        List<Post> posts = new ArrayList<>();
+    public Post getPostsByStoryId(int storyId) throws SQLException {
         String sql = "SELECT post_id, story_id, image_name, created_at, like_count, comment_count FROM posts WHERE story_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -70,7 +73,7 @@ public class PostDAO {
             stmt.setInt(1, storyId);
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 Post post = new Post(
                         rs.getInt("post_id"),
                         rs.getInt("story_id"),
@@ -79,7 +82,7 @@ public class PostDAO {
                         rs.getInt("like_count"),
                         rs.getInt("comment_count")
                 );
-                posts.add(post);
+                return post;
             }
 
         } catch (SQLException e) {
@@ -87,7 +90,7 @@ public class PostDAO {
             throw e;
         }
 
-        return posts;
+        return null;
     }
 
 
@@ -118,6 +121,5 @@ public class PostDAO {
 
         return null;
     }
-
 
 }

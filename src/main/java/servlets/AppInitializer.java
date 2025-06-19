@@ -3,6 +3,8 @@ import data.*;
 import data.chat.*;
 import data.media.*;
 import data.story.*;
+import data.user.HistoryDAO;
+import data.user.UserDAO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;

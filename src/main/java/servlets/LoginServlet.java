@@ -1,5 +1,5 @@
 package servlets;
-import data.UserDAO;
+import data.user.UserDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
