@@ -40,59 +40,30 @@ public class TagsDAO {
         return tags;
     }
 
+    public List<Integer> findStoryIdsByTag(String query) throws SQLException {
+        List<Integer> storyIds = new ArrayList<>();
 
-    public List<Story> getStories(List<String> storyTags) throws SQLException {
-        if (storyTags == null || storyTags.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        int counter = 0;
-        List<String> StoryTagsCopy = new ArrayList<>();
-
-        for (String storyTag : storyTags) {
-            if (Tags.isValidTag(storyTag)) {
-                StoryTagsCopy.add(storyTag);
-            }
-            else {
-                counter++;
-            }
-        }
-
-        if (counter == storyTags.size()) {
-            return Collections.emptyList();
-        }
-
-        String placeholders = String.join(", ", Collections.nCopies(StoryTagsCopy.size(), "?"));
-        String sql = "SELECT s.story_id, s.creator_id, s.title, s.prompt, s.created_at " +
-                "FROM stories s " +
+        String sql = "SELECT DISTINCT s.story_id FROM stories s " +
                 "JOIN story_tags st ON s.story_id = st.story_id " +
                 "JOIN tags t ON st.tag_id = t.tag_id " +
-                "WHERE t.name IN (" + placeholders + ") " +
-                "GROUP BY s.story_id";
-
-        List<Story> stories = new ArrayList<>();
+                "WHERE t.name LIKE ? " +
+                "ORDER BY s.created_at DESC";
 
         try (Connection conn = MySqlConnector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-            for (int i = 0; i < StoryTagsCopy.size(); i++) {
-                stmt.setString(i + 1, StoryTagsCopy.get(i));
-            }
+            preparedStatement.setString(1, "%" + query + "%");
 
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                int storyId = rs.getInt("story_id");
-                int creatorId = rs.getInt("creator_id");
-                String title = rs.getString("title");
-                String prompt = rs.getString("prompt");
-                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-                stories.add(new Story(title, prompt, creatorId, storyId, createdAt));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                storyIds.add(resultSet.getInt("story_id"));
             }
         } catch (SQLException e) {
+            System.err.println("Error finding story IDs by tag: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
-        return stories;
+        return storyIds;
     }
 
 }
