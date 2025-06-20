@@ -43,7 +43,7 @@ public class TagsDAO {
     public List<Integer> findStoryIdsByTag(String query) throws SQLException {
         List<Integer> storyIds = new ArrayList<>();
 
-        String sql = "SELECT DISTINCT s.story_id FROM stories s " +
+        String sql = "SELECT s.story_id FROM stories s " +
                 "JOIN story_tags st ON s.story_id = st.story_id " +
                 "JOIN tags t ON st.tag_id = t.tag_id " +
                 "WHERE t.name LIKE ? " +
