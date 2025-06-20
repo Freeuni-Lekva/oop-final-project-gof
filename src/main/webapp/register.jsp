@@ -173,7 +173,7 @@
                     strengthText.className = 'text-xs font-bold text-yellow-500';
                     strengthBar.className = 'h-2 rounded-full bg-yellow-500 transition-all duration-300';
                     strengthBar.style.width = '66%';
-                    registerButton.disabled = false;
+                    if (isLongEnough)  registerButton.disabled = false;
                     break;
                 case 4:
                     strengthText.textContent = 'Strength: Strong';
