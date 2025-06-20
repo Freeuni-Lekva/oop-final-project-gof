@@ -37,7 +37,7 @@ public class StoryCreationServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if(session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -49,7 +49,7 @@ public class StoryCreationServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
