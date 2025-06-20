@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
         User user = userDAO.findUser(username);
 
-        if (user == null||!BCrypt.checkpw(password, user.getPasswordHash())) {
+        if (user == null || !BCrypt.checkpw(password, user.getPasswordHash())) {
             req.setAttribute("error", "Username or Password is incorrect!");
             reqDispatcher.forward(req, res);
             return;
