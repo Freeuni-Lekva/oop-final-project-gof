@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="model.story.Tags" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
     <title>Create a New Story</title>
@@ -17,7 +19,7 @@
 <%
     String username = (String) session.getAttribute("user");
     if (username == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(request.getContextPath() + "/login.jsp");
         return;
     }
 %>
@@ -29,13 +31,23 @@
         <p class="text-gray-400 mt-2">Welcome, <%= username %>! Let's build a world together.</p>
     </div>
 
-    <form action="postcreation" method="POST" class="space-y-8">
+    <form action="/postcreation" method="POST" enctype="multipart/form-data" class="space-y-8">
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <label for="title" class="block text-xl font-semibold mb-2 text-gray-300">Story Title</label>
             <input type="text" id="title" name="title" required
                    class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                    placeholder="e.g., The Last Dragon of Eldoria">
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <label for="coverImage" class="block text-xl font-semibold mb-2 text-gray-300">Cover Image</label>
+            <p class="text-gray-400 mb-4 text-sm">Choose a compelling image to represent your story. (Required)</p>
+            <input type="file" id="coverImage" name="coverImage" required accept="image/png, image/jpeg, image/webp"
+                   class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4
+                          file:rounded-md file:border-0 file:text-sm file:font-semibold
+                          file:bg-indigo-600 file:text-white hover:file:bg-indigo-700
+                          cursor-pointer"/>
         </div>
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -46,6 +58,18 @@
                       placeholder="e.g., A world where magic is fading and technology is on the rise..."></textarea>
         </div>
 
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-3 text-gray-300">Choose Your Tags</h2>
+            <div class="flex flex-wrap gap-4">
+                <% for (String tag : Tags.getAllTags()) { %>
+                <div>
+                    <input type="checkbox" id="tag-<%= tag %>" name="storyTags" value="<%= tag %>"
+                           class="form-checkbox h-5 w-5 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500">
+                    <label for="tag-<%= tag %>" class="ml-2 text-gray-300"><%= tag %></label>
+                </div>
+                <% } %>
+            </div>
+        </div>
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <div class="flex justify-between items-center mb-4">

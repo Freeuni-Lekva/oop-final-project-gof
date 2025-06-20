@@ -5,6 +5,10 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
+  <listener>
+    <listener-class>servlets.AppInitializer</listener-class>
+  </listener>
+
   <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>servlets.LoginServlet</servlet-class>

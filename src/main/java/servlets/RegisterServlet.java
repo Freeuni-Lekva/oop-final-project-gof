@@ -11,6 +11,7 @@ import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class RegisterServlet extends HttpServlet {
@@ -69,13 +70,21 @@ public class RegisterServlet extends HttpServlet {
         ServletContext context = getServletContext();
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
 
-        if(userDAO.findUser(user.getUsername()) != null) {
-            req.setAttribute("error", "Username is already taken.");
-            reqDispatcher.forward(req, res);
-            return;
+        try {
+            if(userDAO.findUser(user.getUsername()) != null) {
+                req.setAttribute("error", "Username is already taken.");
+                reqDispatcher.forward(req, res);
+                return;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
-        userDAO.saveUser(user);
+        try {
+            userDAO.saveUser(user);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         session.setAttribute("user", user.getUsername());
         res.sendRedirect(req.getContextPath() + "/home.jsp");
     }

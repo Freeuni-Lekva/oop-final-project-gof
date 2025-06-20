@@ -165,9 +165,9 @@ VALUES
     ('Adventure'),
     ('Mystery'),
     ('Technology'),
-    ('sci-fi'),
-    ('detective'),
-    ('drama');
+    ('Sci-Fi'),
+    ('Detective'),
+    ('Drama');
 
 INSERT INTO story_tags (story_id, tag_id)
 VALUES

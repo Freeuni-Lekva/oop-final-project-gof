@@ -23,7 +23,7 @@ public class HistoryDaoTest extends TestCase {
         historyDao = new HistoryDAO();
     }
 
-    public void testAddAndGetReadHistory() {
+    public void testAddAndGetReadHistory() throws SQLException {
         assertTrue(historyDao.getReadHistoryForUser(1).isEmpty());
 
         historyDao.addReadHistory(1, 2);
@@ -33,7 +33,7 @@ public class HistoryDaoTest extends TestCase {
         assertEquals(2, history.get(0).getStoryId());
     }
 
-    public void testReadHistoryOrder() throws InterruptedException {
+    public void testReadHistoryOrder() throws InterruptedException, SQLException {
         historyDao.addReadHistory(1, 1);
         // DATETIME column in MySQL only stores time to the precision of seconds
         // So without an artificial delay, they would both get the same timestamp
@@ -51,7 +51,7 @@ public class HistoryDaoTest extends TestCase {
      * Tests that re-reading story updates its timestamp
      * and moves it to the top of the history list.
      */
-    public void testReadHistoryUpdateTimestamp() throws InterruptedException {
+    public void testReadHistoryUpdateTimestamp() throws InterruptedException, SQLException {
         historyDao.addReadHistory(1, 1);
         Thread.sleep(20);
         historyDao.addReadHistory(1, 2);

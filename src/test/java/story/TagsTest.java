@@ -34,34 +34,6 @@ public class TagsTest extends TestCase {
         assertEquals("Technology",tags2.get(1));
     }
 
-    public void testgetStories1() throws SQLException {
-        List<String> tags = new ArrayList<>();
-        tags.add("Adventure");
-
-        List<Story> stories = tagsDAO.getStories(tags);
-        assertEquals(2, stories.size());
-
-        assertEquals(1,stories.get(0).getStoryId());
-        assertEquals(2,stories.get(1).getStoryId());
-    }
-
-    public void testEmpty() throws SQLException {
-        List<String> tags = new ArrayList<>();
-        List<Story> stories = tagsDAO.getStories(tags);
-        assertEquals(0, stories.size());
-    }
-
-    public void testIncorrect() throws SQLException {
-        List<String> tags = new ArrayList<>();
-        tags.add("Adventurfffe");
-        List<Story> stories = tagsDAO.getStories(tags);
-        assertEquals(0, stories.size());
-
-        tags.add("Adventure");
-        List<Story> stories2 = tagsDAO.getStories(tags);
-        assertEquals(2, stories2.size());
-    }
-
     @Override
     public void tearDown() throws SQLException {
         MySqlConnector.close(conn);

@@ -9,6 +9,7 @@ public class User {
     private int age;
     private final LocalDateTime registerTime;
     private boolean isCreator;
+    private String imageName;
 
     public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator) {
         this.userId = userId;
@@ -17,6 +18,16 @@ public class User {
         this.age = age;
         this.registerTime = registerTime;
         this.isCreator = isCreator;
+    }
+
+    public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
+        this.userId = userId;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.age = age;
+        this.registerTime = registerTime;
+        this.isCreator = isCreator;
+        this.imageName = imageName;
     }
 
     public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator) {
@@ -48,6 +59,10 @@ public class User {
         return registerTime;
     }
 
+    public String getImageName() {
+        return imageName;
+    }
+
     public boolean isCreator() {
         return isCreator;
     }
@@ -63,6 +78,10 @@ public class User {
 
     public void setCreatorStatus(boolean isCreator) {
         this.isCreator = isCreator;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     // Utility methods

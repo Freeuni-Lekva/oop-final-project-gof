@@ -25,7 +25,7 @@ public class StoryDaoTest extends TestCase {
         storyDao = new StoryDAO();
     }
 
-    public void testCreateAndGetStory() {
+    public void testCreateAndGetStory() throws SQLException {
         storyDao.createStory("New Story", "Prompt for New Story", 1);
         Story retrievedStory = storyDao.getStory(3);
 
@@ -36,7 +36,7 @@ public class StoryDaoTest extends TestCase {
         assertEquals("Prompt for New Story", retrievedStory.getPrompt());
     }
 
-    public void testGetPrompt() {
+    public void testGetPrompt() throws SQLException {
         createInitialStories();
 
         String prompt = storyDao.getPrompt(4);
@@ -46,7 +46,7 @@ public class StoryDaoTest extends TestCase {
         assertNull(nonExistentPrompt);
     }
 
-    public void testGetStoriesList() {
+    public void testGetStoriesList() throws SQLException {
         createInitialStories();
 
         List<Story> storiesForCreator1 = storyDao.getStoriesList(1);
@@ -60,7 +60,7 @@ public class StoryDaoTest extends TestCase {
         assertTrue(storiesForCreator99.isEmpty());
     }
 
-    public void testGetStoriesByIds() {
+    public void testGetStoriesByIds() throws SQLException {
         createInitialStories();
 
         List<Integer> idsToFetch = Arrays.asList(1, 3, 5);
@@ -77,7 +77,7 @@ public class StoryDaoTest extends TestCase {
         assertTrue(nonExistentResult.isEmpty());
     }
 
-    public void testUpdateStory() {
+    public void testUpdateStory() throws SQLException {
         storyDao.createStory("Old Title", "Old prompt", 1);
         Story storyToUpdate = storyDao.getStory(3);
         assertNotNull(storyToUpdate);
@@ -91,7 +91,7 @@ public class StoryDaoTest extends TestCase {
         assertEquals("New updated prompt", updatedStory.getPrompt());
     }
 
-    public void testDeleteStory() {
+    public void testDeleteStory() throws SQLException {
         createInitialStories();
         assertNotNull(storyDao.getStory(2));
 
@@ -123,7 +123,7 @@ public class StoryDaoTest extends TestCase {
 
     // --- Helper methods ---
 
-    private void createInitialStories() {
+    private void createInitialStories() throws SQLException {
         storyDao.createStory("First Story", "Prompt for story 1.", 1);
         storyDao.createStory("Second Story", "Prompt for story 2.", 2);
         storyDao.createStory("Third Story", "Prompt for story 3.", 1);
