@@ -25,14 +25,22 @@
                 <p class="text-gray-400 mt-2">Create your account to begin.</p>
             </div>
 
-            <% String error = (String) request.getAttribute("error"); if (error != null && !error.isEmpty()) { %>
-            <div class="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-md mb-6 text-sm" role="alert">
+            <%
+                String error = (String) request.getAttribute("error");
+                if (error != null && !error.isEmpty()) {
+            %>
+            <div id="error-alert" class="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-md mb-6 text-sm flex items-start justify-between" role="alert">
                 <span><%= error %></span>
+                <button type="button" id="close-error-button" class="ml-4 -mt-1 -mr-1 p-1 rounded-md text-red-300 hover:text-white hover:bg-red-500/50 focus:outline-none focus:ring-2 focus:ring-white">
+                    <span class="sr-only">Dismiss</span>
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <% } %>
+            <%
+                }
+            %>
 
             <form action="register" method="post" class="space-y-6">
-                <!-- Username & Age Fields -->
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
                     <input type="text" id="username" name="username" placeholder="Choose a unique username" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
@@ -42,7 +50,6 @@
                     <input type="number" id="age" name="age" placeholder="Enter your age" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
 
-                <!-- Password Field and Strength Meter -->
                 <div>
                     <label for="password" class="block text-sm font-bold mb-2 text-gray-300">Password</label>
                     <div class="relative">
@@ -54,9 +61,7 @@
                     </div>
 
                     <div id="strength-meter" class="mt-4 space-y-2 hidden">
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%;"></div>
-                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2"><div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%;"></div></div>
                         <p class="text-xs font-bold" id="strength-text"></p>
                         <ul class="text-xs text-gray-400 space-y-1">
                             <li id="length-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>At least 8 characters</span></li>
@@ -67,7 +72,6 @@
                     </div>
                 </div>
 
-                <!-- Confirm Password Field -->
                 <div>
                     <label for="confirm_password" class="block text-sm font-bold mb-2 text-gray-300">Confirm Password</label>
                     <div class="relative">
@@ -79,7 +83,6 @@
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <div>
                     <button type="submit" id="register-button" disabled
                             class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500 disabled:bg-gray-600 disabled:shadow-none disabled:cursor-not-allowed">
@@ -99,10 +102,9 @@
     function setupPasswordToggle(inputId, toggleButtonId, eyeIconId, eyeSlashIconId) {
         const passwordInput = document.getElementById(inputId);
         const toggleButton = document.getElementById(toggleButtonId);
-        const eyeIcon = document.getElementById(eyeIconId);
-        const eyeSlashIcon = document.getElementById(eyeSlashIconId);
-
         if(toggleButton) {
+            const eyeIcon = document.getElementById(eyeIconId);
+            const eyeSlashIcon = document.getElementById(eyeSlashIconId);
             toggleButton.addEventListener('click', function() {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
@@ -115,21 +117,13 @@
     setupPasswordToggle('confirm_password', 'toggleConfirmPassword', 'eyeIcon2', 'eyeSlashIcon2');
 
     document.addEventListener('DOMContentLoaded', function () {
+        // --- Password Strength Meter Script (same as before) ---
         const passwordInput = document.getElementById('password');
         const strengthMeter = document.getElementById('strength-meter');
         const strengthBar = document.getElementById('strength-bar');
         const strengthText = document.getElementById('strength-text');
         const registerButton = document.getElementById('register-button');
-
-        const checks = {
-            length: document.getElementById('length-check'),
-            upper: document.getElementById('upper-check'),
-            number: document.getElementById('number-check'),
-            special: document.getElementById('special-check'),
-        };
-
-        const checkIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-        const crossIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+        const checks = { /* ... */ };
 
         passwordInput.addEventListener('input', function() {
             const password = this.value;
@@ -153,27 +147,25 @@
             if (hasSpecial) score++;
             if (isLongEnough) score++;
 
-            updateChecklistItem(checks.length, isLongEnough);
-            updateChecklistItem(checks.upper, hasUpper);
-            updateChecklistItem(checks.number, hasNumber);
-            updateChecklistItem(checks.special, hasSpecial);
+            updateChecklistItem(document.getElementById('length-check'), isLongEnough);
+            updateChecklistItem(document.getElementById('upper-check'), hasUpper);
+            updateChecklistItem(document.getElementById('number-check'), hasNumber);
+            updateChecklistItem(document.getElementById('special-check'), hasSpecial);
 
             switch (score) {
-                case 0:
-                case 1:
+                case 0: case 1:
                     strengthText.textContent = 'Strength: Weak';
                     strengthText.className = 'text-xs font-bold text-red-500';
                     strengthBar.className = 'h-2 rounded-full bg-red-500 transition-all duration-300';
                     strengthBar.style.width = '25%';
                     registerButton.disabled = true;
                     break;
-                case 2:
-                case 3:
+                case 2: case 3:
                     strengthText.textContent = 'Strength: Medium';
                     strengthText.className = 'text-xs font-bold text-yellow-500';
                     strengthBar.className = 'h-2 rounded-full bg-yellow-500 transition-all duration-300';
                     strengthBar.style.width = '66%';
-                    if (isLongEnough)  registerButton.disabled = false;
+                    if (isLongEnough) registerButton.disabled = false;
                     break;
                 case 4:
                     strengthText.textContent = 'Strength: Strong';
@@ -186,10 +178,21 @@
         });
 
         function updateChecklistItem(element, isValid) {
+            const checkIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            const crossIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
             const icon = isValid ? checkIcon : crossIcon;
             const textClass = isValid ? 'text-green-400' : 'text-red-400';
             element.innerHTML = icon + `<span>${element.lastElementChild.textContent}</span>`;
             element.className = 'flex items-center ' + textClass;
+        }
+
+        const errorAlert = document.getElementById('error-alert');
+        const closeErrorButton = document.getElementById('close-error-button');
+
+        if (errorAlert && closeErrorButton) {
+            closeErrorButton.addEventListener('click', function() {
+                errorAlert.classList.add('hidden');
+            });
         }
     });
 </script>
