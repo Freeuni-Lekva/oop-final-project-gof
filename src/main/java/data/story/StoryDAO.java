@@ -34,6 +34,32 @@ public class StoryDAO {
         }
     }
 
+    public int createStoryAndGetId(String title, String prompt, int creatorId) {
+        String sql = "INSERT INTO stories (creator_id, title, prompt, created_at) VALUES (?, ?, ?, NOW())";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setInt(1, creatorId);
+            preparedStatement.setString(2, title);
+            preparedStatement.setString(3, prompt);
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error creating story: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     public Story getStory(int storyId) {
         String sql = "SELECT * FROM stories WHERE story_id = ?";
         Story story = null;
@@ -53,6 +79,76 @@ public class StoryDAO {
             e.printStackTrace();
         }
         return story;
+    }
+
+    public List<Story> searchStoriesByTitle(String query) {
+        List<Story> stories = new ArrayList<>();
+
+        String sql = "SELECT * FROM stories WHERE title LIKE ? ORDER BY created_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, "%" + query + "%");
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    stories.add(populateStory(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching stories by title: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return stories;
+    }
+
+    public List<Story> searchStoriesByCreatorName(String query) {
+        List<Story> stories = new ArrayList<>();
+
+        String sql = "SELECT s.* FROM stories s JOIN users u ON s.creator_id = u.user_id " +
+                "WHERE u.username LIKE ? ORDER BY s.created_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, "%" + query + "%");
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    stories.add(populateStory(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching stories by creator: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return stories;
+    }
+
+    public List<Story> searchStoriesByTag(String query) {
+        List<Story> stories = new ArrayList<>();
+
+        String sql = "SELECT s.* FROM stories s " +
+                "JOIN story_tags st ON s.story_id = st.story_id " +
+                "JOIN tags t ON st.tag_id = t.tag_id " +
+                "WHERE t.name LIKE ? ORDER BY s.created_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, "%" + query + "%");
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    stories.add(populateStory(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching stories by tag: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return stories;
     }
 
     public String getPrompt(int storyId) {
@@ -94,6 +190,55 @@ public class StoryDAO {
             e.printStackTrace();
         }
         return stories;
+    }
+
+    public List<Story> getAllStories() {
+        List<Story> stories = new ArrayList<>();
+        String sql = "SELECT * FROM stories ORDER BY created_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching all stories: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return stories;
+    }
+
+    public void linkTagsToStory(int storyId, List<String> tagNames) throws SQLException {
+        if (tagNames == null || tagNames.isEmpty()) {
+            return;
+        }
+
+        String getTagIdSql = "SELECT tag_id FROM tags WHERE name = ?";
+        String linkTagSql = "INSERT INTO story_tags (story_id, tag_id) VALUES (?, ?)";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement getTagIdStatement = conn.prepareStatement(getTagIdSql);
+             PreparedStatement linkTagStatement = conn.prepareStatement(linkTagSql)) {
+
+            for (String tagName : tagNames) {
+                getTagIdStatement.setString(1, tagName);
+                int tagId = -1;
+                try (ResultSet resultSet = getTagIdStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        tagId = resultSet.getInt("tag_id");
+                    }
+                }
+
+                if (tagId != -1) {
+                    linkTagStatement.setInt(1, storyId);
+                    linkTagStatement.setInt(2, tagId);
+                    linkTagStatement.addBatch();
+                }
+            }
+            linkTagStatement.executeBatch();
+        }
     }
 
     public List<Story> getStoriesByIds(List<Integer> storyIds) {
