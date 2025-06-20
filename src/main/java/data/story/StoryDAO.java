@@ -127,31 +127,6 @@ public class StoryDAO {
         return stories;
     }
 
-    public List<Story> searchStoriesByTag(String query) throws SQLException {
-        List<Story> stories = new ArrayList<>();
-
-        String sql = "SELECT s.* FROM stories s " +
-                "JOIN story_tags st ON s.story_id = st.story_id " +
-                "JOIN tags t ON st.tag_id = t.tag_id " +
-                "WHERE t.name LIKE ? ORDER BY s.created_at DESC";
-
-        try (Connection conn = MySqlConnector.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, "%" + query + "%");
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                stories.add(populateStory(resultSet));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error searching stories by tag: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-        return stories;
-    }
-
     public String getPrompt(int storyId) throws SQLException {
         String sql = "SELECT prompt FROM stories WHERE story_id = ?";
         String prompt = null;
