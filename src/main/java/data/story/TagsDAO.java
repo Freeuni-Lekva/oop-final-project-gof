@@ -29,16 +29,14 @@ public class TagsDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, storyId);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    tags.add(rs.getString("name"));
-                }
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                tags.add(rs.getString("name"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         }
-
         return tags;
     }
 
@@ -81,15 +79,14 @@ public class TagsDAO {
                 stmt.setString(i + 1, StoryTagsCopy.get(i));
             }
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    int storyId = rs.getInt("story_id");
-                    int creatorId = rs.getInt("creator_id");
-                    String title = rs.getString("title");
-                    String prompt = rs.getString("prompt");
-                    LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-                    stories.add(new Story(title, prompt, creatorId, storyId, createdAt));
-                }
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int storyId = rs.getInt("story_id");
+                int creatorId = rs.getInt("creator_id");
+                String title = rs.getString("title");
+                String prompt = rs.getString("prompt");
+                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
+                stories.add(new Story(title, prompt, creatorId, storyId, createdAt));
             }
         } catch (SQLException e) {
             e.printStackTrace();

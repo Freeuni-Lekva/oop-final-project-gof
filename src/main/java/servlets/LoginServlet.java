@@ -11,6 +11,7 @@ import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginServlet extends HttpServlet {
     @Override
@@ -38,7 +39,12 @@ public class LoginServlet extends HttpServlet {
 
         ServletContext context = getServletContext();
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
-        User user = userDAO.findUser(username);
+        User user = null;
+        try {
+            user = userDAO.findUser(username);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         if (user == null) {
             req.setAttribute("error", "Username or Password is incorrect!");

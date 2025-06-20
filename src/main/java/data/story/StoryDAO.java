@@ -16,7 +16,7 @@ public class StoryDAO {
 
     public StoryDAO() { }
 
-    public void createStory(String title, String prompt, int creatorId) {
+    public void createStory(String title, String prompt, int creatorId) throws SQLException {
         String sql = "INSERT INTO stories (creator_id, title, prompt, created_at) VALUES (?, ?, ?, NOW())";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -31,10 +31,11 @@ public class StoryDAO {
         } catch (SQLException e) {
             System.err.println("Error creating story: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
-    public int createStoryAndGetId(String title, String prompt, int creatorId) {
+    public int createStoryAndGetId(String title, String prompt, int creatorId) throws SQLException {
         String sql = "INSERT INTO stories (creator_id, title, prompt, created_at) VALUES (?, ?, ?, NOW())";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -47,20 +48,20 @@ public class StoryDAO {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows > 0) {
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        return generatedKeys.getInt(1);
-                    }
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
                 }
             }
         } catch (SQLException e) {
             System.err.println("Error creating story: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return -1;
     }
 
-    public Story getStory(int storyId) {
+    public Story getStory(int storyId) throws SQLException {
         String sql = "SELECT * FROM stories WHERE story_id = ?";
         Story story = null;
 
@@ -69,19 +70,19 @@ public class StoryDAO {
 
             preparedStatement.setInt(1, storyId);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    story = populateStory(resultSet);
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                story = populateStory(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error fetching story: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return story;
     }
 
-    public List<Story> searchStoriesByTitle(String query) {
+    public List<Story> searchStoriesByTitle(String query) throws SQLException {
         List<Story> stories = new ArrayList<>();
 
         String sql = "SELECT * FROM stories WHERE title LIKE ? ORDER BY created_at DESC";
@@ -91,19 +92,19 @@ public class StoryDAO {
 
             preparedStatement.setString(1, "%" + query + "%");
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    stories.add(populateStory(resultSet));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
             }
         } catch (SQLException e) {
             System.err.println("Error searching stories by title: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
 
-    public List<Story> searchStoriesByCreatorName(String query) {
+    public List<Story> searchStoriesByCreatorName(String query) throws SQLException {
         List<Story> stories = new ArrayList<>();
 
         String sql = "SELECT s.* FROM stories s JOIN users u ON s.creator_id = u.user_id " +
@@ -114,19 +115,19 @@ public class StoryDAO {
 
             preparedStatement.setString(1, "%" + query + "%");
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    stories.add(populateStory(resultSet));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
             }
         } catch (SQLException e) {
             System.err.println("Error searching stories by creator: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
 
-    public List<Story> searchStoriesByTag(String query) {
+    public List<Story> searchStoriesByTag(String query) throws SQLException {
         List<Story> stories = new ArrayList<>();
 
         String sql = "SELECT s.* FROM stories s " +
@@ -139,19 +140,19 @@ public class StoryDAO {
 
             preparedStatement.setString(1, "%" + query + "%");
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    stories.add(populateStory(resultSet));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
             }
         } catch (SQLException e) {
             System.err.println("Error searching stories by tag: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
 
-    public String getPrompt(int storyId) {
+    public String getPrompt(int storyId) throws SQLException {
         String sql = "SELECT prompt FROM stories WHERE story_id = ?";
         String prompt = null;
 
@@ -160,19 +161,19 @@ public class StoryDAO {
 
             preparedStatement.setInt(1, storyId);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    prompt = resultSet.getString("prompt");
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                prompt = resultSet.getString("prompt");
             }
         } catch (SQLException e) {
             System.err.println("Error fetching prompt: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return prompt;
     }
 
-    public List<Story> getStoriesList(int creatorId) {
+    public List<Story> getStoriesList(int creatorId) throws SQLException {
         List<Story> stories = new ArrayList<>();
         String sql = "SELECT * FROM stories WHERE creator_id = ? ORDER BY created_at DESC";
 
@@ -180,19 +181,19 @@ public class StoryDAO {
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setInt(1, creatorId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    stories.add(populateStory(resultSet));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
             }
         } catch (SQLException e) {
             System.err.println("Error finding stories: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
 
-    public List<Story> getAllStories() {
+    public List<Story> getAllStories() throws SQLException {
         List<Story> stories = new ArrayList<>();
         String sql = "SELECT * FROM stories ORDER BY created_at DESC";
 
@@ -206,6 +207,7 @@ public class StoryDAO {
         } catch (SQLException e) {
             System.err.println("Error fetching all stories: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
@@ -225,10 +227,9 @@ public class StoryDAO {
             for (String tagName : tagNames) {
                 getTagIdStatement.setString(1, tagName);
                 int tagId = -1;
-                try (ResultSet resultSet = getTagIdStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        tagId = resultSet.getInt("tag_id");
-                    }
+                ResultSet resultSet = getTagIdStatement.executeQuery();
+                if (resultSet.next()) {
+                    tagId = resultSet.getInt("tag_id");
                 }
 
                 if (tagId != -1) {
@@ -239,9 +240,14 @@ public class StoryDAO {
             }
             linkTagStatement.executeBatch();
         }
+        catch (SQLException e) {
+            System.err.println("Error linking tags to story: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    public List<Story> getStoriesByIds(List<Integer> storyIds) {
+    public List<Story> getStoriesByIds(List<Integer> storyIds) throws SQLException {
         List<Story> stories = new ArrayList<>();
         if (storyIds == null || storyIds.isEmpty()) {
             return stories;
@@ -257,19 +263,19 @@ public class StoryDAO {
                 preparedStatement.setInt(i + 1, storyIds.get(i));
             }
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    stories.add(populateStory(resultSet));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching stories by IDs: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
 
-    public List<Story> findBookmarkedStories(int userId) {
+    public List<Story> findBookmarkedStories(int userId) throws SQLException {
         List<Story> stories = new ArrayList<>();
         String sql = "SELECT s.* FROM stories s JOIN bookmarks b ON s.story_id = b.story_id WHERE b.user_id = ? ORDER BY s.created_at DESC";
 
@@ -277,19 +283,19 @@ public class StoryDAO {
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setInt(1, userId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    stories.add(populateStory(resultSet));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
             }
         } catch (SQLException e) {
             System.err.println("Error finding bookmarked stories: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
         return stories;
     }
 
-    public void updateStory(Story story) {
+    public void updateStory(Story story) throws SQLException {
         String sql = "UPDATE stories SET title = ?, prompt = ? WHERE story_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -304,10 +310,11 @@ public class StoryDAO {
         } catch (SQLException e) {
             System.err.println("Error updating story: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
-    public void deleteStory(int storyId) {
+    public void deleteStory(int storyId) throws SQLException {
         String sql = "DELETE FROM stories WHERE story_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -319,6 +326,7 @@ public class StoryDAO {
         } catch (SQLException e) {
             System.err.println("Error deleting story: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 

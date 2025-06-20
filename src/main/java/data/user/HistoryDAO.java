@@ -34,7 +34,7 @@ public class HistoryDAO {
         }
     }
 
-    public List<Story> getReadHistoryForUser(int userId) {
+    public List<Story> getReadHistoryForUser(int userId) throws SQLException {
         List<Integer> orderedStoryIds = new ArrayList<>();
         StoryDAO storyDao = new StoryDAO();
         String sql = "SELECT story_id FROM read_history WHERE user_id = ? ORDER BY last_read_at DESC";
@@ -43,15 +43,14 @@ public class HistoryDAO {
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setInt(1, userId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    orderedStoryIds.add(resultSet.getInt("story_id"));
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                orderedStoryIds.add(resultSet.getInt("story_id"));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching read history story IDs: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>();
+            throw e;
         }
 
         if (orderedStoryIds.isEmpty()) {

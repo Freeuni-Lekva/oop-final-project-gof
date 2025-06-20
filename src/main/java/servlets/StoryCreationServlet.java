@@ -58,7 +58,12 @@ public class StoryCreationServlet extends HttpServlet {
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
         PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
         String username = (String) session.getAttribute("user");
-        int userId = userDAO.findUser(username).getUserId();
+        int userId = 0;
+        try {
+            userId = userDAO.findUser(username).getUserId();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         String title = req.getParameter("title");
         String worldInfo = req.getParameter("worldInfo");
@@ -94,7 +99,12 @@ public class StoryCreationServlet extends HttpServlet {
         PromptBuilder builder = new PromptBuilder(characters, worldInfo);
         String firstPrompt = builder.build();
 
-        int newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, userId);
+        int newStoryId = 0;
+        try {
+            newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, userId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         if (newStoryId == -1) {
             System.err.println("Failed to create a new story for user " + userId);

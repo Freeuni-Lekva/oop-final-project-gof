@@ -98,18 +98,21 @@ public class PostDAO {
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, storyId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Post(
-                            rs.getInt("post_id"),
-                            rs.getInt("story_id"),
-                            rs.getString("image_name"),
-                            rs.getTimestamp("created_at").toLocalDateTime(),
-                            rs.getInt("like_count"),
-                            rs.getInt("comment_count")
-                    );
-                }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Post(
+                        rs.getInt("post_id"),
+                        rs.getInt("story_id"),
+                        rs.getString("image_name"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getInt("like_count"),
+                        rs.getInt("comment_count")
+                );
             }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
         return null;
     }

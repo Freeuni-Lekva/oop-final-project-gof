@@ -24,7 +24,7 @@ public class UserDaoTest extends TestCase {
         userDao = new UserDAO();
     }
 
-    public void testFindExistingUser() {
+    public void testFindExistingUser() throws SQLException {
         User user = userDao.findUserById(1);
 
         assertNotNull(user);
@@ -33,7 +33,7 @@ public class UserDaoTest extends TestCase {
         assertTrue(user.isCreator());
     }
 
-    public void testSaveAndFindNewUser() {
+    public void testSaveAndFindNewUser() throws SQLException {
         User newUser = new User(0, "newUser", "new_hash", 33, null, false);
         userDao.saveUser(newUser);
 
@@ -69,7 +69,7 @@ public class UserDaoTest extends TestCase {
         assertTrue(user1IsFollowing.isEmpty());
     }
 
-    public void testAddFollower() {
+    public void testAddFollower() throws SQLException {
         assertTrue(userDao.findFollowers(1).isEmpty());
 
         userDao.addFollower(1, 2);
@@ -79,7 +79,7 @@ public class UserDaoTest extends TestCase {
         assertEquals(2, followers.get(0).getUserId());
     }
 
-    public void testAddFollowing() {
+    public void testAddFollowing() throws SQLException {
         assertTrue(userDao.findFollowing(1).isEmpty());
         assertTrue(userDao.findFollowers(2).isEmpty());
 
@@ -94,7 +94,7 @@ public class UserDaoTest extends TestCase {
         assertEquals(1, followersList.get(0).getUserId());
     }
 
-    public void testAddBookmark() {
+    public void testAddBookmark() throws SQLException {
         data.story.StoryDAO storyDao = new data.story.StoryDAO();
         Story storyToBookmark = storyDao.getStory(2);
         assertNotNull(storyToBookmark);

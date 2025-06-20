@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.story.Story;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,11 @@ public class SearchServlet extends HttpServlet {
         } catch (Exception e) {
             System.err.println("Error during search: " + e.getMessage());
             e.printStackTrace();
+            try {
+                throw e;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         req.setAttribute("stories", stories);
