@@ -1,31 +1,114 @@
-<!-- Very basic register page -->
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Register</title>
+    <title>Register - StoryAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #111827; color: #E5E7EB; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .hero-section { background-image: url('<%= request.getContextPath() %>/images/design/img.jpg'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover; position: relative; }
+        .dark-overlay::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); z-index: 1; }
+        .form-container { position: relative; z-index: 2; }
+    </style>
 </head>
 <body>
-<h1>Create a new account</h1>
-<%
-    String error = (String) request.getAttribute("error");
-    if (error != null) {
-%>
-<div style="color: red;"><%= error %></div>
-<%
+
+<main class="hero-section min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 dark-overlay">
+    <div class="form-container w-full max-w-md">
+        <div class="bg-gray-900 bg-opacity-75 backdrop-blur-lg rounded-xl p-8 shadow-2xl border border-gray-700">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold font-orbitron tracking-widest text-white">Join the Adventure</h1>
+                <p class="text-gray-400 mt-2">Create your account to begin.</p>
+            </div>
+
+            <% String error = (String) request.getAttribute("error"); if (error != null && !error.isEmpty()) { %>
+            <div class="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-md mb-6 text-sm" role="alert">
+                <span><%= error %></span>
+            </div>
+            <% } %>
+
+            <form action="register" method="post" class="space-y-6">
+                <!-- Username & Age Fields (Unchanged) -->
+                <div>
+                    <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a unique username" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
+                </div>
+                <div>
+                    <label for="age" class="block text-sm font-bold mb-2 text-gray-300">Age</label>
+                    <input type="number" id="age" name="age" placeholder="Enter your age" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
+                </div>
+
+                <!-- Password Field with Toggle -->
+                <div>
+                    <label for="password" class="block text-sm font-bold mb-2 text-gray-300">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
+                            <svg id="eyeIcon1" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            <svg id="eyeSlashIcon1" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field with Toggle -->
+                <div>
+                    <label for="confirm_password" class="block text-sm font-bold mb-2 text-gray-300">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" id="confirm_password" name="confirmPassword" placeholder="Confirm your password" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+                        <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
+                            <svg id="eyeIcon2" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            <svg id="eyeSlashIcon2" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500">
+                        Create Account
+                    </button>
+                </div>
+            </form>
+
+            <div class="text-center mt-6">
+                <p class="text-sm text-gray-400">
+                    Already have an account?
+                    <a href="login" class="font-semibold text-purple-400 hover:text-purple-300 transition-colors duration-300">
+                        Log in
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- JAVASCRIPT SECTION -->
+<script>
+    // Reusable function to set up a password toggle
+    function setupPasswordToggle(inputId, toggleButtonId, eyeIconId, eyeSlashIconId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleButton = document.getElementById(toggleButtonId);
+        const eyeIcon = document.getElementById(eyeIconId);
+        const eyeSlashIcon = document.getElementById(eyeSlashIconId);
+
+        toggleButton.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            eyeIcon.classList.toggle('hidden');
+            eyeSlashIcon.classList.toggle('hidden');
+        });
     }
-%>
-<form action="register" method="post">
-    <label for="username">Username:</label>
-    <input id="username" name="username" type="text" placeholder="username" /> <br><br>
-    <label for="age">Age:</label>
-    <input id="age" name="age" type="number" placeholder="age" required /> <br><br>
-    <label for="password">Password:</label>
-    <input id="password" name="password" type="password" placeholder="password" /> <br><br>
-    <label for="confirm_password">Confirm Password:</label>
-    <input id="confirm_password" name="confirmPassword" type="password" placeholder="confirm password" required />
-    <button type="submit">Register</button>
-</form>
-<p>Already have an account? <a href="login">Log in</a></p>
+
+    // Set up the toggle for the first password field
+    setupPasswordToggle('password', 'togglePassword', 'eyeIcon1', 'eyeSlashIcon1');
+
+    // Set up the toggle for the confirm password field
+    setupPasswordToggle('confirm_password', 'toggleConfirmPassword', 'eyeIcon2', 'eyeSlashIcon2');
+</script>
+
 </body>
 </html>
