@@ -106,7 +106,7 @@
         if (stories == null) {
             stories = new ArrayList<>();
         }
-        TagsDAO tagsDao = (TagsDAO) application.getAttribute("tagsDao");
+        TagsDAO tagsDao = (TagsDAO) application.getAttribute("tagDao");
         PostDAO postDao = (PostDAO) application.getAttribute("postDao");
     %>
 
@@ -165,7 +165,7 @@
             <p class="text-gray-500">No stories found matching your search for "<%= searchQuery %>".</p>
             <a href="/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
             <% } else { %>
-            <p class="text-gray-500">No stories are available at the moment. Why not create one?</p>
+            <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
             <a href="/create-post.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
