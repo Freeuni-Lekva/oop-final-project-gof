@@ -93,6 +93,26 @@ public class PostDAO {
         return null;
     }
 
+    public Post getFirstPostForStory(int storyId) throws SQLException {
+        String sql = "SELECT * FROM posts WHERE story_id = ? ORDER BY created_at ASC LIMIT 1";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, storyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Post(
+                            rs.getInt("post_id"),
+                            rs.getInt("story_id"),
+                            rs.getString("image_name"),
+                            rs.getTimestamp("created_at").toLocalDateTime(),
+                            rs.getInt("like_count"),
+                            rs.getInt("comment_count")
+                    );
+                }
+            }
+        }
+        return null;
+    }
 
     public Post getPostById(int postId) throws SQLException {
         String sql = "SELECT post_id, story_id, image_name, created_at, like_count, comment_count FROM posts WHERE post_id = ?";
