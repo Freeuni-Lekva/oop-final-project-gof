@@ -1,6 +1,7 @@
 package servlets;
 
 import data.story.StoryDAO;
+import data.story.TagsDAO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,6 +29,7 @@ public class SearchServlet extends HttpServlet {
 
         ServletContext context = getServletContext();
         StoryDAO storyDAO = (StoryDAO) context.getAttribute("storyDao");
+        TagsDAO tagsDAO = (TagsDAO) context.getAttribute("tagDao");
         List<Story> stories = new ArrayList<>();
 
         try {
@@ -39,7 +41,10 @@ public class SearchServlet extends HttpServlet {
                     stories = storyDAO.searchStoriesByCreatorName(query);
                     break;
                 case "tag":
-                    stories = storyDAO.searchStoriesByTag(query);
+                    List<Integer> storyIds = tagsDAO.findStoryIdsByTag(query);
+                    if (storyIds != null && !storyIds.isEmpty()) {
+                        stories = storyDAO.getStoriesByIds(storyIds);
+                    }
                     break;
                 default:
                     break;
