@@ -98,7 +98,7 @@ public class UserDAO {
     }
 
     public void saveUser(User user) {
-        String sql = "INSERT INTO users (username, password_hash, age, register_time, is_creator) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password_hash, age, register_time, is_creator, image_name) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -108,6 +108,7 @@ public class UserDAO {
             preparedStatement.setInt(3, user.getAge());
             preparedStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.setBoolean(5, user.isCreator());
+            preparedStatement.setString(6, user.getImageName());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -175,8 +176,9 @@ public class UserDAO {
         // Convert java.sql.Timestamp from database to java.time.LocalDateTime
         LocalDateTime registerTime = resultSet.getTimestamp("register_time").toLocalDateTime();
         boolean isCreator = resultSet.getBoolean("is_creator");
+        String imageName = resultSet.getString("image_name");
 
-        return new User(userId, username, passwordHash, age, registerTime, isCreator);
+        return new User(userId, username, passwordHash, age, registerTime, isCreator, imageName);
     }
 
 }
