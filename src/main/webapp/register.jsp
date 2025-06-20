@@ -32,6 +32,7 @@
             <% } %>
 
             <form action="register" method="post" class="space-y-6">
+                <!-- Username & Age Fields -->
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
                     <input type="text" id="username" name="username" placeholder="Choose a unique username" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
@@ -41,6 +42,7 @@
                     <input type="number" id="age" name="age" placeholder="Enter your age" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
 
+                <!-- Password Field and Strength Meter -->
                 <div>
                     <label for="password" class="block text-sm font-bold mb-2 text-gray-300">Password</label>
                     <div class="relative">
@@ -57,26 +59,15 @@
                         </div>
                         <p class="text-xs font-bold" id="strength-text"></p>
                         <ul class="text-xs text-gray-400 space-y-1">
-                            <li id="length-check" class="flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span>At least 8 characters</span>
-                            </li>
-                            <li id="upper-check" class="flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span>One uppercase letter (A-Z)</span>
-                            </li>
-                            <li id="number-check" class="flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span>One number (0-9)</span>
-                            </li>
-                            <li id="special-check" class="flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span>One special character (!, @, #, etc.)</span>
-                            </li>
+                            <li id="length-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>At least 8 characters</span></li>
+                            <li id="upper-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>One uppercase letter (A-Z)</span></li>
+                            <li id="number-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>One number (0-9)</span></li>
+                            <li id="special-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>One special character (!, @, #, etc.)</span></li>
                         </ul>
                     </div>
                 </div>
 
+                <!-- Confirm Password Field -->
                 <div>
                     <label for="confirm_password" class="block text-sm font-bold mb-2 text-gray-300">Confirm Password</label>
                     <div class="relative">
@@ -88,6 +79,7 @@
                     </div>
                 </div>
 
+                <!-- Submit Button -->
                 <div>
                     <button type="submit" id="register-button" disabled
                             class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500 disabled:bg-gray-600 disabled:shadow-none disabled:cursor-not-allowed">
@@ -110,7 +102,7 @@
         const eyeIcon = document.getElementById(eyeIconId);
         const eyeSlashIcon = document.getElementById(eyeSlashIconId);
 
-        if(toggleButton) { // Check if the button exists
+        if(toggleButton) {
             toggleButton.addEventListener('click', function() {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
@@ -181,7 +173,7 @@
                     strengthText.className = 'text-xs font-bold text-yellow-500';
                     strengthBar.className = 'h-2 rounded-full bg-yellow-500 transition-all duration-300';
                     strengthBar.style.width = '66%';
-                    registerButton.disabled = false; // Allow Medium passwords
+                    registerButton.disabled = false;
                     break;
                 case 4:
                     strengthText.textContent = 'Strength: Strong';
