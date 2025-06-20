@@ -32,7 +32,6 @@
             <% } %>
 
             <form action="register" method="post" class="space-y-6">
-                <!-- Username & Age Fields (Unchanged) -->
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
                     <input type="text" id="username" name="username" placeholder="Choose a unique username" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
@@ -42,7 +41,6 @@
                     <input type="number" id="age" name="age" placeholder="Enter your age" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
 
-                <!-- Password Field with Toggle -->
                 <div>
                     <label for="password" class="block text-sm font-bold mb-2 text-gray-300">Password</label>
                     <div class="relative">
@@ -52,9 +50,33 @@
                             <svg id="eyeSlashIcon1" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                         </button>
                     </div>
+
+                    <div id="strength-meter" class="mt-4 space-y-2 hidden">
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                        </div>
+                        <p class="text-xs font-bold" id="strength-text"></p>
+                        <ul class="text-xs text-gray-400 space-y-1">
+                            <li id="length-check" class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>At least 8 characters</span>
+                            </li>
+                            <li id="upper-check" class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>One uppercase letter (A-Z)</span>
+                            </li>
+                            <li id="number-check" class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>One number (0-9)</span>
+                            </li>
+                            <li id="special-check" class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>One special character (!, @, #, etc.)</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <!-- Confirm Password Field with Toggle -->
                 <div>
                     <label for="confirm_password" class="block text-sm font-bold mb-2 text-gray-300">Confirm Password</label>
                     <div class="relative">
@@ -67,47 +89,117 @@
                 </div>
 
                 <div>
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500">
+                    <button type="submit" id="register-button" disabled
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500 disabled:bg-gray-600 disabled:shadow-none disabled:cursor-not-allowed">
                         Create Account
                     </button>
                 </div>
             </form>
 
             <div class="text-center mt-6">
-                <p class="text-sm text-gray-400">
-                    Already have an account?
-                    <a href="login" class="font-semibold text-purple-400 hover:text-purple-300 transition-colors duration-300">
-                        Log in
-                    </a>
-                </p>
+                <p class="text-sm text-gray-400">Already have an account? <a href="login" class="font-semibold text-purple-400 hover:text-purple-300 transition-colors duration-300">Log in</a></p>
             </div>
         </div>
     </div>
 </main>
 
-<!-- JAVASCRIPT SECTION -->
 <script>
-    // Reusable function to set up a password toggle
     function setupPasswordToggle(inputId, toggleButtonId, eyeIconId, eyeSlashIconId) {
         const passwordInput = document.getElementById(inputId);
         const toggleButton = document.getElementById(toggleButtonId);
         const eyeIcon = document.getElementById(eyeIconId);
         const eyeSlashIcon = document.getElementById(eyeSlashIconId);
 
-        toggleButton.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-
-            eyeIcon.classList.toggle('hidden');
-            eyeSlashIcon.classList.toggle('hidden');
-        });
+        if(toggleButton) { // Check if the button exists
+            toggleButton.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('hidden');
+                eyeSlashIcon.classList.toggle('hidden');
+            });
+        }
     }
-
-    // Set up the toggle for the first password field
     setupPasswordToggle('password', 'togglePassword', 'eyeIcon1', 'eyeSlashIcon1');
-
-    // Set up the toggle for the confirm password field
     setupPasswordToggle('confirm_password', 'toggleConfirmPassword', 'eyeIcon2', 'eyeSlashIcon2');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInput = document.getElementById('password');
+        const strengthMeter = document.getElementById('strength-meter');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+        const registerButton = document.getElementById('register-button');
+
+        const checks = {
+            length: document.getElementById('length-check'),
+            upper: document.getElementById('upper-check'),
+            number: document.getElementById('number-check'),
+            special: document.getElementById('special-check'),
+        };
+
+        const checkIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+        const crossIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+
+            if (password.length === 0) {
+                strengthMeter.classList.add('hidden');
+                registerButton.disabled = true;
+                return;
+            }
+
+            strengthMeter.classList.remove('hidden');
+
+            let score = 0;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            const isLongEnough = password.length >= 8;
+
+            if (hasUpper) score++;
+            if (hasNumber) score++;
+            if (hasSpecial) score++;
+            if (isLongEnough) score++;
+
+            updateChecklistItem(checks.length, isLongEnough);
+            updateChecklistItem(checks.upper, hasUpper);
+            updateChecklistItem(checks.number, hasNumber);
+            updateChecklistItem(checks.special, hasSpecial);
+
+            switch (score) {
+                case 0:
+                case 1:
+                    strengthText.textContent = 'Strength: Weak';
+                    strengthText.className = 'text-xs font-bold text-red-500';
+                    strengthBar.className = 'h-2 rounded-full bg-red-500 transition-all duration-300';
+                    strengthBar.style.width = '25%';
+                    registerButton.disabled = true;
+                    break;
+                case 2:
+                case 3:
+                    strengthText.textContent = 'Strength: Medium';
+                    strengthText.className = 'text-xs font-bold text-yellow-500';
+                    strengthBar.className = 'h-2 rounded-full bg-yellow-500 transition-all duration-300';
+                    strengthBar.style.width = '66%';
+                    registerButton.disabled = false; // Allow Medium passwords
+                    break;
+                case 4:
+                    strengthText.textContent = 'Strength: Strong';
+                    strengthText.className = 'text-xs font-bold text-green-500';
+                    strengthBar.className = 'h-2 rounded-full bg-green-500 transition-all duration-300';
+                    strengthBar.style.width = '100%';
+                    registerButton.disabled = false;
+                    break;
+            }
+        });
+
+        function updateChecklistItem(element, isValid) {
+            const icon = isValid ? checkIcon : crossIcon;
+            const textClass = isValid ? 'text-green-400' : 'text-red-400';
+            element.innerHTML = icon + `<span>${element.lastElementChild.textContent}</span>`;
+            element.className = 'flex items-center ' + textClass;
+        }
+    });
 </script>
 
 </body>
