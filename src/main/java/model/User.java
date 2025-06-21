@@ -11,15 +11,6 @@ public class User {
     private boolean isCreator;
     private String imageName;
 
-    public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator) {
-        this.userId = userId;
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.age = age;
-        this.registerTime = registerTime;
-        this.isCreator = isCreator;
-    }
-
     public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
         this.userId = userId;
         this.username = username;
@@ -30,12 +21,13 @@ public class User {
         this.imageName = imageName;
     }
 
-    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator) {
+    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.age = age;
         this.registerTime = registerTime;
         this.isCreator = isCreator;
+        this.imageName = imageName;
     }
 
     // Getters
