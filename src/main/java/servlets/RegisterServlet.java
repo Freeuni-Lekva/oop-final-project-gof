@@ -13,8 +13,12 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.io.File;
+import java.util.Random;
 
 public class RegisterServlet extends HttpServlet {
+
+    private static final String DEFAULT_PHOTOS_DIR = "images" + File.separator + "default-photos";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
@@ -42,7 +46,6 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-
         try {
             age = Integer.parseInt(req.getParameter("age"));
             if (age < 16) {
@@ -64,8 +67,19 @@ public class RegisterServlet extends HttpServlet {
 
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
+        String defaultPhotosPath = getServletContext().getRealPath("/") + DEFAULT_PHOTOS_DIR;
+        File defaultPhotosDir = new File(defaultPhotosPath);
+        String[] defaultPhotoFiles = defaultPhotosDir.list();
+        String chosenImageName = null;
+
+        if (defaultPhotoFiles != null && defaultPhotoFiles.length > 0) {
+            Random random = new Random();
+            int randomIndex = random.nextInt(defaultPhotoFiles.length);
+            chosenImageName = defaultPhotoFiles[randomIndex];
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        User user = new User(username, hashedPassword, age, now, false);
+        User user = new User(username, hashedPassword, age, now, false, chosenImageName);
 
         ServletContext context = getServletContext();
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
