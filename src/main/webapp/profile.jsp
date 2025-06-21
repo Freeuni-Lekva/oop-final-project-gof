@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.media.Post" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Your Profile - StoryAI</title>
-    <%-- Copied from login.jsp for styling --%>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,16 +12,21 @@
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #111827; color: #E5E7EB; }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .post-image {
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body class="bg-gray-900">
 
 <%
-    // Ensure user is logged in
     String username = (String) session.getAttribute("user");
     if (username == null) {
         response.sendRedirect("login.jsp");
-        return; // Important to stop further processing of the page
+        return;
     }
 %>
 
@@ -43,26 +49,55 @@
             <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">
                 Your Published Posts
             </h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <%-- Placeholder for posts. We will populate this with data later. --%>
-                <div class="bg-gray-800 p-4 rounded-lg text-center">
-                    <p class="text-gray-400">Post 1 will be here</p>
+
+            <%
+                // 1. Get the list of posts from the request object (sent by the servlet)
+                List<Post> userPosts = (List<Post>) request.getAttribute("userPosts");
+
+                // 2. Check if the list is null or empty
+                if (userPosts != null && !userPosts.isEmpty()) {
+            %>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <%
+                    // 3. Loop through each post using a standard Java for-loop
+                    for (Post post : userPosts) {
+                %>
+                <div class="group relative bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                    <a href="post.jsp?id=<%= post.getPostId() %>" class="block">
+                        <img src="<%= request.getContextPath() %>/images/posts/<%= post.getImageName() %>"
+                             alt="Post Image"
+                             class="post-image">
+                        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div class="text-center text-white p-2">
+                                <p class="font-semibold">Likes: <%= post.getLikeCount() %></p>
+                                <p class="font-semibold">Comments: <%= post.getCommentCount() %></p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-                <div class="bg-gray-800 p-4 rounded-lg text-center">
-                    <p class="text-gray-400">Post 2 will be here</p>
-                </div>
+                <%
+                    } // End of the for-loop
+                %>
             </div>
-            <%-- Message to show if user has no posts --%>
-            <%-- <p class="text-gray-500">You haven't published any posts yet.</p> --%>
+            <%
+            } else {
+                // 4. If the list is empty, show this message
+            %>
+            <div class="bg-gray-800 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
+                <p class="font-bold">No Posts Yet</p>
+                <p>You haven't published any posts. Start creating a story to share your work!</p>
+            </div>
+            <%
+                } // End of the if/else block
+            %>
         </section>
 
-        <%-- Section for Reading History --%>
+        <%-- Section for Reading History (still has placeholders) --%>
         <section id="reading-history" class="mt-12">
             <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">
                 Your Reading History
             </h2>
             <div class="space-y-4">
-                <%-- Placeholder for read stories. We will populate this later. --%>
                 <div class="bg-gray-800 p-4 rounded-lg">
                     <a href="#" class="font-semibold text-lg text-white hover:text-purple-400">
                         Placeholder: The Mystery of the Lost Artifact
@@ -74,12 +109,9 @@
                     </a>
                 </div>
             </div>
-            <%-- Message to show if user has no history --%>
-            <%-- <p class="text-gray-500">You haven't read any stories yet.</p> --%>
         </section>
 
     </main>
-
 </div>
 
 </body>
