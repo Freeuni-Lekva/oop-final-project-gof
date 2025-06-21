@@ -3,7 +3,6 @@
 <%@ page import="data.story.TagsDAO, data.media.PostDAO, model.media.Post" %>
 <%@ page import="data.user.UserDAO, model.User, java.lang.String" %>
 <%@ page import="java.io.File" %>
-<%@ page import="java.util.Random" %>
 
 <!DOCTYPE html>
 <html>
@@ -50,15 +49,8 @@
                 <a href="/profile" class="flex items-center space-x-2 text-gray-300 hover:text-white font-medium">
                     <%
                         String profilePicUrl;
-                        String defaultPhotosPath = application.getRealPath("/images/default-photos");
-                        File defaultPhotosDir = new File(defaultPhotosPath);
-                        String[] defaultPhotoFiles = defaultPhotosDir.list();
-
-                        if (defaultPhotoFiles != null && defaultPhotoFiles.length > 0) {
-                            Random random = new Random();
-                            int randomIndex = random.nextInt(defaultPhotoFiles.length);
-                            String randomFileName = defaultPhotoFiles[randomIndex];
-                            profilePicUrl = request.getContextPath() + "/images/default-photos/" + randomFileName;
+                        if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
+                            profilePicUrl = request.getContextPath() + "/images/profiles/" + loggedInUser.getImageName();
                         } else {
                             profilePicUrl = "https://placehold.co/40x40/4F46E5/FFFFFF?text=" + username.toUpperCase().charAt(0);
                         }
