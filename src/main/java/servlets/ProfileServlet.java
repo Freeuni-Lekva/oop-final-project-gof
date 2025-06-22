@@ -1,6 +1,7 @@
 package servlets;
 
 import data.media.PostDAO;
+import data.story.StoryDAO;
 import data.user.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 import model.media.Post;
+import model.story.Story;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,9 +21,8 @@ import java.util.List;
 public class ProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        HttpSession session = req.getSession(false); // Use false to not create a new session
+        HttpSession session = req.getSession(false);
 
-        // 1. Check if user is logged in
         if (session == null || session.getAttribute("user") == null) {
             res.sendRedirect(req.getContextPath() + "/login.jsp");
             return;
@@ -30,18 +31,20 @@ public class ProfileServlet extends HttpServlet {
         String username = (String) session.getAttribute("user");
         UserDAO userDAO = new UserDAO();
         PostDAO postDAO = new PostDAO();
+        StoryDAO storyDAO = new StoryDAO();
 
         try {
-            // 2. Fetch the full User object to get their ID
             User user = userDAO.findUser(username);
+
             List<Post> userPosts = postDAO.getPostsByCreatorId(user.getUserId());
+            List<Story> readingHistory = storyDAO.findReadingHistory(user.getUserId());
 
             req.setAttribute("userPosts", userPosts);
+            req.setAttribute("readingHistory", readingHistory); // <-- ADDED: Attach reading history
             req.setAttribute("profileUser", user);
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new RuntimeException("Database error when fetching profile data.", e);
         }
 
         req.getRequestDispatcher("/profile.jsp").forward(req, res);

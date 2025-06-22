@@ -270,6 +270,29 @@ public class StoryDAO {
         return stories;
     }
 
+    public List<Story> findReadingHistory(int userId) throws SQLException {
+        List<Story> stories = new ArrayList<>();
+        String sql = "SELECT s.* FROM stories s " +
+                "JOIN read_history rh ON s.story_id = rh.story_id " +
+                "WHERE rh.user_id = ? " +
+                "ORDER BY rh.last_read_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding reading history stories: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return stories;
+    }
+
     public void updateStory(Story story) throws SQLException {
         String sql = "UPDATE stories SET title = ?, prompt = ? WHERE story_id = ?";
 
