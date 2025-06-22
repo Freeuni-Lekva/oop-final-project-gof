@@ -145,6 +145,46 @@
                 }
             %>
         </section>
+
+        <section id="bookmarked-stories" class="mt-12">
+            <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">
+                Your Bookmarked Stories
+            </h2>
+            <%
+                List<Story> bookmarkedStories = (List<Story>) request.getAttribute("bookmarkedStories");
+                if (bookmarkedStories != null && !bookmarkedStories.isEmpty()) {
+            %>
+            <div class="space-y-4">
+                <%
+                    for (Story story : bookmarkedStories) {
+                %>
+                <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
+                    <a href="story.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 flex-grow">
+                        <%= story.getTitle() %>
+                    </a>
+
+                    <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4">
+                        <input type="hidden" name="action" value="deleteBookmark">
+                        <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
+                        <button type="submit" class="bg-yellow-600/70 hover:bg-yellow-600 p-2 rounded-full transition-colors duration-200" title="Remove bookmark">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                        </button>
+                    </form>
+                </div>
+                <%
+                    }
+                %>
+            </div>
+            <%
+            } else {
+            %>
+            <div class="bg-gray-800 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
+                <p class="font-bold">No Bookmarks Yet</p><p>You haven't bookmarked any stories. Find one you like and save it for later!</p>
+            </div>
+            <%
+                }
+            %>
+        </section>
     </main>
 </div>
 </body>

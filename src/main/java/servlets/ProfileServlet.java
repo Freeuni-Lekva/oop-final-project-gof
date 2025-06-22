@@ -35,12 +35,18 @@ public class ProfileServlet extends HttpServlet {
 
         try {
             User user = userDAO.findUser(username);
+            if (user == null) {
+                res.sendRedirect(req.getContextPath() + "/login.jsp");
+                return;
+            }
 
             List<Post> userPosts = postDAO.getPostsByCreatorId(user.getUserId());
             List<Story> readingHistory = storyDAO.findReadingHistory(user.getUserId());
+            List<Story> bookmarkedStories = storyDAO.findBookmarkedStories(user.getUserId());
 
             req.setAttribute("userPosts", userPosts);
-            req.setAttribute("readingHistory", readingHistory); // <-- ADDED: Attach reading history
+            req.setAttribute("readingHistory", readingHistory);
+            req.setAttribute("bookmarkedStories", bookmarkedStories);
             req.setAttribute("profileUser", user);
 
         } catch (SQLException e) {
@@ -55,7 +61,7 @@ public class ProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
 
-        if (session == null || session.getAttribute("user") == null) {//if logged in
+        if (session == null || session.getAttribute("user") == null) {
             res.sendRedirect(req.getContextPath() + "/login.jsp");
             return;
         }
@@ -63,31 +69,36 @@ public class ProfileServlet extends HttpServlet {
         String action = req.getParameter("action");
         String username = (String) session.getAttribute("user");
 
-        if ("deletePost".equals(action)) {//check which one user wants to delete
-            try {
+        try {
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.findUser(username);
+            if (user == null) {
+                res.sendRedirect(req.getContextPath() + "/login.jsp");
+                return;
+            }
+            int userId = user.getUserId();
+
+            if ("deletePost".equals(action)) {
                 int postId = Integer.parseInt(req.getParameter("postId"));
                 PostDAO postDAO = new PostDAO();
                 postDAO.deletePost(postId);
-            } catch (NumberFormatException | SQLException e) {
-                throw new ServletException("Error deleting post.", e);
-            }
-        } else if ("deleteHistory".equals(action)) {
-            try {
-                UserDAO userDAO = new UserDAO();
-                User user = userDAO.findUser(username);
-                int userId = user.getUserId();
 
+            } else if ("deleteHistory".equals(action)) {
                 int storyId = Integer.parseInt(req.getParameter("storyId"));
-
                 StoryDAO storyDAO = new StoryDAO();
                 storyDAO.removeReadingHistory(userId, storyId);
 
-            } catch (NumberFormatException | SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Error deleting from reading history.", e);
+            } else if ("deleteBookmark".equals(action)) {
+                int storyId = Integer.parseInt(req.getParameter("storyId"));
+                StoryDAO storyDAO = new StoryDAO();
+                storyDAO.removeBookmark(userId, storyId);
             }
+
+        } catch (NumberFormatException | SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Error processing profile action.", e);
         }
 
-        res.sendRedirect(req.getContextPath() + "/profile");//reload page
+        res.sendRedirect(req.getContextPath() + "/profile");
     }
 }
