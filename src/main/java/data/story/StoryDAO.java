@@ -311,6 +311,21 @@ public class StoryDAO {
         }
     }
 
+    public void removeReadingHistory(int userId, int storyId) throws SQLException {
+        String sql = "DELETE FROM read_history WHERE user_id = ? AND story_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public void updateStory(Story story) throws SQLException {
         String sql = "UPDATE stories SET title = ?, prompt = ? WHERE story_id = ?";
 

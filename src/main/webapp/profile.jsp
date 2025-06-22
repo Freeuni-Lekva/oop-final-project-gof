@@ -69,7 +69,7 @@
                         String imageUrl = request.getContextPath() + "/images/posts/" + post.getImageName();
                         int storyId = (story != null) ? story.getStoryId() : -1;
                 %>
-                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
+                <div class="relative bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
                     <a href="story.jsp?id=<%= storyId %>" class="block h-full">
                         <img src="<%= imageUrl %>" alt="Post art for <%= title %>" class="w-full h-40 object-cover">
                         <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
@@ -82,6 +82,14 @@
                             </div>
                         </div>
                     </a>
+
+                    <form action="<%= request.getContextPath() %>/profile" method="post" class="absolute top-2 right-2">
+                        <input type="hidden" name="action" value="deletePost">
+                        <input type="hidden" name="postId" value="<%= post.getPostId() %>">
+                        <button type="submit" class="bg-red-600/70 hover:bg-red-600 p-2 rounded-full transition-colors duration-200" title="Delete this post">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </form>
                 </div>
                 <%
                     }
@@ -91,8 +99,7 @@
             } else {
             %>
             <div class="bg-gray-800 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
-                <p class="font-bold">No Posts Yet</p>
-                <p>You haven't published any posts. Start creating a story to share your work!</p>
+                <p class="font-bold">No Posts Yet</p><p>You haven't published any posts. Start creating a story to share your work!</p>
             </div>
             <%
                 }
@@ -104,20 +111,25 @@
                 Your Reading History
             </h2>
             <%
-
                 List<Story> readingHistory = (List<Story>) request.getAttribute("readingHistory");
-
                 if (readingHistory != null && !readingHistory.isEmpty()) {
             %>
             <div class="space-y-4">
                 <%
-                    //Loop through each story in the history
                     for (Story story : readingHistory) {
                 %>
-                <div class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
-                    <a href="story.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 block">
+                <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
+                    <a href="story.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 flex-grow">
                         <%= story.getTitle() %>
                     </a>
+
+                    <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4">
+                        <input type="hidden" name="action" value="deleteHistory">
+                        <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
+                        <button type="submit" class="bg-red-600/70 hover:bg-red-600 p-2 rounded-full transition-colors duration-200" title="Remove from history">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </form>
                 </div>
                 <%
                     }
@@ -125,11 +137,9 @@
             </div>
             <%
             } else {
-                //If the list is empty, show this message
             %>
             <div class="bg-gray-800 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
-                <p class="font-bold">History is Empty</p>
-                <p>You haven't read any stories yet. Fun awaits!</p>
+                <p class="font-bold">History is Empty</p><p>You haven't read any stories yet. Fun awaits!</p>
             </div>
             <%
                 }
