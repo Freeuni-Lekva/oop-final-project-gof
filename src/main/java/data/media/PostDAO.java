@@ -175,7 +175,19 @@ public class PostDAO {
             e.printStackTrace();
             throw e;
         }
-
         return userPosts;
+    }
+
+    public void deletePost(int postId) throws SQLException {
+        String sql = "DELETE FROM posts WHERE post_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, postId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

@@ -4,7 +4,7 @@
 <%@ page import="data.story.StoryDAO, data.story.TagsDAO" %>
 
 <%!
-    // copied from home.jsp
+    // Helper function to shorten text, copied from home.jsp
     String truncate(String text, int length) {
         if (text == null || text.length() <= length) return text;
         return text.substring(0, length) + "...";
@@ -52,10 +52,8 @@
             <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">
                 Your Published Posts
             </h2>
-
             <%
                 List<Post> userPosts = (List<Post>) request.getAttribute("userPosts");
-
                 if (userPosts != null && !userPosts.isEmpty()) {
                     StoryDAO storyDAO = new StoryDAO();
                     TagsDAO tagsDAO = new TagsDAO();
@@ -65,10 +63,7 @@
                     for (Post post : userPosts) {
                         Story story = storyDAO.getStory(post.getStoryId());
                         List<String> storyTags = new ArrayList<>();
-                        if (story != null) {
-                            storyTags = tagsDAO.getStoryTags(story.getStoryId());
-                        }
-
+                        if (story != null) { storyTags = tagsDAO.getStoryTags(story.getStoryId()); }
                         String title = (story != null) ? story.getTitle() : "Untitled Story";
                         String prompt = (story != null) ? story.getPrompt() : "No description available.";
                         String imageUrl = request.getContextPath() + "/images/posts/" + post.getImageName();
@@ -79,19 +74,11 @@
                         <img src="<%= imageUrl %>" alt="Post art for <%= title %>" class="w-full h-40 object-cover">
                         <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
                             <div>
-                                <h3 class="font-bold text-lg text-white mb-2 truncate" title="<%= title %>">
-                                    <%= title %>
-                                </h3>
-                                <p class="text-gray-400 text-sm h-20 overflow-hidden">
-                                    <%= truncate(prompt, 100) %>
-                                </p>
+                                <h3 class="font-bold text-lg text-white mb-2 truncate" title="<%= title %>"><%= title %></h3>
+                                <p class="text-gray-400 text-sm h-20 overflow-hidden"><%= truncate(prompt, 100) %></p>
                             </div>
                             <div class="mt-4 text-xs text-indigo-400">
-                                <% if (!storyTags.isEmpty()) { %>
-                                <%= String.join(" · ", storyTags) %>
-                                <% } else { %>
-                                No Tags
-                                <% } %>
+                                <% if (!storyTags.isEmpty()) { %><%= String.join(" · ", storyTags) %><% } else { %>No Tags<% } %>
                             </div>
                         </div>
                     </a>
@@ -113,10 +100,42 @@
         </section>
 
         <section id="reading-history" class="mt-12">
-            <!-- Placeholder content... -->
+            <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">
+                Your Reading History
+            </h2>
+            <%
+
+                List<Story> readingHistory = (List<Story>) request.getAttribute("readingHistory");
+
+                if (readingHistory != null && !readingHistory.isEmpty()) {
+            %>
+            <div class="space-y-4">
+                <%
+                    //Loop through each story in the history
+                    for (Story story : readingHistory) {
+                %>
+                <div class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
+                    <a href="story.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 block">
+                        <%= story.getTitle() %>
+                    </a>
+                </div>
+                <%
+                    }
+                %>
+            </div>
+            <%
+            } else {
+                //If the list is empty, show this message
+            %>
+            <div class="bg-gray-800 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
+                <p class="font-bold">History is Empty</p>
+                <p>You haven't read any stories yet. Fun awaits!</p>
+            </div>
+            <%
+                }
+            %>
         </section>
     </main>
 </div>
-
 </body>
 </html>

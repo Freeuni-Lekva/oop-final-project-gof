@@ -292,6 +292,24 @@ public class StoryDAO {
         }
         return stories;
     }
+    //call this method when a user tries to view a post.jsp, add new servlet for posts
+    public void addReadingHistory(int userId, int storyId) throws SQLException {
+        String sql = "INSERT INTO read_history (user_id, story_id, last_read_at) VALUES (?, ?, NOW()) " +
+                "ON DUPLICATE KEY UPDATE last_read_at = NOW()";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     public void updateStory(Story story) throws SQLException {
         String sql = "UPDATE stories SET title = ?, prompt = ? WHERE story_id = ?";
