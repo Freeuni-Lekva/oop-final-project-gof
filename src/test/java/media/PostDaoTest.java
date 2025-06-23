@@ -88,6 +88,23 @@ public class PostDaoTest extends TestCase {
         assertEquals("Chichia's post count should remain unchanged at 1", 1, postsForChichia.size());
     }
 
+
+
+    public void testDeletePost() throws SQLException {
+        initPosts();
+
+        Post postBeforeDelete = postDao.getPostById(3);
+        assertNotNull("Post with ID 3 should exist before deletion", postBeforeDelete);
+
+        postDao.deletePost(3);
+
+        Post postAfterDelete = postDao.getPostById(3);
+        assertNull("Post with ID 3 should be null after deletion", postAfterDelete);
+
+        Post otherPost = postDao.getPostById(4); // The second post from initPosts()
+        assertNotNull("Post with ID 4 should still exist", otherPost);
+    }
+
     @Override
     public void tearDown() {
         MySqlConnector.close(conn);
