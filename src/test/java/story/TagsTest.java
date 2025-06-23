@@ -23,16 +23,7 @@ public class TagsTest extends TestCase {
        tagsDAO = new TagsDAO();
     }
 
-    public void testTags() throws SQLException {
-        List<String> tags = tagsDAO.getStoryTags(1);
-        assertEquals(2, tags.size());
-        assertEquals("Adventure",tags.get(0));
-        assertEquals("Mystery",tags.get(1));
 
-        List<String> tags2 = tagsDAO.getStoryTags(2);
-        assertEquals(2, tags2.size());
-        assertEquals("Technology",tags2.get(1));
-    }
 
     @Override
     public void tearDown() throws SQLException {

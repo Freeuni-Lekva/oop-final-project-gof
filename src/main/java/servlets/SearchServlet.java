@@ -13,6 +13,7 @@ import model.story.Story;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @WebServlet(name = "searchServlet", value = "/search")
@@ -41,7 +42,8 @@ public class SearchServlet extends HttpServlet {
                     stories = storyDAO.searchStoriesByCreatorName(query);
                     break;
                 case "tag":
-                    List<Integer> storyIds = tagsDAO.findStoryIdsByTag(query);
+                    List<String> tagList = Arrays.asList(query.trim().split("\\s+"));
+                    List<Integer> storyIds = tagsDAO.findStoryIdsByMultipleTags(tagList);
                     if (storyIds != null && !storyIds.isEmpty()) {
                         stories = storyDAO.getStoriesByIds(storyIds);
                     }
