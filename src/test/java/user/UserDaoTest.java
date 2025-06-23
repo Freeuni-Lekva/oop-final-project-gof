@@ -69,29 +69,42 @@ public class UserDaoTest extends TestCase {
         assertTrue(user1IsFollowing.isEmpty());
     }
 
-    public void testAddFollower() throws SQLException {
-        assertTrue(userDao.findFollowers(1).isEmpty());
-
-        userDao.addFollower(1, 2);
-
-        List<User> followers = userDao.findFollowers(1);
-        assertEquals(1, followers.size());
-        assertEquals(2, followers.get(0).getUserId());
-    }
-
-    public void testAddFollowing() throws SQLException {
+    public void testFollowUser() throws SQLException {
         assertTrue(userDao.findFollowing(1).isEmpty());
         assertTrue(userDao.findFollowers(2).isEmpty());
 
-        userDao.addFollowing(1, 2);
+        userDao.followUser(1, 2);
 
         List<User> followingList = userDao.findFollowing(1);
         assertEquals(1, followingList.size());
-        assertEquals(2, followingList.get(0).getUserId());
+        assertEquals(2, followingList.get(0).getUserId()); // User 1 is following User 2
 
         List<User> followersList = userDao.findFollowers(2);
         assertEquals(1, followersList.size());
-        assertEquals(1, followersList.get(0).getUserId());
+        assertEquals(1, followersList.get(0).getUserId()); // User 2 is followed by User 1
+    }
+
+
+    public void testUnfollowUser() throws SQLException {
+        createInitialFollowers();
+
+        assertEquals(1, userDao.findFollowing(2).size());
+
+        userDao.unfollowUser(2, 1);
+
+        assertTrue(userDao.findFollowing(2).isEmpty());
+        assertTrue(userDao.findFollowers(1).isEmpty());
+    }
+
+
+    public void testIsFollowing() throws SQLException {
+        assertFalse("User 2 should not be following User 1 initially", userDao.isFollowing(2, 1));
+        assertFalse("User 1 should not be following User 2 initially", userDao.isFollowing(1, 2));
+
+        createInitialFollowers();
+
+        assertTrue("User 2 should now be following User 1", userDao.isFollowing(2, 1));
+        assertFalse("Directionality check: User 1 should still not be following User 2", userDao.isFollowing(1, 2));
     }
 
     public void testAddBookmark() throws SQLException {

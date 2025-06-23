@@ -3,6 +3,7 @@ package servlets;
 import data.media.PostDAO;
 import data.story.StoryDAO;
 import data.user.UserDAO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,7 +25,7 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -36,22 +37,27 @@ public class ProfileServlet extends HttpServlet {
         try {
             User user = userDAO.findUser(username);
             if (user == null) {
-                res.sendRedirect(req.getContextPath() + "/login.jsp");
+                session.invalidate();
+                res.sendRedirect(req.getContextPath() + "/login");
                 return;
             }
 
             List<Post> userPosts = postDAO.getPostsByCreatorId(user.getUserId());
             List<Story> readingHistory = storyDAO.findReadHistory(user.getUserId());
             List<Story> bookmarkedStories = storyDAO.findBookmarkedStories(user.getUserId());
+            List<User> followersList = userDAO.findFollowers(user.getUserId());
+            List<User> followingList = userDAO.findFollowing(user.getUserId());
 
             req.setAttribute("userPosts", userPosts);
             req.setAttribute("readingHistory", readingHistory);
             req.setAttribute("bookmarkedStories", bookmarkedStories);
+            req.setAttribute("followersList", followersList);
+            req.setAttribute("followingList", followingList);
             req.setAttribute("profileUser", user);
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Database error when fetching profile data.", e);
+            throw new ServletException("Database error when fetching profile data.", e);
         }
 
         req.getRequestDispatcher("/profile.jsp").forward(req, res);
@@ -62,7 +68,7 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -71,6 +77,15 @@ public class ProfileServlet extends HttpServlet {
 
         if (action != null) {
             try {
+                ServletContext context = getServletContext();
+                UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
+                User user = userDAO.findUser(username);
+                if (user == null) {
+                    res.sendRedirect(req.getContextPath() + "/login");
+                    return;
+                }
+                int userId = user.getUserId();
+
                 switch (action) {
                     case "deletePost": {
                         int postId = Integer.parseInt(req.getParameter("postId"));
@@ -80,21 +95,13 @@ public class ProfileServlet extends HttpServlet {
                     }
 
                     case "deleteHistory": {
-                        UserDAO userDAO = new UserDAO();
-                        User user = userDAO.findUser(username);
-                        int userId = user.getUserId();
                         int storyId = Integer.parseInt(req.getParameter("storyId"));
-
                         StoryDAO storyDAO = new StoryDAO();
                         storyDAO.removeReadHistory(userId, storyId);
                         break;
                     }
 
                     case "deleteBookmark": {
-                        UserDAO userDAO = new UserDAO();
-                        User user = userDAO.findUser(username);
-                        int userId = user.getUserId();
-
                         int storyId = Integer.parseInt(req.getParameter("storyId"));
                         StoryDAO storyDAO = new StoryDAO();
                         storyDAO.removeBookmark(userId, storyId);
@@ -108,6 +115,6 @@ public class ProfileServlet extends HttpServlet {
                 throw new ServletException("Error processing profile action: " + action, e);
             }
         }
-        res.sendRedirect(req.getContextPath() + "/profile");//reload page
+        res.sendRedirect(req.getContextPath() + "/profile");
     }
 }

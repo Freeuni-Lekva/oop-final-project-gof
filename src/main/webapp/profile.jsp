@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List, java.util.ArrayList" %>
-<%@ page import="model.media.Post, model.story.Story" %>
+<%@ page import="model.media.Post, model.story.Story, model.User" %>
 <%@ page import="data.story.StoryDAO, data.story.TagsDAO" %>
+<%@ page import="java.sql.SQLException" %>
 
 <%!
     // Helper function to shorten text, copied from home.jsp
@@ -27,25 +28,54 @@
 <body class="bg-gray-900">
 
 <%
-    String username = (String) session.getAttribute("user");
-    if (username == null) {
-        response.sendRedirect("login.jsp");
+    User profileUser = (User) request.getAttribute("profileUser");
+    if (profileUser == null) {
+        response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
+    String username = profileUser.getUsername();
 %>
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <header class="mb-10">
+    <header class="mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-4xl font-bold font-orbitron text-white">
-                Profile: <span class="text-purple-400"><%= username %></span>
-            </h1>
+            <div class="flex items-center space-x-4">
+                <%
+                    String profilePicturePath = request.getContextPath() + "/images/profiles/" + profileUser.getImageName();
+                %>
+                <img src="<%= profilePicturePath %>" alt="Profile Picture" class="w-20 h-20 rounded-full object-cover border-2 border-purple-400">
+
+                <h1 class="text-4xl font-bold font-orbitron text-white">
+                    Profile: <span class="text-purple-400"><%= username %></span>
+                </h1>
+            </div>
+
             <a href="home.jsp" class="text-purple-400 hover:text-purple-300 transition-colors duration-300 font-semibold">
                 ← Back to Home
             </a>
         </div>
-        <p class="text-gray-400 mt-2">Manage your creator content and view your history.</p>
+        <p class="text-gray-400 mt-2 ml-24">Manage your creator content and view your history.</p>
     </header>
+
+    <%
+        List<Post> userPosts = (List<Post>) request.getAttribute("userPosts");
+        List<User> followersList = (List<User>) request.getAttribute("followersList");
+        List<User> followingList = (List<User>) request.getAttribute("followingList");
+
+        int followerCount = (followersList != null) ? followersList.size() : 0;
+        int followingCount = (followingList != null) ? followingList.size() : 0;
+    %>
+    <div class="flex space-x-8 mb-10">
+        <a href="<%= request.getContextPath() %>/followList?userId=<%= profileUser.getUserId() %>&type=followers" class="text-center block hover:text-purple-300 transition-colors">
+            <span class="font-bold text-xl text-white"><%= followerCount %></span>
+            <span class="block text-sm text-gray-400">Followers</span>
+        </a>
+        <a href="<%= request.getContextPath() %>/followList?userId=<%= profileUser.getUserId() %>&type=following" class="text-center block hover:text-purple-300 transition-colors">
+            <span class="font-bold text-xl text-white"><%= followingCount %></span>
+            <span class="block text-sm text-gray-400">Following</span>
+        </a>
+    </div>
+
 
     <main>
         <section id="published-posts">
@@ -53,17 +83,27 @@
                 Your Published Posts
             </h2>
             <%
-                List<Post> userPosts = (List<Post>) request.getAttribute("userPosts");
                 if (userPosts != null && !userPosts.isEmpty()) {
-                    StoryDAO storyDAO = new StoryDAO();
-                    TagsDAO tagsDAO = new TagsDAO();
+                    StoryDAO storyDAO = (StoryDAO) application.getAttribute("storyDao");
+                    TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagsDao");
             %>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <%
                     for (Post post : userPosts) {
-                        Story story = storyDAO.getStory(post.getStoryId());
+                        Story story = null;
+                        try {
+                            story = storyDAO.getStory(post.getStoryId());
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
                         List<String> storyTags = new ArrayList<>();
-                        if (story != null) { storyTags = tagsDAO.getStoryTags(story.getStoryId()); }
+                        if (story != null) {
+                            try {
+                                storyTags = tagsDAO.getStoryTags(story.getStoryId());
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                         String title = (story != null) ? story.getTitle() : "Untitled Story";
                         String prompt = (story != null) ? story.getPrompt() : "No description available.";
                         String imageUrl = request.getContextPath() + "/images/posts/" + post.getImageName();
