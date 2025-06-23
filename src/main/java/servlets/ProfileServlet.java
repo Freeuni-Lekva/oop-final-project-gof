@@ -41,7 +41,7 @@ public class ProfileServlet extends HttpServlet {
             }
 
             List<Post> userPosts = postDAO.getPostsByCreatorId(user.getUserId());
-            List<Story> readingHistory = storyDAO.findReadingHistory(user.getUserId());
+            List<Story> readingHistory = storyDAO.findReadHistory(user.getUserId());
             List<Story> bookmarkedStories = storyDAO.findBookmarkedStories(user.getUserId());
 
             req.setAttribute("userPosts", userPosts);
@@ -69,36 +69,45 @@ public class ProfileServlet extends HttpServlet {
         String action = req.getParameter("action");
         String username = (String) session.getAttribute("user");
 
-        try {
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.findUser(username);
-            if (user == null) {
-                res.sendRedirect(req.getContextPath() + "/login.jsp");
-                return;
+        if (action != null) {
+            try {
+                switch (action) {
+                    case "deletePost": {
+                        int postId = Integer.parseInt(req.getParameter("postId"));
+                        PostDAO postDAO = new PostDAO();
+                        postDAO.deletePost(postId);
+                        break;
+                    }
+
+                    case "deleteHistory": {
+                        UserDAO userDAO = new UserDAO();
+                        User user = userDAO.findUser(username);
+                        int userId = user.getUserId();
+                        int storyId = Integer.parseInt(req.getParameter("storyId"));
+
+                        StoryDAO storyDAO = new StoryDAO();
+                        storyDAO.removeReadHistory(userId, storyId);
+                        break;
+                    }
+
+                    case "deleteBookmark": {
+                        UserDAO userDAO = new UserDAO();
+                        User user = userDAO.findUser(username);
+                        int userId = user.getUserId();
+
+                        int storyId = Integer.parseInt(req.getParameter("storyId"));
+                        StoryDAO storyDAO = new StoryDAO();
+                        storyDAO.removeBookmark(userId, storyId);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            } catch (NumberFormatException | SQLException e) {
+                throw new ServletException("Error processing profile action: " + action, e);
             }
-            int userId = user.getUserId();
-
-            if ("deletePost".equals(action)) {
-                int postId = Integer.parseInt(req.getParameter("postId"));
-                PostDAO postDAO = new PostDAO();
-                postDAO.deletePost(postId);
-
-            } else if ("deleteHistory".equals(action)) {
-                int storyId = Integer.parseInt(req.getParameter("storyId"));
-                StoryDAO storyDAO = new StoryDAO();
-                storyDAO.removeReadingHistory(userId, storyId);
-
-            } else if ("deleteBookmark".equals(action)) {
-                int storyId = Integer.parseInt(req.getParameter("storyId"));
-                StoryDAO storyDAO = new StoryDAO();
-                storyDAO.removeBookmark(userId, storyId);
-            }
-
-        } catch (NumberFormatException | SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Error processing profile action.", e);
         }
-
-        res.sendRedirect(req.getContextPath() + "/profile");
+        res.sendRedirect(req.getContextPath() + "/profile");//reload page
     }
 }

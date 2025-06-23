@@ -287,7 +287,6 @@ public class StoryDAO {
             throw e;
         }
     }
-    //also use this inside story.jsp
     public void addBookmark(int userId, int storyId) throws SQLException {
             /* used insert ignore; if the pair already exists, it will do nothing
             * instead of throwing error */
@@ -305,7 +304,7 @@ public class StoryDAO {
             throw e;
         }
     }
-    public List<Story> findReadingHistory(int userId) throws SQLException {
+    public List<Story> findReadHistory(int userId) throws SQLException {
         List<Story> stories = new ArrayList<>();
         String sql = "SELECT s.* FROM stories s " +
                 "JOIN read_history rh ON s.story_id = rh.story_id " +
@@ -327,8 +326,8 @@ public class StoryDAO {
         }
         return stories;
     }
-    //TODO call this method when a user tries to view a post.jsp, add new servlet for posts
-    public void addReadingHistory(int userId, int storyId) throws SQLException {
+    
+    public void addReadHistory(int userId, int storyId) throws SQLException {
         String sql = "INSERT INTO read_history (user_id, story_id, last_read_at) VALUES (?, ?, NOW()) " +
                 "ON DUPLICATE KEY UPDATE last_read_at = NOW()";
 
@@ -347,7 +346,7 @@ public class StoryDAO {
         }
     }
 
-    public void removeReadingHistory(int userId, int storyId) throws SQLException {
+    public void removeReadHistory(int userId, int storyId) throws SQLException {
         String sql = "DELETE FROM read_history WHERE user_id = ? AND story_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
