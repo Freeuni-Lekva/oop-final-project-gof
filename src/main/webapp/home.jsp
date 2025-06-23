@@ -16,9 +16,21 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(17, 24, 39, 0.7);
+            z-index: -1;
+        }
+
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 font-sans">
+<body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img4.jpg');">
 
 <%
     String username = (String) session.getAttribute("user");
@@ -45,8 +57,8 @@
                         }
                     }
                 %>
-                <a href="/create-post.jsp" class="hidden sm:inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="/profile" class="flex items-center space-x-2 text-gray-300 hover:text-white font-medium">
+                <a href="/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
+                <a href="/profile" class="flex items-center space-x-2 text-black hover:text-black font-medium">
                     <%
                         String profilePicUrl;
                         if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
@@ -58,7 +70,7 @@
                     <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
                     <span><%= username %></span>
                 </a>
-                <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
+                <a href="/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
                 <% } else { %>
                 <a href="/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
                 <a href="/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
@@ -83,8 +95,7 @@
                 <option value="tag" <%= "tag".equals(searchType) ? "selected" : "" %>>Tag</option>
             </select>
             <input type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
-        </form>
+            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-black font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
     </div>
 
     <%!
@@ -159,7 +170,7 @@
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="/create-post.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-black font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
             <a href="/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
@@ -206,6 +217,5 @@
         }
     });
 </script>
-
 </body>
 </html>
