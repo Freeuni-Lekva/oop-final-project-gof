@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class StoryDAO {
 
-    public StoryDAO() { }
+    public StoryDAO() {
+    }
 
     public void createStory(String title, String prompt, int creatorId) throws SQLException {
         String sql = "INSERT INTO stories (creator_id, title, prompt, created_at) VALUES (?, ?, ?, NOW())";
@@ -214,8 +215,7 @@ public class StoryDAO {
                 }
             }
             linkTagStatement.executeBatch();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.err.println("Error linking tags to story: " + e.getMessage());
             e.printStackTrace();
             throw e;
@@ -287,9 +287,10 @@ public class StoryDAO {
             throw e;
         }
     }
+
     public void addBookmark(int userId, int storyId) throws SQLException {
-            /* used insert ignore; if the pair already exists, it will do nothing
-            * instead of throwing error */
+        /* used insert ignore; if the pair already exists, it will do nothing
+         * instead of throwing error */
         String sql = "INSERT IGNORE INTO bookmarks (user_id, story_id) VALUES (?, ?)";
 
         try (Connection conn = MySqlConnector.getConnection();
@@ -304,6 +305,7 @@ public class StoryDAO {
             throw e;
         }
     }
+
     public List<Story> findReadHistory(int userId) throws SQLException {
         List<Story> stories = new ArrayList<>();
         String sql = "SELECT s.* FROM stories s " +
@@ -326,7 +328,7 @@ public class StoryDAO {
         }
         return stories;
     }
-    
+
     public void addReadHistory(int userId, int storyId) throws SQLException {
         String sql = "INSERT INTO read_history (user_id, story_id, last_read_at) VALUES (?, ?, NOW()) " +
                 "ON DUPLICATE KEY UPDATE last_read_at = NOW()";
@@ -405,7 +407,6 @@ public class StoryDAO {
         int creatorId = resultSet.getInt("creator_id");
         String title = resultSet.getString("title");
         String prompt = resultSet.getString("prompt");
-        // Convert java.sql.Timestamp from database to java.time.LocalDateTime
         LocalDateTime creationDate = resultSet.getTimestamp("created_at").toLocalDateTime();
 
         return new Story(title, prompt, creatorId, storyId, creationDate);
