@@ -22,7 +22,6 @@ public class PublicProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-
         String viewerUsername = (session != null) ? (String) session.getAttribute("user") : null;
 
         if (viewerUsername == null) {
@@ -30,19 +29,15 @@ public class PublicProfileServlet extends HttpServlet {
             return;
         }
 
-
         String profileUsername = request.getParameter("username");
-
 
         if (profileUsername == null || profileUsername.equals(viewerUsername)) {
             response.sendRedirect("profile");
             return;
         }
 
-
         try {
             UserDAO userDAO = new UserDAO();
-
 
             User viewer = userDAO.findUser(viewerUsername);
             if (viewer == null) {
@@ -58,12 +53,11 @@ public class PublicProfileServlet extends HttpServlet {
                 return;
             }
 
-            PostDAO postDAO = new PostDAO(); // Moved DAO instantiation here
+            PostDAO postDAO = new PostDAO();
             List<Post> userPosts = postDAO.getPostsByCreatorId(profileOwner.getUserId());
             List<User> followersList = userDAO.findFollowers(profileOwner.getUserId());
             List<User> followingList = userDAO.findFollowing(profileOwner.getUserId());
             boolean isFollowing = userDAO.isFollowing(viewer.getUserId(), profileOwner.getUserId());
-
 
             request.setAttribute("profileOwner", profileOwner);
             request.setAttribute("userPosts", userPosts);
@@ -75,6 +69,43 @@ public class PublicProfileServlet extends HttpServlet {
 
         } catch (SQLException e) {
             throw new ServletException("Database error loading public profile for " + profileUsername, e);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        String viewerUsername = (session != null) ? (String) session.getAttribute("user") : null;
+
+        if (viewerUsername == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        String profileOwnerUsername = request.getParameter("profileUsername");
+
+        try {
+            UserDAO userDAO = new UserDAO();
+
+            User viewer = userDAO.findUser(viewerUsername);
+            User profileOwner = userDAO.findUser(profileOwnerUsername);
+
+            if (viewer == null || profileOwner == null || action == null) {
+                response.sendRedirect("home.jsp");
+                return;
+            }
+
+            if ("follow".equals(action)) {
+                userDAO.followUser(viewer.getUserId(), profileOwner.getUserId());
+            } else if ("unfollow".equals(action)) {
+                userDAO.unfollowUser(viewer.getUserId(), profileOwner.getUserId());
+            }
+
+            response.sendRedirect("user?username=" + profileOwnerUsername);
+
+        } catch (SQLException e) {
+            throw new ServletException("Database error performing follow/unfollow action.", e);
         }
     }
 }
