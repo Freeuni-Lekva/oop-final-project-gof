@@ -85,7 +85,7 @@
     <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">Published Posts</h2>
     <% if (userPosts != null && !userPosts.isEmpty()) {
       StoryDAO storyDAO = (StoryDAO) application.getAttribute("storyDao");
-      TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagsDao");  %>
+      TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagDao");  %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <% for (Post post : userPosts) {
           Story story;
@@ -107,7 +107,7 @@
           String title = story.getTitle();
       %>
       <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full">
-        <a href="story.jsp?id=<%= story.getStoryId() %>" class="block h-full">
+        <a href="post.jsp?id=<%= story.getStoryId() %>" class="block h-full">
           <img src="<%= request.getContextPath() %>/images/posts/<%= post.getImageName() %>" alt="Post art for <%= title %>" class="w-full h-40 object-cover">
           <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
             <div>

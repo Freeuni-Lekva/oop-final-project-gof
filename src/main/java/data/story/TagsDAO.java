@@ -9,9 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Manages creation and retrieval of tags used to label stories.
@@ -40,30 +38,59 @@ public class TagsDAO {
         return tags;
     }
 
-    public List<Integer> findStoryIdsByTag(String query) throws SQLException {
-        List<Integer> storyIds = new ArrayList<>();
 
-        String sql = "SELECT s.story_id FROM stories s " +
-                "JOIN story_tags st ON s.story_id = st.story_id " +
+    public List<Integer> findStoryIdsByMultipleTags(List<String> tagNames) throws SQLException {
+
+        Set<String> uniqueUpperTags = cleanedTags(tagNames);
+
+        if (uniqueUpperTags.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Integer> storyIds = new ArrayList<>();
+        int numberOfUniqueTags = uniqueUpperTags.size();
+
+        String inClausePlaceholders = String.join(",", Collections.nCopies(numberOfUniqueTags, "?"));
+        String sql = "SELECT st.story_id FROM story_tags st " +
                 "JOIN tags t ON st.tag_id = t.tag_id " +
-                "WHERE t.name LIKE ? " +
-                "ORDER BY s.created_at DESC";
+                "WHERE UPPER(t.name) IN (" + inClausePlaceholders + ") " +
+                "GROUP BY st.story_id " +
+                "HAVING COUNT(DISTINCT UPPER(t.name)) = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, "%" + query + "%");
+            int index = 1;
+            for (String upperCaseTag : uniqueUpperTags) {
+                preparedStatement.setString(index++, upperCaseTag);
+            }
+
+            preparedStatement.setInt(index, numberOfUniqueTags);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 storyIds.add(resultSet.getInt("story_id"));
             }
+
         } catch (SQLException e) {
-            System.err.println("Error finding story IDs by tag: " + e.getMessage());
+            System.err.println("Error finding story IDs by multiple tags: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
         return storyIds;
+    }
+
+
+    private Set<String> cleanedTags(List<String> tagNames) {
+        Set<String> uniqueUpperTags = new HashSet<>();
+        if (tagNames != null) {
+            for (String tagName : tagNames) {
+                if (tagName != null && !tagName.trim().isEmpty()) {
+                    uniqueUpperTags.add(tagName.trim().toUpperCase());
+                }
+            }
+        }
+        return uniqueUpperTags;
     }
 
 }

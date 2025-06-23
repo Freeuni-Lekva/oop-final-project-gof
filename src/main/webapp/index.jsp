@@ -22,7 +22,7 @@
       /* Main hero section with parallax-like effect */
       .hero-section {
          background-image: url('<%= request.getContextPath() %>images/design/img.jpg');
-         background-attachment: fixed; /* Creates the parallax effect */
+         background-attachment: fixed;
          background-position: center;
          background-repeat: no-repeat;
          background-size: cover;
@@ -50,7 +50,7 @@
       /* Styling for the header */
       header {
          background-color: rgba(10, 10, 10, 0.5);
-         backdrop-filter: blur(10px); /* Frosted glass effect */
+         backdrop-filter: blur(10px);
          -webkit-backdrop-filter: blur(10px);
          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }

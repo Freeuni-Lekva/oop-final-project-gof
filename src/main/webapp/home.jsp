@@ -2,6 +2,7 @@
 <%@ page import="java.util.List, java.util.ArrayList, model.story.Story" %>
 <%@ page import="data.story.TagsDAO, data.media.PostDAO, model.media.Post" %>
 <%@ page import="data.user.UserDAO, model.User, java.lang.String" %>
+<%@ page import="model.story.Tags" %>
 <%@ page import="java.io.File" %>
 
 <!DOCTYPE html>
@@ -16,9 +17,21 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(17, 24, 39, 0.7);
+            z-index: -1;
+        }
+
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 font-sans">
+<body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img4.jpg');">
 
 <%
     String username = (String) session.getAttribute("user");
@@ -45,8 +58,8 @@
                         }
                     }
                 %>
-                <a href="/create-post.jsp" class="hidden sm:inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="/profile" class="flex items-center space-x-2 text-gray-300 hover:text-white font-medium">
+                <a href="/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
+                <a href="/profile" class="flex items-center space-x-2 text-black hover:text-indigo-400 font-medium">
                     <%
                         String profilePicUrl;
                         if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
@@ -58,7 +71,7 @@
                     <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
                     <span><%= username %></span>
                 </a>
-                <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
+                <a href="/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
                 <% } else { %>
                 <a href="/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
                 <a href="/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
@@ -77,15 +90,24 @@
 
     <div class="max-w-2xl mx-auto mb-12">
         <form action="/search" method="GET" class="flex flex-col sm:flex-row gap-2">
-            <select name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="title" <%= "title".equals(searchType) ? "selected" : "" %>>Title</option>
                 <option value="creator" <%= "creator".equals(searchType) ? "selected" : "" %>>Creator</option>
                 <option value="tag" <%= "tag".equals(searchType) ? "selected" : "" %>>Tag</option>
             </select>
-            <input type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
+            <input id="search-query-input" type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
+            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-black font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
         </form>
+
+        <div class="flex flex-wrap justify-center gap-2 mt-4">
+            <% for (String tag : Tags.getAllTags()) { %>
+            <button type="button" class="tag-button bg-gray-700 hover:bg-indigo-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
+                <%= tag %>
+            </button>
+            <% } %>
+        </div>
     </div>
+
 
     <%!
         String truncate(String text, int length) {
@@ -127,7 +149,7 @@
                         : "https://placehold.co/600x400/111827/374151?text=Saga";
             %>
             <div class="story-card">
-                <a href="/story.jsp?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
+                <a href="<%= request.getContextPath() %>/post.jsp?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
                     <img src="<%= imageUrl %>" alt="Story Art for <%= story.getTitle() %>" class="w-full h-40 object-cover">
                     <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
                         <div>
@@ -159,7 +181,7 @@
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="/create-post.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-black font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
             <a href="/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
@@ -204,8 +226,27 @@
         } else {
             showMoreContainer.style.display = 'none';
         }
+
+        const searchInput = document.getElementById('search-query-input');
+        const searchTypeSelect = document.getElementById('search-type-select');
+        const tagButtons = document.querySelectorAll('.tag-button');
+
+        tagButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tagText = this.textContent.trim();
+                const currentSearchValue = searchInput.value.trim();
+
+                if (currentSearchValue === '') {
+                    searchInput.value = tagText;
+                } else {
+                    searchInput.value = currentSearchValue + ' ' + tagText;
+                }
+
+                searchTypeSelect.value = 'tag';
+                searchInput.focus();
+            });
+        });
     });
 </script>
-
 </body>
 </html>

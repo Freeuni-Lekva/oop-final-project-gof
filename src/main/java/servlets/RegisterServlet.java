@@ -3,6 +3,7 @@ import data.user.UserDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 import java.io.File;
 import java.util.Random;
 
+
+@WebServlet(name="register", value="/register")
 public class RegisterServlet extends HttpServlet {
 
     private static final String DEFAULT_PHOTOS_DIR = "images" + File.separator + "default-photos";
