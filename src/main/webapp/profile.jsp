@@ -3,6 +3,8 @@
 <%@ page import="model.media.Post, model.story.Story, model.User" %>
 <%@ page import="data.story.StoryDAO, data.story.TagsDAO" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="data.media.PostDAO" %>
+<%@ page import="model.media.Post" %>
 
 <%!
     // Helper function to shorten text, copied from home.jsp
@@ -196,10 +198,22 @@
             %>
             <div class="space-y-4">
                 <%
+                    PostDAO postDao = (PostDAO) application.getAttribute("postDao");
+
                     for (Story story : bookmarkedStories) {
+                        Post coverPost = null;
+                        if (postDao != null) {
+                            try {
+                                coverPost = postDao.getFirstPostForStory(story.getStoryId());
+                            } catch (Exception e) {
+                                System.err.println("Could not fetch cover post for story " + story.getStoryId() + ": " + e.getMessage());
+                            }
+                        }
+                        assert coverPost != null;
+                        String linkUrl = request.getContextPath() + "/post.jsp?id=" + coverPost.getPostId();
                 %>
                 <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
-                    <a href="story.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 flex-grow">
+                    <a href="<%= linkUrl %>" class="font-semibold text-lg text-white hover:text-purple-300 flex-grow">
                         <%= story.getTitle() %>
                     </a>
 
