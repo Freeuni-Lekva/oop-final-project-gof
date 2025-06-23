@@ -1,5 +1,6 @@
 package servlets;
 
+import data.media.PostDAO;
 import data.user.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.User;
+import model.media.Post;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,9 +35,9 @@ public class FollowListServlet extends HttpServlet {
             return;
         }
 
-
         try {
             UserDAO userDAO = new UserDAO();
+            PostDAO postDAO = new PostDAO();
 
             User profileOwner = userDAO.findUserById(userId);
             if (profileOwner == null) {
@@ -43,16 +45,21 @@ public class FollowListServlet extends HttpServlet {
                 return;
             }
 
-            List<User> userList;
+            List<Post> userPosts = postDAO.getPostsByCreatorId(profileOwner.getUserId());
+            List<User> followersList = userDAO.findFollowers(profileOwner.getUserId());
+            List<User> followingList = userDAO.findFollowing(profileOwner.getUserId());
+
+
+            List<User> mainDisplayList;
             String pageTitle;
 
             switch (type) {
                 case "followers":
-                    userList = userDAO.findFollowers(userId);
+                    mainDisplayList = followersList;
                     pageTitle = "Followers";
                     break;
                 case "following":
-                    userList = userDAO.findFollowing(userId);
+                    mainDisplayList = followingList;
                     pageTitle = "Following";
                     break;
                 default:
@@ -60,9 +67,12 @@ public class FollowListServlet extends HttpServlet {
                     return;
             }
 
-            request.setAttribute("userList", userList);
+            request.setAttribute("mainDisplayList", mainDisplayList);
             request.setAttribute("pageTitle", pageTitle);
             request.setAttribute("profileOwner", profileOwner);
+            request.setAttribute("userPosts", userPosts);
+            request.setAttribute("followersList", followersList);
+            request.setAttribute("followingList", followingList);
 
             request.getRequestDispatcher("/followList.jsp").forward(request, response);
 
