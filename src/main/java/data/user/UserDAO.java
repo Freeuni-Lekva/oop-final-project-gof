@@ -135,30 +135,13 @@ public class UserDAO {
         }
     }
 
-    public void addFollower(int userId, int followerId) throws SQLException {
+    public void followUser(int followerId, int followingId) throws SQLException {
         String sql = "INSERT IGNORE INTO followers (follower_id, following_id) VALUES (?, ?)";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setInt(1, followerId);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            System.err.println("Error adding follower: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    public void addFollowing(int userId, int followingId) throws SQLException {
-        String sql = "INSERT IGNORE INTO followers (follower_id, following_id) VALUES (?, ?)";
-
-        try (Connection conn = MySqlConnector.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-
-            preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, followingId);
             preparedStatement.executeUpdate();
 
@@ -169,9 +152,49 @@ public class UserDAO {
         }
     }
 
-    /**
-     * Helper method to create a User object from a ResultSet row.
-     */
+    public void unfollowUser(int followerId, int followingId) throws SQLException {
+        String sql = "DELETE FROM followers WHERE follower_id = ? AND following_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, followerId);
+            preparedStatement.setInt(2, followingId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error unfollowing user: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public boolean isFollowing(int viewerId, int profileOwnerId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM followers WHERE follower_id = ? AND following_id = ?";
+        boolean isFollowing = false;
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, viewerId);
+            preparedStatement.setInt(2, profileOwnerId);
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getInt(1) > 0) {
+                        isFollowing = true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking follow status: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return isFollowing;
+    }
+
+
     private User populateUser(ResultSet resultSet) throws SQLException {
         int userId = resultSet.getInt("user_id");
         String username = resultSet.getString("username");
