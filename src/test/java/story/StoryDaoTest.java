@@ -115,6 +115,68 @@ public class StoryDaoTest extends TestCase {
         assertTrue(noBookmarks.isEmpty());
     }
 
+    public void testAddBookmark() throws SQLException {
+        List<Story> initialBookmarks = storyDao.findBookmarkedStories(1);
+        assertTrue("User 1 should have no bookmarks initially.", initialBookmarks.isEmpty());
+
+        storyDao.addBookmark(1, 2);
+
+        List<Story> finalBookmarks = storyDao.findBookmarkedStories(1);
+        assertEquals("User 1 should have 1 bookmark after adding one.", 1, finalBookmarks.size());
+        assertEquals("The bookmarked story should be the correct one.", 2, finalBookmarks.get(0).getStoryId());
+    }
+
+    public void testRemoveBookmark() throws SQLException {
+        createInitialStories();
+        createInitialBookmarks();
+        assertEquals("User 1 should have 2 bookmarks initially.", 2, storyDao.findBookmarkedStories(1).size());
+
+        storyDao.removeBookmark(1, 5);
+
+        List<Story> finalBookmarks = storyDao.findBookmarkedStories(1);
+        assertEquals("User 1 should have 1 bookmark after removing one.", 1, finalBookmarks.size());
+        assertEquals("The remaining bookmark should be for story 3.", 3, finalBookmarks.get(0).getStoryId());
+    }
+
+    public void testFindReadHistory() throws SQLException {
+        createInitialStories();
+        createInitialReadHistory();
+
+        List<Story> history = storyDao.findReadHistory(1);
+
+        assertNotNull("History list should not be null.", history);
+        assertEquals("User 1 should have 2 stories in their history.", 2, history.size());
+        assertTrue("History should contain 'Second Story'", history.stream().anyMatch(s -> s.getTitle().equals("Second Story")));
+        assertTrue("History should contain 'Third Story'", history.stream().anyMatch(s -> s.getTitle().equals("Third Story")));
+    }
+
+    public void testAddReadHistory() throws SQLException {
+        assertTrue("User 2 should have no history initially.", storyDao.findReadHistory(2).isEmpty());
+
+        storyDao.addReadHistory(2, 1);
+
+        List<Story> history = storyDao.findReadHistory(2);
+        assertEquals("User 2 should have 1 item in history.", 1, history.size());
+        assertEquals("The story in history should be story 1.", 1, history.get(0).getStoryId());
+
+        storyDao.addReadHistory(2, 1);
+
+        List<Story> historyAfterReRead = storyDao.findReadHistory(2);
+        assertEquals("History count should remain 1 after re-Read.", 1, historyAfterReRead.size());
+    }
+
+    public void testRemoveReadHistory() throws SQLException {
+        createInitialStories();
+        createInitialReadHistory();
+        assertEquals("User 1 should have 2 stories in history initially.", 2, storyDao.findReadHistory(1).size());
+
+        storyDao.removeReadHistory(1, 4); // Corresponds to "Second Story"
+
+        List<Story> finalHistory = storyDao.findReadHistory(1);
+        assertEquals("User 1 should have 1 story in history after removing one.", 1, finalHistory.size());
+        assertEquals("The remaining story should be story 5.", 5, finalHistory.get(0).getStoryId());
+    }
+
     @Override
     public void tearDown() throws SQLException {
         MySqlConnector.close(conn);
@@ -142,6 +204,25 @@ public class StoryDaoTest extends TestCase {
 
             preparedStatement.setInt(1, 2);
             preparedStatement.setInt(2, 4);
+            preparedStatement.addBatch();
+
+            preparedStatement.executeBatch();
+        }
+    }
+    
+    private void createInitialReadHistory() throws SQLException {
+        String sql = "INSERT INTO read_history (user_id, story_id) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, 1);
+            preparedStatement.setInt(2, 4); // "Second Story"
+            preparedStatement.addBatch();
+
+            preparedStatement.setInt(1, 1);
+            preparedStatement.setInt(2, 5); // "Third Story"
+            preparedStatement.addBatch();
+
+            preparedStatement.setInt(1, 2);
+            preparedStatement.setInt(2, 3); // "First Story"
             preparedStatement.addBatch();
 
             preparedStatement.executeBatch();

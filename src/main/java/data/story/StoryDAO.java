@@ -270,6 +270,98 @@ public class StoryDAO {
         return stories;
     }
 
+
+    public void removeBookmark(int userId, int storyId) throws SQLException {
+        String sql = "DELETE FROM bookmarks WHERE user_id = ? AND story_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error removing bookmark: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    public void addBookmark(int userId, int storyId) throws SQLException {
+            /* used insert ignore; if the pair already exists, it will do nothing
+            * instead of throwing error */
+        String sql = "INSERT IGNORE INTO bookmarks (user_id, story_id) VALUES (?, ?)";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error adding bookmark: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    public List<Story> findReadHistory(int userId) throws SQLException {
+        List<Story> stories = new ArrayList<>();
+        String sql = "SELECT s.* FROM stories s " +
+                "JOIN read_history rh ON s.story_id = rh.story_id " +
+                "WHERE rh.user_id = ? " +
+                "ORDER BY rh.last_read_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stories.add(populateStory(resultSet));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding reading history stories: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return stories;
+    }
+    
+    public void addReadHistory(int userId, int storyId) throws SQLException {
+        String sql = "INSERT INTO read_history (user_id, story_id, last_read_at) VALUES (?, ?, NOW()) " +
+                "ON DUPLICATE KEY UPDATE last_read_at = NOW()";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error adding story: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void removeReadHistory(int userId, int storyId) throws SQLException {
+        String sql = "DELETE FROM read_history WHERE user_id = ? AND story_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error removing history: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public void updateStory(Story story) throws SQLException {
         String sql = "UPDATE stories SET title = ?, prompt = ? WHERE story_id = ?";
 

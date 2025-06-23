@@ -145,4 +145,49 @@ public class PostDAO {
         return null;
     }
 
+    public List<Post> getPostsByCreatorId(int creatorId) throws SQLException {
+        List<Post> userPosts = new ArrayList<>();
+        String sql = "SELECT p.post_id, p.story_id, p.image_name, p.created_at, p.like_count, p.comment_count " +
+                "FROM posts p " +
+                "JOIN stories s ON p.story_id = s.story_id " +
+                "WHERE s.creator_id = ? " +
+                "ORDER BY p.created_at DESC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, creatorId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Post post = new Post(
+                        rs.getInt("post_id"),
+                        rs.getInt("story_id"),
+                        rs.getString("image_name"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getInt("like_count"),
+                        rs.getInt("comment_count")
+                );
+                userPosts.add(post);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return userPosts;
+    }
+
+    public void deletePost(int postId) throws SQLException {
+        String sql = "DELETE FROM posts WHERE post_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, postId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }
