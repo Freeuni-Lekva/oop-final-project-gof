@@ -2,6 +2,7 @@
 <%@ page import="java.util.List, java.util.ArrayList, model.story.Story" %>
 <%@ page import="data.story.TagsDAO, data.media.PostDAO, model.media.Post" %>
 <%@ page import="data.user.UserDAO, model.User, java.lang.String" %>
+<%@ page import="model.story.Tags" %>
 <%@ page import="java.io.File" %>
 
 <!DOCTYPE html>
@@ -58,7 +59,7 @@
                     }
                 %>
                 <a href="/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="/profile" class="flex items-center space-x-2 text-black hover:text-black font-medium">
+                <a href="/profile" class="flex items-center space-x-2 text-black hover:text-indigo-400 font-medium">
                     <%
                         String profilePicUrl;
                         if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
@@ -89,14 +90,24 @@
 
     <div class="max-w-2xl mx-auto mb-12">
         <form action="/search" method="GET" class="flex flex-col sm:flex-row gap-2">
-            <select name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="title" <%= "title".equals(searchType) ? "selected" : "" %>>Title</option>
                 <option value="creator" <%= "creator".equals(searchType) ? "selected" : "" %>>Creator</option>
                 <option value="tag" <%= "tag".equals(searchType) ? "selected" : "" %>>Tag</option>
             </select>
-            <input type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
+            <input id="search-query-input" type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
             <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-black font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
+        </form>
+
+        <div class="flex flex-wrap justify-center gap-2 mt-4">
+            <% for (String tag : Tags.getAllTags()) { %>
+            <button type="button" class="tag-button bg-gray-700 hover:bg-indigo-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
+                <%= tag %>
+            </button>
+            <% } %>
+        </div>
     </div>
+
 
     <%!
         String truncate(String text, int length) {
@@ -215,6 +226,26 @@
         } else {
             showMoreContainer.style.display = 'none';
         }
+
+        const searchInput = document.getElementById('search-query-input');
+        const searchTypeSelect = document.getElementById('search-type-select');
+        const tagButtons = document.querySelectorAll('.tag-button');
+
+        tagButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tagText = this.textContent.trim();
+                const currentSearchValue = searchInput.value.trim();
+
+                if (currentSearchValue === '') {
+                    searchInput.value = tagText;
+                } else {
+                    searchInput.value = currentSearchValue + ' ' + tagText;
+                }
+
+                searchTypeSelect.value = 'tag';
+                searchInput.focus();
+            });
+        });
     });
 </script>
 </body>
