@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List, java.util.ArrayList, model.User, model.media.Post, model.story.Story, data.story.StoryDAO, data.story.TagsDAO" %>
+<%@ page import="java.sql.SQLException" %>
 
 <%!
   String truncate(String text, int length) {
@@ -83,13 +84,27 @@
   <main>
     <h2 class="text-2xl font-semibold text-gray-200 border-b-2 border-gray-700 pb-2 mb-6">Published Posts</h2>
     <% if (userPosts != null && !userPosts.isEmpty()) {
-      StoryDAO storyDAO = new StoryDAO();
-      TagsDAO tagsDAO = new TagsDAO(); %>
+      StoryDAO storyDAO = (StoryDAO) application.getAttribute("storyDao");
+      TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagsDao");  %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <% for (Post post : userPosts) {
-        Story story = storyDAO.getStory(post.getStoryId());
-        List<String> storyTags = (story != null) ? tagsDAO.getStoryTags(story.getStoryId()) : new ArrayList<>();
-        String prompt = (story != null) ? story.getPrompt() : "No description.";
+          Story story;
+          try {
+              story = storyDAO.getStory(post.getStoryId());
+          } catch (SQLException e) {
+              throw new RuntimeException(e);
+          }
+          List<String> storyTags = null;
+          try {
+              storyTags = (story != null) ? tagsDAO.getStoryTags(story.getStoryId()) : new ArrayList<>();
+          } catch (SQLException e) {
+              throw new RuntimeException(e);
+          }
+          if (story == null) {
+            throw new ServletException("story was null on publicProfile.jsp");
+          }
+          String prompt = story.getPrompt();
+          String title = story.getTitle();
       %>
       <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full">
         <a href="story.jsp?id=<%= story.getStoryId() %>" class="block h-full">

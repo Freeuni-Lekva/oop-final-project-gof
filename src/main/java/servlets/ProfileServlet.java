@@ -3,6 +3,7 @@ package servlets;
 import data.media.PostDAO;
 import data.story.StoryDAO;
 import data.user.UserDAO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,7 +25,7 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -37,7 +38,7 @@ public class ProfileServlet extends HttpServlet {
             User user = userDAO.findUser(username);
             if (user == null) {
                 session.invalidate();
-                res.sendRedirect(req.getContextPath() + "/login.jsp");
+                res.sendRedirect(req.getContextPath() + "/login");
                 return;
             }
 
@@ -67,7 +68,7 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -76,10 +77,11 @@ public class ProfileServlet extends HttpServlet {
 
         if (action != null) {
             try {
-                UserDAO userDAO = new UserDAO();
+                ServletContext context = getServletContext();
+                UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
                 User user = userDAO.findUser(username);
                 if (user == null) {
-                    res.sendRedirect(req.getContextPath() + "/login.jsp");
+                    res.sendRedirect(req.getContextPath() + "/login");
                     return;
                 }
                 int userId = user.getUserId();

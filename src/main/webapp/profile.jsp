@@ -2,6 +2,7 @@
 <%@ page import="java.util.List, java.util.ArrayList" %>
 <%@ page import="model.media.Post, model.story.Story, model.User" %>
 <%@ page import="data.story.StoryDAO, data.story.TagsDAO" %>
+<%@ page import="java.sql.SQLException" %>
 
 <%!
     // Helper function to shorten text, copied from home.jsp
@@ -29,7 +30,7 @@
 <%
     User profileUser = (User) request.getAttribute("profileUser");
     if (profileUser == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
     String username = profileUser.getUsername();
@@ -83,15 +84,26 @@
             </h2>
             <%
                 if (userPosts != null && !userPosts.isEmpty()) {
-                    StoryDAO storyDAO = new StoryDAO();
-                    TagsDAO tagsDAO = new TagsDAO();
+                    StoryDAO storyDAO = (StoryDAO) application.getAttribute("storyDao");
+                    TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagsDao");
             %>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <%
                     for (Post post : userPosts) {
-                        Story story = storyDAO.getStory(post.getStoryId());
+                        Story story = null;
+                        try {
+                            story = storyDAO.getStory(post.getStoryId());
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
                         List<String> storyTags = new ArrayList<>();
-                        if (story != null) { storyTags = tagsDAO.getStoryTags(story.getStoryId()); }
+                        if (story != null) {
+                            try {
+                                storyTags = tagsDAO.getStoryTags(story.getStoryId());
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                         String title = (story != null) ? story.getTitle() : "Untitled Story";
                         String prompt = (story != null) ? story.getPrompt() : "No description available.";
                         String imageUrl = request.getContextPath() + "/images/posts/" + post.getImageName();

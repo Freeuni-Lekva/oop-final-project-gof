@@ -2,6 +2,7 @@ package servlets;
 
 import data.media.PostDAO;
 import data.user.UserDAO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,35 +26,36 @@ public class PublicProfileServlet extends HttpServlet {
         String viewerUsername = (session != null) ? (String) session.getAttribute("user") : null;
 
         if (viewerUsername == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         String profileUsername = request.getParameter("username");
 
         if (profileUsername == null || profileUsername.equals(viewerUsername)) {
-            response.sendRedirect("profile");
+            response.sendRedirect(request.getContextPath() + "/profile");
             return;
         }
 
         try {
-            UserDAO userDAO = new UserDAO();
+            ServletContext context = getServletContext();
+            UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
 
             User viewer = userDAO.findUser(viewerUsername);
             if (viewer == null) {
                 session.invalidate();
-                response.sendRedirect("login.jsp");
+                response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
 
             User profileOwner = userDAO.findUser(profileUsername);
 
             if (profileOwner == null) {
-                response.sendRedirect("home.jsp");
+                response.sendRedirect(request.getContextPath() + "/home");
                 return;
             }
 
-            PostDAO postDAO = new PostDAO();
+            PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
             List<Post> userPosts = postDAO.getPostsByCreatorId(profileOwner.getUserId());
             List<User> followersList = userDAO.findFollowers(profileOwner.getUserId());
             List<User> followingList = userDAO.findFollowing(profileOwner.getUserId());
@@ -86,7 +88,8 @@ public class PublicProfileServlet extends HttpServlet {
         String profileOwnerUsername = request.getParameter("profileUsername");
 
         try {
-            UserDAO userDAO = new UserDAO();
+            ServletContext context = getServletContext();
+            UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
 
             User viewer = userDAO.findUser(viewerUsername);
             User profileOwner = userDAO.findUser(profileOwnerUsername);

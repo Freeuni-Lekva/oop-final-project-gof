@@ -2,6 +2,7 @@ package servlets;
 
 import data.media.PostDAO;
 import data.user.UserDAO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,7 +24,7 @@ public class FollowListServlet extends HttpServlet {
         String type = request.getParameter("type");
 
         if (userIdStr == null || type == null || userIdStr.isEmpty() || type.isEmpty()) {
-            response.sendRedirect("home.jsp");
+            response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
 
@@ -31,17 +32,18 @@ public class FollowListServlet extends HttpServlet {
         try {
             userId = Integer.parseInt(userIdStr);
         } catch (NumberFormatException e) {
-            response.sendRedirect("home.jsp");
+            response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
 
         try {
-            UserDAO userDAO = new UserDAO();
-            PostDAO postDAO = new PostDAO();
+            ServletContext context = getServletContext();
+            UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
+            PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
 
             User profileOwner = userDAO.findUserById(userId);
             if (profileOwner == null) {
-                response.sendRedirect("home.jsp");
+                response.sendRedirect(request.getContextPath() + "/home");
                 return;
             }
 
