@@ -95,7 +95,7 @@
                     <%= story.getTitle() %>
                 </h1>
                 <p class="text-lg text-gray-400">
-                    By <a href="#" class="text-indigo-400 hover:underline"><%= creator != null ? creator.getUsername() : "Unknown Creator" %></a>
+                    By <a href="/user?username=<%=creator.getUsername()%>" class="text-indigo-400 hover:underline"><%= creator != null ? creator.getUsername() : "Unknown Creator" %></a>
                 </p>
             </header>
 

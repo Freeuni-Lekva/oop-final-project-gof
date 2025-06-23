@@ -18,6 +18,7 @@ import java.sql.SQLException;
 public class PostServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+
     }
 
     @Override

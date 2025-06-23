@@ -85,7 +85,7 @@
             <%
                 if (userPosts != null && !userPosts.isEmpty()) {
                     StoryDAO storyDAO = (StoryDAO) application.getAttribute("storyDao");
-                    TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagsDao");
+                    TagsDAO tagsDAO = (TagsDAO) application.getAttribute("tagDao");
             %>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <%
@@ -110,7 +110,7 @@
                         int storyId = (story != null) ? story.getStoryId() : -1;
                 %>
                 <div class="relative bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
-                    <a href="story.jsp?id=<%= storyId %>" class="block h-full">
+                    <a href="post.jsp?id=<%= storyId %>" class="block h-full">
                         <img src="<%= imageUrl %>" alt="Post art for <%= title %>" class="w-full h-40 object-cover">
                         <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
                             <div>
@@ -159,7 +159,7 @@
                     for (Story story : readingHistory) {
                 %>
                 <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
-                    <a href="story.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 flex-grow">
+                    <a href="post.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-lg text-white hover:text-purple-300 flex-grow">
                         <%= story.getTitle() %>
                     </a>
 
