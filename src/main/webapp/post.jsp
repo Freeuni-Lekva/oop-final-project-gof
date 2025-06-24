@@ -100,7 +100,7 @@
             </header>
 
             <div class="story-content mb-8 border-t border-gray-700 pt-6">
-                <p class="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap"><%= story.getPrompt() %></p>
+                <p class="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap"><%= story.getDescription() %></p>
             </div>
 
             <% if (username != null) { %>
