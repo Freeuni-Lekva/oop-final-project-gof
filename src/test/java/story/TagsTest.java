@@ -68,7 +68,7 @@ public class TagsTest extends TestCase {
 
     private void addStory() throws SQLException {
         StoryDAO storyDAO = new StoryDAO();
-        storyDAO.createStory("news","abc",1);
+        storyDAO.createStory("news","abc", "desc",1);
         List<String> tags = new ArrayList<>();
         tags.add("Technology");
         storyDAO.linkTagsToStory(3,tags);

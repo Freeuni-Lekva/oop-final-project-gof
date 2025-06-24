@@ -26,7 +26,7 @@ public class StoryDaoTest extends TestCase {
     }
 
     public void testCreateAndGetStory() throws SQLException {
-        storyDao.createStory("New Story", "Prompt for New Story", 1);
+        storyDao.createStory("New Story", "Prompt for New Story", "Description for New Story", 1);
         Story retrievedStory = storyDao.getStory(3);
 
         assertNotNull(retrievedStory);
@@ -34,6 +34,7 @@ public class StoryDaoTest extends TestCase {
         assertEquals(1, retrievedStory.getCreatorId());
         assertEquals("New Story", retrievedStory.getTitle());
         assertEquals("Prompt for New Story", retrievedStory.getPrompt());
+        assertEquals("Description for New Story", retrievedStory.getDescription());
     }
 
     public void testGetPrompt() throws SQLException {
@@ -78,17 +79,19 @@ public class StoryDaoTest extends TestCase {
     }
 
     public void testUpdateStory() throws SQLException {
-        storyDao.createStory("Old Title", "Old prompt", 1);
+        storyDao.createStory("Old Title", "Old prompt", "Old Description",1);
         Story storyToUpdate = storyDao.getStory(3);
         assertNotNull(storyToUpdate);
 
         storyToUpdate.setTitle("New Updated Title");
         storyToUpdate.setPrompt("New updated prompt");
+        storyToUpdate.setDescription("New updated description");
         storyDao.updateStory(storyToUpdate);
 
         Story updatedStory = storyDao.getStory(3);
         assertEquals("New Updated Title", updatedStory.getTitle());
         assertEquals("New updated prompt", updatedStory.getPrompt());
+        assertEquals("New updated description", updatedStory.getDescription());
     }
 
     public void testDeleteStory() throws SQLException {
@@ -186,9 +189,9 @@ public class StoryDaoTest extends TestCase {
     // --- Helper methods ---
 
     private void createInitialStories() throws SQLException {
-        storyDao.createStory("First Story", "Prompt for story 1.", 1);
-        storyDao.createStory("Second Story", "Prompt for story 2.", 2);
-        storyDao.createStory("Third Story", "Prompt for story 3.", 1);
+        storyDao.createStory("First Story", "Prompt for story 1.", "Desc 1", 1);
+        storyDao.createStory("Second Story", "Prompt for story 2.", "Desc 2", 2);
+        storyDao.createStory("Third Story", "Prompt for story 3.", "Desc 3", 1);
     }
 
     private void createInitialBookmarks() throws SQLException {

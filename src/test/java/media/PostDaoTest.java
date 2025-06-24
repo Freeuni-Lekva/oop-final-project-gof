@@ -76,10 +76,8 @@ public class PostDaoTest extends TestCase {
         assertNotNull("User 'chichia' should exist from setup.sql", chichia);
         int chichiaId = chichia.getUserId();
 
-        // ACT: Call the method we want to test for both users.
         List<Post> postsForLsana = postDao.getPostsByCreatorId(lsanaId);
         List<Post> postsForChichia = postDao.getPostsByCreatorId(chichiaId);
-
 
         assertNotNull("List for 'lsana' should not be null", postsForLsana);
         assertEquals("Lsana should have 3 posts (1 original + 2 new)", 3, postsForLsana.size());
@@ -113,26 +111,22 @@ public class PostDaoTest extends TestCase {
 
     // --------- Helper method ---------
     private void initPosts() throws SQLException {
-        // Use dummy postId values; actual DB will auto-increment if set up that way
         postDao.addPost(new Post(3, 1, "src/main/webapp/images/posts/image1.jpg", LocalDateTime.now(), 0, 0));
         postDao.addPost(new Post(4, 2, "src/main/webapp/images/posts/image2.jpg", LocalDateTime.now(), 0, 0));
     }
 
     private int addPostsForUsers() throws SQLException {
-        // --- 1. Find the existing user from setup.sql ---
         User lsana = userDao.findUser("lsana");
         if (lsana == null) {
             throw new IllegalStateException("Test setup failed: User 'lsana' not found. Please ensure setup.sql has been run.");
         }
         int lsanaId = lsana.getUserId();
 
-        // --- 2. Create new stories for 'lsana' using StoryDAO ---
-        int newStoryId1 = storyDao.createStoryAndGetId("A New Adventure for Lsana", "A new prompt.", lsanaId);
-        int newStoryId2 = storyDao.createStoryAndGetId("Another Tale by Lsana", "Another prompt.", lsanaId);
+        int newStoryId1 = storyDao.createStoryAndGetId("A New Adventure for Lsana",
+                "A new prompt.", "A new description.", lsanaId);
+        int newStoryId2 = storyDao.createStoryAndGetId("Another Tale by Lsana",
+                "Another prompt.", "Another description.", lsanaId);
 
-        // --- 3. Create new posts using the correct Post constructor ---
-        // We provide dummy values (0, now(), 0, 0) for fields that are not used by the addPost method.
-        // This matches the style in your initPosts() helper.
         postDao.addPost(new Post(0, newStoryId1, "image1.jpg", LocalDateTime.now(), 0, 0));
         postDao.addPost(new Post(0, newStoryId2, "image2.jpg", LocalDateTime.now(), 0, 0));
 
