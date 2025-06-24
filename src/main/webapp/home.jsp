@@ -212,9 +212,9 @@
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="${pageContext.request.contextPath}/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="${pageContext.request.contextPath}/create-post" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
-            <a href="${pageContext.request.contextPath}/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
+            <a href="${pageContext.request.contextPath}/login" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
             <% } %>
         </div>
