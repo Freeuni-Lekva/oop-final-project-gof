@@ -57,6 +57,26 @@ public class UserDAO {
         return user;
     }
 
+    public List<User> searchUsersByName(String query) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE username LIKE ? AND is_creator = TRUE";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, "%" + query + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                users.add(populateUser(resultSet));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching for users by name: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return users;
+    }
+
     public List<User> findFollowers(int userId) throws SQLException {
         List<User> followers = new ArrayList<>();
         String sql = "SELECT u.* FROM users u JOIN followers f ON u.user_id = f.follower_id WHERE f.following_id = ?";
