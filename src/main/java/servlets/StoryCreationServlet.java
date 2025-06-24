@@ -65,6 +65,7 @@ public class StoryCreationServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
 
+        String description = req.getParameter("description");
         String title = req.getParameter("title");
         String worldInfo = req.getParameter("worldInfo");
 
@@ -101,7 +102,7 @@ public class StoryCreationServlet extends HttpServlet {
 
         int newStoryId = 0;
         try {
-            newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, userId);
+            newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, description, userId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
