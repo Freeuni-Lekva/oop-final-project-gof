@@ -17,8 +17,8 @@ public class StoryDAO {
     public StoryDAO() {
     }
 
-    public void createStory(String title, String prompt, int creatorId) throws SQLException {
-        String sql = "INSERT INTO stories (creator_id, title, prompt, created_at) VALUES (?, ?, ?, NOW())";
+    public void createStory(String title, String prompt, String description, int creatorId) throws SQLException {
+        String sql = "INSERT INTO stories (creator_id, title, prompt, description, created_at) VALUES (?, ?, ?, ?, NOW())";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -26,6 +26,7 @@ public class StoryDAO {
             preparedStatement.setInt(1, creatorId);
             preparedStatement.setString(2, title);
             preparedStatement.setString(3, prompt);
+            preparedStatement.setString(4, description);
 
             preparedStatement.executeUpdate();
 
@@ -36,8 +37,8 @@ public class StoryDAO {
         }
     }
 
-    public int createStoryAndGetId(String title, String prompt, int creatorId) throws SQLException {
-        String sql = "INSERT INTO stories (creator_id, title, prompt, created_at) VALUES (?, ?, ?, NOW())";
+    public int createStoryAndGetId(String title, String prompt, String description, int creatorId) throws SQLException {
+        String sql = "INSERT INTO stories (creator_id, title, prompt, description, created_at) VALUES (?, ?, ?, ?, NOW())";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -45,6 +46,7 @@ public class StoryDAO {
             preparedStatement.setInt(1, creatorId);
             preparedStatement.setString(2, title);
             preparedStatement.setString(3, prompt);
+            preparedStatement.setString(4, description);
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -365,14 +367,15 @@ public class StoryDAO {
     }
 
     public void updateStory(Story story) throws SQLException {
-        String sql = "UPDATE stories SET title = ?, prompt = ? WHERE story_id = ?";
+        String sql = "UPDATE stories SET title = ?, prompt = ?, description = ? WHERE story_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setString(1, story.getTitle());
             preparedStatement.setString(2, story.getPrompt());
-            preparedStatement.setInt(3, story.getStoryId());
+            preparedStatement.setString(3, story.getDescription());
+            preparedStatement.setInt(4, story.getStoryId());
 
             preparedStatement.executeUpdate();
 
@@ -407,8 +410,9 @@ public class StoryDAO {
         int creatorId = resultSet.getInt("creator_id");
         String title = resultSet.getString("title");
         String prompt = resultSet.getString("prompt");
+        String description = resultSet.getString("description");
         LocalDateTime creationDate = resultSet.getTimestamp("created_at").toLocalDateTime();
 
-        return new Story(title, prompt, creatorId, storyId, creationDate);
+        return new Story(title, prompt, description, creatorId, storyId, creationDate);
     }
 }

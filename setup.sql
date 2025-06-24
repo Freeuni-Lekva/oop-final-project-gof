@@ -42,6 +42,7 @@ CREATE TABLE stories (
                          creator_id INT NOT NULL,
                          title VARCHAR(200) NOT NULL,
                          prompt TEXT,
+                         description TEXT,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                          FOREIGN KEY (creator_id) REFERENCES users(user_id)
 );
@@ -137,10 +138,12 @@ VALUES
     ('chichia', 'hash_kitketa', 20, TRUE, TRUE, 'image2.jpg');
 
 -- Insert stories for creators
-INSERT INTO stories (creator_id, title, prompt)
+INSERT INTO stories (creator_id, title, prompt, description)
 VALUES
-    (1, 'The Mystery of the Lost Artifact', 'A suspenseful journey to uncover hidden secrets.'),
-    (2, 'Adventures in the Digital Age', 'Exploring the vast world of cyberspace.');
+    (1, 'The Mystery of the Lost Artifact', 'A suspenseful journey to uncover hidden secrets.',
+     'A really cool description for a really cool story'),
+    (2, 'Adventures in the Digital Age', 'Exploring the vast world of cyberspace.',
+     'A really uncool description for a really uncool story');
 
 -- Insert posts for stories
 INSERT INTO posts (story_id, image_name, like_count, comment_count)

@@ -49,6 +49,13 @@
                           file:bg-indigo-600 file:text-white hover:file:bg-indigo-700
                           cursor-pointer"/>
         </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <label for="description" class="block text-xl font-semibold mb-2 text-gray-300">Story Description</label>
+            <p class="text-gray-400 mb-4 text-sm">A brief, enticing summary.</p>
+            <textarea id="description" name="description" rows="3" required
+                      class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., A young hero must find the legendary Sunstone in a realm shrouded in perpetual twilight..."></textarea>
+        </div>
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <label for="worldInfo" class="block text-xl font-semibold mb-2 text-gray-300">World Information</label>

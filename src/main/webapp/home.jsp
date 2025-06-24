@@ -157,7 +157,7 @@
                                 <%= story.getTitle() %>
                             </h3>
                             <p class="text-gray-400 text-sm h-20 overflow-hidden">
-                                <%= truncate(story.getPrompt(), 120) %>
+                                <%= truncate(story.getDescription(), 120) %>
                             </p>
                         </div>
                         <div class="mt-4 text-xs text-indigo-400">
