@@ -1,9 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List, java.util.ArrayList, model.story.Story" %>
 <%@ page import="data.story.TagsDAO, data.media.PostDAO, model.media.Post" %>
-<%@ page import="data.user.UserDAO, model.User, java.lang.String" %>
+<%@ page import="data.user.UserDAO, model.User" %>
 <%@ page import="model.story.Tags" %>
-<%@ page import="java.io.File" %>
 
 <!DOCTYPE html>
 <html>
@@ -117,6 +116,7 @@
     %>
     <%
         List<Story> stories = (List<Story>) request.getAttribute("stories");
+        List<User> foundUsers = (List<User>) request.getAttribute("foundUsers");
         if (stories == null) {
             stories = new ArrayList<>();
         }
@@ -125,6 +125,37 @@
     %>
 
     <main>
+        <% if ("creator".equals(searchType) && foundUsers != null) { %>
+        <div id="users-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <% for (User user : foundUsers) { %>
+            <div class="user-card">
+                <%
+                    String profileUrl;
+                    if (username != null && username.equals(user.getUsername())) {
+                        profileUrl = request.getContextPath() + "/profile";
+                    } else {
+                        profileUrl = request.getContextPath() + "/user?username=" + user.getUsername();
+                    }
+                %>
+                <a href="<%= profileUrl %>" class="block text-center bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-6 transform transition-transform duration-300 hover:-translate-y-2">
+                    <%
+                        String userProfilePic = "https://placehold.co/128x128/1F2937/FFFFFF?text=" + user.getUsername().toUpperCase().charAt(0);
+                        if (user.getImageName() != null && !user.getImageName().isEmpty()) {
+                            userProfilePic = request.getContextPath() + "/images/profiles/" + user.getImageName();
+                        }
+                    %>
+                    <img src="<%= userProfilePic %>" alt="Profile of <%= user.getUsername() %>" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-gray-700 object-cover">
+                    <h3 class="font-bold text-xl text-white truncate"><%= user.getUsername() %></h3>
+                </a>
+            </div>
+            <% } %>
+        </div>
+
+        <% if (foundUsers.isEmpty()) { %>
+        <div class="text-center py-20"><p class="text-gray-500">No creators found matching your search for "<%= searchQuery %>".</p></div>
+        <% } %>
+
+        <% } else { %>
         <div id="stories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <% for (Story story : stories) { %>
             <%
@@ -177,16 +208,17 @@
         <div class="text-center py-20">
             <% if (searchQuery != null && !searchQuery.trim().isEmpty()) { %>
             <p class="text-gray-500">No stories found matching your search for "<%= searchQuery %>".</p>
-            <a href="/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
+            <a href="${pageContext.request.contextPath}/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-black font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="${pageContext.request.contextPath}/create-post" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
-            <a href="/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
+            <a href="${pageContext.request.contextPath}/login" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
             <% } %>
         </div>
+        <% } %>
         <% } %>
 
         <div id="show-more-container" class="text-center mt-12">
@@ -199,32 +231,41 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const grid = document.getElementById('stories-grid');
-        const showMoreBtn = document.getElementById('show-more-btn');
-        const showMoreContainer = document.getElementById('show-more-container');
-        const allCards = Array.from(grid.querySelectorAll('.story-card'));
-        const itemsPerPage = 8;
-        let currentlyVisible = 0;
+        const searchType = "<%= searchType != null ? searchType : "" %>";
+        const gridId = (searchType === "creator") ? 'users-grid' : 'stories-grid';
+        const cardClass = (searchType === "creator") ? '.user-card' : '.story-card';
 
-        function showNextItems() {
-            const nextLimit = currentlyVisible + itemsPerPage;
-            for (let i = currentlyVisible; i < nextLimit && i < allCards.length; i++) {
-                setTimeout(() => {
-                    allCards[i].style.display = 'block';
-                    allCards[i].classList.add('fade-in');
-                }, (i - currentlyVisible) * 50);
+        const grid = document.getElementById(gridId);
+        if (grid) {
+            const showMoreBtn = document.getElementById('show-more-btn');
+            const showMoreContainer = document.getElementById('show-more-container');
+            const allCards = Array.from(grid.querySelectorAll(cardClass));
+            const itemsPerPage = 8;
+            let currentlyVisible = 0;
+
+            function showNextItems() {
+                const nextLimit = currentlyVisible + itemsPerPage;
+                for (let i = currentlyVisible; i < nextLimit && i < allCards.length; i++) {
+                    setTimeout(() => {
+                        allCards[i].style.display = 'block';
+                        allCards[i].classList.add('fade-in');
+                    }, (i - currentlyVisible) * 50);
+                }
+                currentlyVisible = nextLimit;
+                if (currentlyVisible >= allCards.length) {
+                    showMoreContainer.style.display = 'none';
+                }
             }
-            currentlyVisible = nextLimit;
-            if (currentlyVisible >= allCards.length) {
+
+            if (allCards.length > 0) {
+                showNextItems();
+                showMoreBtn.addEventListener('click', showNextItems);
+            } else {
                 showMoreContainer.style.display = 'none';
             }
-        }
-
-        if (allCards.length > 0) {
-            showNextItems();
-            showMoreBtn.addEventListener('click', showNextItems);
         } else {
-            showMoreContainer.style.display = 'none';
+            const showMoreContainer = document.getElementById('show-more-container');
+            if(showMoreContainer) showMoreContainer.style.display = 'none';
         }
 
         const searchInput = document.getElementById('search-query-input');
@@ -234,16 +275,9 @@
         tagButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const tagText = this.textContent.trim();
-                const currentSearchValue = searchInput.value.trim();
-
-                if (currentSearchValue === '') {
-                    searchInput.value = tagText;
-                } else {
-                    searchInput.value = currentSearchValue + ' ' + tagText;
-                }
-
+                searchInput.value = tagText;
                 searchTypeSelect.value = 'tag';
-                searchInput.focus();
+                this.closest('form').submit();
             });
         });
     });
