@@ -19,7 +19,7 @@ import java.util.Set;
 public class AuthenticationFilter implements Filter {
 
     private static final Set<String> PUBLIC_PATHS = Set.of(
-            "/login", "/logout", "/index.jsp", "/register","/"
+            "/login", "/logout", "/index.jsp", "/register", "/"
     );
 
     @Override
@@ -28,7 +28,7 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         String path = req.getRequestURI().substring(req.getContextPath().length());
 
-        boolean isPublic = PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+        boolean isPublic = PUBLIC_PATHS.stream().anyMatch(path::equals);
         if (isPublic) {
             filterChain.doFilter(req, res);
             return;

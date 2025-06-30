@@ -5,12 +5,6 @@ import jakarta.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 
-/**
- * This filter checks if a user is authenticated before allowing
- * them to access protected pages.
- *
- *
- */
 @WebFilter("/*")
 public class EncodingFilter implements Filter {
 
