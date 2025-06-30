@@ -20,7 +20,7 @@
     .font-orbitron { font-family: 'Orbitron', sans-serif; }
   </style>
 </head>
-<body class="bg-gray-900">
+<body class="bg-black">
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <header class="mb-6 flex justify-between items-center">

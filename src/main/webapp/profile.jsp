@@ -27,7 +27,7 @@
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-900">
+<body class="bg-black">
 
 <%
     User profileUser = (User) request.getAttribute("profileUser");
