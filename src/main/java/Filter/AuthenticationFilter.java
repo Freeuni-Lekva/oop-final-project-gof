@@ -19,7 +19,7 @@ import java.util.Set;
 public class AuthenticationFilter implements Filter {
 
     private static final Set<String> PUBLIC_PATHS = Set.of(
-            "/login", "/logout", "/index.jsp", "/register"
+            "/login", "/logout", "/index.jsp", "/register","/"
     );
 
     @Override
