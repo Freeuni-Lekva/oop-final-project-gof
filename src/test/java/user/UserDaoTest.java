@@ -127,6 +127,50 @@ public class UserDaoTest extends TestCase {
         assertEquals(1, finalBookmarks.size());
     }
 
+
+    public void testUpdateUsername() throws SQLException {
+
+        User initialUser = userDao.findUserById(1);
+        assertEquals("Initial username should be 'lsana'", "lsana", initialUser.getUsername());
+
+        String newUsername = "luka";
+
+        userDao.updateUsername(1, newUsername);
+        User updatedUser = userDao.findUserById(1);
+        assertEquals("Username should have been updated", newUsername, updatedUser.getUsername());
+        assertEquals("Password hash should remain unchanged", initialUser.getPasswordHash(), updatedUser.getPasswordHash());
+    }
+
+
+    public void testUpdateUserPassword() throws SQLException {
+        User initialUser = userDao.findUserById(1);
+        String initialHash = initialUser.getPasswordHash();
+
+        String newHashedPassword = "abcdefg12345";
+        userDao.updateUserPassword(1, newHashedPassword);
+
+        User updatedUser = userDao.findUserById(1);
+
+        assertEquals("Password hash should have been updated", newHashedPassword, updatedUser.getPasswordHash());
+        assertNotSame("The new hash should be different from the old one", initialHash, updatedUser.getPasswordHash());
+        assertEquals("Username should remain unchanged", "lsana", updatedUser.getUsername());
+    }
+
+
+    public void testUpdateUserImage() throws SQLException {
+        User initialUser = userDao.findUserById(1);
+        assertEquals("Initial image name should be 'image1.jpg'", "image1.jpg", initialUser.getImageName());
+
+        String newImageName = "coolPic.jpg";
+
+        userDao.updateUserImage(1, newImageName);
+
+        User updatedUser = userDao.findUserById(1);
+
+        assertEquals("Image name should have been updated", newImageName, updatedUser.getImageName());
+        assertEquals("Username should remain unchanged", "lsana", updatedUser.getUsername());
+    }
+
     @Override
     public void tearDown() throws SQLException {
         if (conn != null && !conn.isClosed()) {
