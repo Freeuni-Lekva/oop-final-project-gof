@@ -24,11 +24,6 @@ public class ProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
 
-        if (session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login");
-            return;
-        }
-
         String username = (String) session.getAttribute("user");
         UserDAO userDAO = new UserDAO();
         PostDAO postDAO = new PostDAO();
@@ -36,11 +31,6 @@ public class ProfileServlet extends HttpServlet {
 
         try {
             User user = userDAO.findUser(username);
-            if (user == null) {
-                session.invalidate();
-                res.sendRedirect(req.getContextPath() + "/login");
-                return;
-            }
 
             List<Post> userPosts = postDAO.getPostsByCreatorId(user.getUserId());
             List<Story> readingHistory = storyDAO.findReadHistory(user.getUserId());
