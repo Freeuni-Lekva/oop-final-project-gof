@@ -12,6 +12,7 @@ import jakarta.servlet.http.Part;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -129,6 +130,8 @@ public class SettingsServlet extends HttpServlet {
 
             if (isImageChanged) {
                 userDAO.updateUserImage(currentUser.getUserId(), newImageName);
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "images" + File.separator + "profiles";
+                filePart.write(uploadPath + File.separator + newImageName);
             }
 
             if (isUsernameChanged) {
