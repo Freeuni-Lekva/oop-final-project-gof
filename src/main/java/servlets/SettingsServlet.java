@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.UUID;
+import java.util.*;
 
 @WebServlet(name = "SettingsServlet", value = "/settings")
 @MultipartConfig
@@ -129,6 +129,14 @@ public class SettingsServlet extends HttpServlet {
             }
 
             if (isImageChanged) {
+                String submittedType = filePart.getContentType();
+                List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png", "image/gif");
+
+                if (!allowedMimeTypes.contains(submittedType)) {
+                    session.setAttribute("settingsError", "Invalid file type. Please upload a PNG, JPG, or GIF image.");
+                    res.sendRedirect(req.getContextPath() + "/settings");
+                    return;
+                }
                 userDAO.updateUserImage(currentUser.getUserId(), newImageName);
                 String uploadPath = getServletContext().getRealPath("") + File.separator + "images" + File.separator + "profiles";
                 filePart.write(uploadPath + File.separator + newImageName);

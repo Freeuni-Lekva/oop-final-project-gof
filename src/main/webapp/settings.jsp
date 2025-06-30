@@ -64,7 +64,7 @@
         <img src="<%= profilePicturePath %>" alt="Current Profile Picture" class="w-24 h-24 rounded-full object-cover border-2 border-purple-400">
         <div>
           <label for="profilePicture" class="block text-sm font-medium text-gray-300">Change Profile Picture</label>
-          <input type="file" name="profilePicture" id="profilePicture" class="mt-1 block w-full text-sm text-gray-400
+          <input type="file" name="profilePicture" id="profilePicture" accept="image/png, image/jpeg, image/gif" class="mt-1 block w-full text-sm text-gray-400
                       file:mr-4 file:py-2 file:px-4
                       file:rounded-md file:border-0
                       file:text-sm file:font-semibold
