@@ -7,7 +7,6 @@
 <%@ page import="model.media.Post" %>
 
 <%!
-    // Helper function to shorten text
     String truncate(String text, int length) {
         if (text == null || text.length() <= length) return text;
         return text.substring(0, length) + "...";
