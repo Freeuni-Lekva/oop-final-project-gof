@@ -66,10 +66,14 @@ public class ProfileServlet extends HttpServlet {
         String action = req.getParameter("action");
         String username = (String) session.getAttribute("user");
 
+        ServletContext context = getServletContext();
+        UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
+        PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
+        StoryDAO storyDAO = (StoryDAO) context.getAttribute("storyDao");
+        HistoryDAO historyDAO = (HistoryDAO) context.getAttribute("historyDao");
+
         if (action != null) {
             try {
-                ServletContext context = getServletContext();
-                UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
                 User user = userDAO.findUser(username);
                 if (user == null) {
                     res.sendRedirect(req.getContextPath() + "/login");
@@ -80,22 +84,18 @@ public class ProfileServlet extends HttpServlet {
                 switch (action) {
                     case "deletePost": {
                         int postId = Integer.parseInt(req.getParameter("postId"));
-                        PostDAO postDAO = new PostDAO();
                         postDAO.deletePost(postId);
                         break;
                     }
 
                     case "deleteHistory": {
                         int storyId = Integer.parseInt(req.getParameter("storyId"));
-                        StoryDAO storyDAO = new StoryDAO();
-                        HistoryDAO historyDAO= new HistoryDAO();
                         historyDAO.deleteReadHistory(userId, storyId);
                         break;
                     }
 
                     case "deleteBookmark": {
                         int storyId = Integer.parseInt(req.getParameter("storyId"));
-                        StoryDAO storyDAO = new StoryDAO();
                         storyDAO.removeBookmark(userId, storyId);
                         break;
                     }
