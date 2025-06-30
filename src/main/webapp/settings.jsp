@@ -71,11 +71,24 @@
         <div class="space-y-4">
           <div>
             <label for="currentPassword" class="block text-sm font-medium text-gray-300">Current Password</label>
-            <input type="password" name="currentPassword" id="currentPassword" placeholder="Enter your current password" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            <div class="relative mt-1">
+              <input type="password" name="currentPassword" id="currentPassword" placeholder="Enter your current password" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+              <button type="button" id="toggleCurrentPasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
+                <svg id="currentEye" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <svg id="currentEyeSlash" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+              </button>
+            </div>
           </div>
+
           <div>
             <label for="newPassword" class="block text-sm font-medium text-gray-300">New Password</label>
-            <input type="password" name="newPassword" id="newPassword" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            <div class="relative mt-1">
+              <input type="password" name="newPassword" id="newPassword" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+              <button type="button" id="toggleNewPasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
+                <svg id="newEye" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <svg id="newEyeSlash" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+              </button>
+            </div>
             <div id="strength-meter" class="mt-4 space-y-2 hidden">
               <div class="w-full bg-gray-700 rounded-full h-2"><div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%;"></div></div>
               <p class="text-xs font-bold" id="strength-text"></p>
@@ -89,7 +102,13 @@
           </div>
           <div>
             <label for="confirmPassword" class="block text-sm font-medium text-gray-300">Confirm New Password</label>
-            <input type="password" name="confirmPassword" id="confirmPassword" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            <div class="relative mt-1">
+              <input type="password" name="confirmPassword" id="confirmPassword" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+              <button type="button" id="toggleConfirmPasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
+                <svg id="confirmEye" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <svg id="confirmEyeSlash" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -174,6 +193,27 @@
       element.innerHTML = icon + `<span>${element.lastElementChild.textContent}</span>`;
       element.className = 'flex items-center ' + textClass;
     }
+
+    function setupPasswordToggle(inputId, toggleButtonId, eyeIconId, eyeSlashIconId) {
+      const passwordInput = document.getElementById(inputId);
+      const toggleButton = document.getElementById(toggleButtonId);
+
+      if(toggleButton) {
+        const eyeIcon = document.getElementById(eyeIconId);
+        const eyeSlashIcon = document.getElementById(eyeSlashIconId);
+        toggleButton.addEventListener('click', function() {
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          eyeIcon.classList.toggle('hidden');
+          eyeSlashIcon.classList.toggle('hidden');
+        });
+      }
+    }
+
+    setupPasswordToggle('currentPassword', 'toggleCurrentPasswordBtn', 'currentEye', 'currentEyeSlash');
+    setupPasswordToggle('newPassword', 'toggleNewPasswordBtn', 'newEye', 'newEyeSlash');
+    setupPasswordToggle('confirmPassword', 'toggleConfirmPasswordBtn', 'confirmEye', 'confirmEyeSlash');
+
   });
 </script>
 </body>
