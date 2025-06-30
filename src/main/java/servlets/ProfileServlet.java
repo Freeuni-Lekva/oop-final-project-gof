@@ -2,6 +2,7 @@ package servlets;
 
 import data.media.PostDAO;
 import data.story.StoryDAO;
+import data.user.HistoryDAO;
 import data.user.UserDAO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -87,7 +88,8 @@ public class ProfileServlet extends HttpServlet {
                     case "deleteHistory": {
                         int storyId = Integer.parseInt(req.getParameter("storyId"));
                         StoryDAO storyDAO = new StoryDAO();
-                        storyDAO.removeReadHistory(userId, storyId);
+                        HistoryDAO historyDAO= new HistoryDAO();
+                        historyDAO.deleteReadHistory(userId, storyId);
                         break;
                     }
 

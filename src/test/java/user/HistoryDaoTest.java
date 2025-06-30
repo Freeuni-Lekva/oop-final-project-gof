@@ -1,5 +1,6 @@
 package user;
 
+import data.chat.ChatDAO;
 import junit.framework.TestCase;
 import model.story.Story;
 
@@ -15,12 +16,14 @@ public class HistoryDaoTest extends TestCase {
 
     private Connection conn;
     private HistoryDAO historyDao;
+    private ChatDAO chatDAO;
 
     @Override
     public void setUp() throws SQLException, IOException {
         conn = MySqlConnector.getConnection();
         MySqlConnector.setupSQL();
         historyDao = new HistoryDAO();
+        chatDAO = new ChatDAO();
     }
 
     public void testAddAndGetReadHistory() throws SQLException {
@@ -61,6 +64,15 @@ public class HistoryDaoTest extends TestCase {
         assertEquals(2, history.size());
         assertEquals(1, history.get(0).getStoryId());
         assertEquals(2, history.get(1).getStoryId());
+    }
+
+    public void testDelete() throws SQLException {
+        historyDao.addReadHistory(1, 1);
+        chatDAO.createChat(1,1);
+
+        historyDao.deleteReadHistory(1,1);
+        assertTrue(historyDao.getReadHistoryForUser(1).isEmpty());
+        assertEquals(-1,chatDAO.getChatId(1,1));
     }
 
     @Override

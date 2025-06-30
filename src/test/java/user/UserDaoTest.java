@@ -37,7 +37,7 @@ public class UserDaoTest extends TestCase {
         User newUser = new User(0, "newUser", "new_hash", 33, null, false, "image1.jpg");
         userDao.saveUser(newUser);
 
-        User foundUser = userDao.findUserById(3);
+        User foundUser = userDao.findUserById(4);
         assertNotNull(foundUser);
         assertEquals("newUser", foundUser.getUsername());
         assertEquals(33, foundUser.getAge());
