@@ -138,7 +138,7 @@
                             </div>
                         </div>
                     </a>
-                    <form action="<%= request.getContextPath() %>/profile" method="post" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <form action="<%= request.getContextPath() %>/profile" method="post" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" onsubmit="return confirm('Are you sure you want to delete this post?');">
                         <input type="hidden" name="action" value="deletePost">
                         <input type="hidden" name="postId" value="<%= post.getPostId() %>">
                         <button type="submit" class="bg-red-600/80 hover:bg-red-600 p-2 rounded-full transition-all duration-200 transform hover:scale-110" title="Delete post">
@@ -164,7 +164,7 @@
                     <% for (Story story : readingHistory) { %>
                     <div class="group flex items-center justify-between bg-white/10 p-3 rounded-lg hover:bg-white/20 transition-colors duration-300">
                         <a href="post.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-white group-hover:text-purple-300 flex-grow"><%= story.getTitle() %></a>
-                        <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity" onsubmit="return confirm('Are you sure you want to remove this item from your reading history?');">
                             <input type="hidden" name="action" value="deleteHistory">
                             <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
                             <button type="submit" class="bg-red-600/80 hover:bg-red-600 p-2 rounded-full transform hover:scale-110" title="Remove">
@@ -193,7 +193,7 @@
                     %>
                     <div class="group flex items-center justify-between bg-white/10 p-3 rounded-lg hover:bg-white/20 transition-colors duration-300">
                         <a href="<%= linkUrl %>" class="font-semibold text-white group-hover:text-purple-300 flex-grow"><%= story.getTitle() %></a>
-                        <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity" onsubmit="return confirm('Are you sure you want to remove this bookmark?');">
                             <input type="hidden" name="action" value="deleteBookmark">
                             <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
                             <button type="submit" class="bg-yellow-600/80 hover:bg-yellow-500 p-2 rounded-full transform hover:scale-110" title="Remove bookmark">
