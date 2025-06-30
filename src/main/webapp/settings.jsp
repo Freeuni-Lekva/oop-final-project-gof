@@ -76,6 +76,16 @@
           <div>
             <label for="newPassword" class="block text-sm font-medium text-gray-300">New Password</label>
             <input type="password" name="newPassword" id="newPassword" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            <div id="strength-meter" class="mt-4 space-y-2 hidden">
+              <div class="w-full bg-gray-700 rounded-full h-2"><div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%;"></div></div>
+              <p class="text-xs font-bold" id="strength-text"></p>
+              <ul class="text-xs text-gray-400 space-y-1">
+                <li id="length-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>At least 8 characters</span></li>
+                <li id="upper-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>One uppercase letter (A-Z)</span></li>
+                <li id="number-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>One number (0-9)</span></li>
+                <li id="special-check" class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>One special character (!, @, #, etc.)</span></li>
+              </ul>
+            </div>
           </div>
           <div>
             <label for="confirmPassword" class="block text-sm font-medium text-gray-300">Confirm New Password</label>
@@ -85,7 +95,9 @@
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300">
+        <button type="submit" id="save-changes-button"
+                class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md transition-colors duration-300
+               disabled:bg-gray-600 disabled:shadow-none disabled:cursor-not-allowed">
           Save Changes
         </button>
       </div>
@@ -93,6 +105,76 @@
   </main>
 
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const passwordInput = document.getElementById('newPassword');
+    const strengthMeter = document.getElementById('strength-meter');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthText = document.getElementById('strength-text');
+    const saveButton = document.getElementById('save-changes-button');
 
+    if(passwordInput) {
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+
+        if (password.length === 0) {
+          strengthMeter.classList.add('hidden');
+          saveButton.disabled = false;
+          return;
+        }
+        strengthMeter.classList.remove('hidden');
+
+        let score = 0;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[^A-Za-z0-9]/.test(password);
+        const isLongEnough = password.length >= 8;
+
+        if (hasUpper) score++;
+        if (hasNumber) score++;
+        if (hasSpecial) score++;
+        if (isLongEnough) score++;
+
+        updateChecklistItem(document.getElementById('length-check'), isLongEnough);
+        updateChecklistItem(document.getElementById('upper-check'), hasUpper);
+        updateChecklistItem(document.getElementById('number-check'), hasNumber);
+        updateChecklistItem(document.getElementById('special-check'), hasSpecial);
+
+        switch (score) {
+          case 0: case 1:
+            strengthText.textContent = 'Strength: Weak';
+            strengthText.className = 'text-xs font-bold text-red-500';
+            strengthBar.className = 'h-2 rounded-full bg-red-500 transition-all duration-300';
+            strengthBar.style.width = '25%';
+            saveButton.disabled = true;
+            break;
+          case 2: case 3:
+            strengthText.textContent = 'Strength: Medium';
+            strengthText.className = 'text-xs font-bold text-yellow-500';
+            strengthBar.className = 'h-2 rounded-full bg-yellow-500 transition-all duration-300';
+            strengthBar.style.width = '66%';
+            saveButton.disabled = !isLongEnough;
+            break;
+          case 4:
+            strengthText.textContent = 'Strength: Strong';
+            strengthText.className = 'text-xs font-bold text-green-500';
+            strengthBar.className = 'h-2 rounded-full bg-green-500 transition-all duration-300';
+            strengthBar.style.width = '100%';
+            saveButton.disabled = false;
+            break;
+        }
+      });
+    }
+
+    function updateChecklistItem(element, isValid) {
+      const checkIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+      const crossIcon = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+      const icon = isValid ? checkIcon : crossIcon;
+      const textClass = isValid ? 'text-green-400' : 'text-red-400';
+      element.innerHTML = icon + `<span>${element.lastElementChild.textContent}</span>`;
+      element.className = 'flex items-center ' + textClass;
+    }
+  });
+</script>
 </body>
 </html>
