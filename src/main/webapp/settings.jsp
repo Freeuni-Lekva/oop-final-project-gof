@@ -41,7 +41,21 @@
     }
     String profilePicturePath = request.getContextPath() + "/images/profiles/" + currentUser.getImageName();
   %>
-
+  <%
+    String error = (String) session.getAttribute("settingsError");
+    if (error != null) {
+  %>
+  <div id="error-alert" class="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-md mb-6 text-sm flex items-start justify-between max-w-2xl mx-auto" role="alert">
+    <span><%= error %></span>
+    <button type="button" id="close-error-button" class="ml-4 -mt-1 -mr-1 p-1 rounded-md text-red-300 hover:text-white hover:bg-red-500/50 focus:outline-none focus:ring-2 focus:ring-white">
+      <span class="sr-only">Dismiss</span>
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <%
+      session.removeAttribute("settingsError");
+    }
+  %>
   <main>
 
     <form action="<%= request.getContextPath() %>/settings" method="POST" enctype="multipart/form-data" class="bg-gray-800 p-8 rounded-lg max-w-2xl mx-auto space-y-8">
@@ -125,12 +139,23 @@
 
 </div>
 <script>
+
+
   document.addEventListener('DOMContentLoaded', function () {
     const passwordInput = document.getElementById('newPassword');
     const strengthMeter = document.getElementById('strength-meter');
     const strengthBar = document.getElementById('strength-bar');
     const strengthText = document.getElementById('strength-text');
     const saveButton = document.getElementById('save-changes-button');
+    const errorAlert = document.getElementById('error-alert');
+    const closeErrorButton = document.getElementById('close-error-button');
+
+    if (errorAlert && closeErrorButton) {
+      closeErrorButton.addEventListener('click', function() {
+        errorAlert.classList.add('hidden');
+      });
+    }
+
 
     if(passwordInput) {
       passwordInput.addEventListener('input', function() {

@@ -214,6 +214,47 @@ public class UserDAO {
         return isFollowing;
     }
 
+    public void updateUsername(int userId, String newUsername) throws SQLException {
+        String sql = "UPDATE users SET username = ? WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, newUsername);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating username for userId " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void updateUserPassword(int userId, String newHashedPassword) throws SQLException {
+        String sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, newHashedPassword);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating user password for userId " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void updateUserImage(int userId, String newImageName) throws SQLException {
+        String sql = "UPDATE users SET image_name = ? WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, newImageName);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating user image for userId " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     private User populateUser(ResultSet resultSet) throws SQLException {
         int userId = resultSet.getInt("user_id");
