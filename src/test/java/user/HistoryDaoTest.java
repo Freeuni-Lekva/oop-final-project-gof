@@ -35,8 +35,6 @@ public class HistoryDaoTest extends TestCase {
 
     public void testReadHistoryOrder() throws InterruptedException, SQLException {
         historyDao.addReadHistory(1, 1);
-        // DATETIME column in MySQL only stores time to the precision of seconds
-        // So without an artificial delay, they would both get the same timestamp
         Thread.sleep(1500);
         historyDao.addReadHistory(1, 2);
 
