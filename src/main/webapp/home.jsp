@@ -70,6 +70,15 @@
                     <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
                     <span><%= username %></span>
                 </a>
+                <%
+                    if (loggedInUser != null && loggedInUser.isAdmin()) {
+                %>
+                <a href="<%= request.getContextPath() %>/dashboard" class="bg-teal-700 hover:bg-teal-600 text-black font-semibold py-2 px-4 rounded-md transition duration-300">
+                    Dashboard
+                </a>
+                <%
+                    }
+                %>
                 <a href="/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
                 <% } else { %>
                 <a href="/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
