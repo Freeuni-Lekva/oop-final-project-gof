@@ -82,7 +82,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        User user = new User(username, hashedPassword, age, now, false, chosenImageName);
+        User user = new User(username, hashedPassword, age, now, false,false, chosenImageName);
 
         ServletContext context = getServletContext();
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
