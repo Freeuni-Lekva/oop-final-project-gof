@@ -261,12 +261,13 @@ public class UserDAO {
         String username = resultSet.getString("username");
         String passwordHash = resultSet.getString("password_hash");
         int age = resultSet.getInt("age");
-        // Convert java.sql.Timestamp from database to java.time.LocalDateTime
+
         LocalDateTime registerTime = resultSet.getTimestamp("register_time").toLocalDateTime();
         boolean isCreator = resultSet.getBoolean("is_creator");
+        boolean isAdmin = resultSet.getBoolean("is_admin");
         String imageName = resultSet.getString("image_name");
 
-        return new User(userId, username, passwordHash, age, registerTime, isCreator, imageName);
+        return new User(userId, username, passwordHash, age, registerTime, isCreator, isAdmin,imageName);
     }
 
     public void SetCreator(int userId) throws SQLException {

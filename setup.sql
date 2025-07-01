@@ -26,6 +26,7 @@ CREATE TABLE users (
                        active BOOLEAN DEFAULT TRUE,
                        last_login DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                        is_creator BOOLEAN DEFAULT FALSE,
+                       is_admin BOOLEAN DEFAULT FALSE,
                        image_name VARCHAR(256)
 );
 

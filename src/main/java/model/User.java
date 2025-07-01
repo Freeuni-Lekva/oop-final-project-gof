@@ -9,9 +9,10 @@ public class User {
     private int age;
     private final LocalDateTime registerTime;
     private boolean isCreator;
+    private boolean isAdmin;
     private String imageName;
 
-    public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
+    public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator,boolean isAdmin, String imageName) {
         this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
@@ -21,7 +22,7 @@ public class User {
         this.imageName = imageName;
     }
 
-    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
+    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator,boolean isAdmin, String imageName) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.age = age;
