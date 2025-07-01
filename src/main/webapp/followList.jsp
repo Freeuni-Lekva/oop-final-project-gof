@@ -77,7 +77,7 @@
       <h2 class="text-2xl font-semibold text-gray-200">
         <%= pageTitle %>
       </h2>
-      <a href="user?username=<%= profileOwner.getUsername() %>" class="text-purple-400 hover:text-purple-300 transition-colors">
+      <a href="<%= request.getContextPath() %>/user?username=<%= profileOwner.getUsername() %>" class="text-purple-400 hover:text-purple-300 transition-colors">
         ← Back to Profile
       </a>
     </div>
@@ -86,7 +86,7 @@
     <div class="space-y-4">
       <% for (User user : mainDisplayList) { %>
       <div class="flex items-center justify-between bg-gray-800 p-3 rounded-lg hover:bg-gray-700/50 transition-colors">
-        <a href="user?username=<%= user.getUsername() %>" class="flex items-center space-x-4">
+        <a href="<%= request.getContextPath() %>/user?username=<%= user.getUsername() %>" class="flex items-center space-x-4">
           <img src="<%= request.getContextPath() %>/images/profiles/<%= user.getImageName() %>" alt="Profile picture of <%= user.getUsername() %>" class="w-12 h-12 rounded-full object-cover">
           <span class="font-semibold text-lg text-white"><%= user.getUsername() %></span>
         </a>
