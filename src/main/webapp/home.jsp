@@ -41,7 +41,7 @@
 <nav class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
     <div class="container mx-auto px-4 md:px-8">
         <div class="flex items-center justify-between h-16">
-            <a href="/home" class="text-2xl font-bold text-white hover:text-indigo-400 transition-colors">
+            <a href="<%= request.getContextPath() %>/home" class="text-2xl font-bold text-white hover:text-indigo-400 transition-colors">
                 StorySaga AI
             </a>
             <div class="flex items-center space-x-4">
@@ -57,8 +57,8 @@
                         }
                     }
                 %>
-                <a href="/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="/profile" class="flex items-center space-x-2 text-black hover:text-indigo-400 font-medium">
+                <a href="<%= request.getContextPath() %>/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
+                <a href="<%= request.getContextPath() %>/profile" class="flex items-center space-x-2 text-black hover:text-indigo-400 font-medium">
                     <%
                         String profilePicUrl;
                         if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
@@ -70,10 +70,10 @@
                     <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
                     <span><%= username %></span>
                 </a>
-                <a href="/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
+                <a href="<%= request.getContextPath() %>/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
                 <% } else { %>
-                <a href="/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
-                <a href="/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
+                <a href="<%= request.getContextPath() %>/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
+                <a href="<%= request.getContextPath() %>/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
                 <% } %>
             </div>
         </div>
@@ -88,7 +88,7 @@
     </header>
 
     <div class="max-w-2xl mx-auto mb-12">
-        <form action="/search" method="GET" class="flex flex-col sm:flex-row gap-2">
+        <form action="<%= request.getContextPath() %>/search" method="GET" class="flex flex-col sm:flex-row gap-2">
             <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="title" <%= "title".equals(searchType) ? "selected" : "" %>>Title</option>
                 <option value="creator" <%= "creator".equals(searchType) ? "selected" : "" %>>Creator</option>
@@ -208,13 +208,13 @@
         <div class="text-center py-20">
             <% if (searchQuery != null && !searchQuery.trim().isEmpty()) { %>
             <p class="text-gray-500">No stories found matching your search for "<%= searchQuery %>".</p>
-            <a href="${pageContext.request.contextPath}/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
+            <a href="<%= request.getContextPath() %>/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="${pageContext.request.contextPath}/create-post" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="<%= request.getContextPath() %>/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
-            <a href="${pageContext.request.contextPath}/login" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
+            <a href="<%= request.getContextPath() %>/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
             <% } %>
         </div>
