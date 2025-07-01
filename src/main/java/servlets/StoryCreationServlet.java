@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import model.User;
 import model.media.Post;
 import model.story.Character;
 import model.story.PromptBuilder;
@@ -52,9 +53,13 @@ public class StoryCreationServlet extends HttpServlet {
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
         PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
         String username = (String) session.getAttribute("user");
+
         int userId = 0;
+        boolean isCreator = false;
         try {
-            userId = userDAO.findUser(username).getUserId();
+            User user = userDAO.findUser(username);
+            userId = user.getUserId();
+            isCreator = user.isCreator();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -97,6 +102,8 @@ public class StoryCreationServlet extends HttpServlet {
         int newStoryId = 0;
         try {
             newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, description, userId);
+            if (!isCreator) userDAO.SetCreator(userId);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

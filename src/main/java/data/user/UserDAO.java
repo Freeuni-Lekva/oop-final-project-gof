@@ -269,4 +269,18 @@ public class UserDAO {
         return new User(userId, username, passwordHash, age, registerTime, isCreator, imageName);
     }
 
+    public void SetCreator(int userId) throws SQLException {
+        String sql = "UPDATE users SET is_creator = ? WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1,1);
+            preparedStatement.setInt(2,userId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating user image for userId " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }
