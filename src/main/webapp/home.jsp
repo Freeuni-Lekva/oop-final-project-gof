@@ -134,7 +134,7 @@
                     if (username != null && username.equals(user.getUsername())) {
                         profileUrl = request.getContextPath() + "/profile";
                     } else {
-                        profileUrl = request.getContextPath() + "/user?username=" + user.getUsername();
+                        profileUrl = request.getContextPath() + "/user" + user.getUsername();
                     }
                 %>
                 <a href="<%= profileUrl %>" class="block text-center bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-6 transform transition-transform duration-300 hover:-translate-y-2">
