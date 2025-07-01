@@ -171,6 +171,14 @@ public class UserDaoTest extends TestCase {
         assertEquals("Username should remain unchanged", "lsana", updatedUser.getUsername());
     }
 
+    public void testIsCreator() throws SQLException {
+        User initialUser = userDao.findUserById(3);
+        assertFalse(initialUser.isCreator());
+
+        userDao.SetCreator(initialUser.getUserId());
+        assertTrue(userDao.findUserById(3).isCreator());
+    }
+
     @Override
     public void tearDown() throws SQLException {
         if (conn != null && !conn.isClosed()) {
