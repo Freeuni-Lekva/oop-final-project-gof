@@ -20,6 +20,7 @@ public class User {
         this.registerTime = registerTime;
         this.isCreator = isCreator;
         this.imageName = imageName;
+        this.isAdmin = isAdmin;
     }
 
     public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator,boolean isAdmin, String imageName) {
@@ -29,6 +30,7 @@ public class User {
         this.registerTime = registerTime;
         this.isCreator = isCreator;
         this.imageName = imageName;
+        this.isAdmin = isAdmin;
     }
 
     // Getters
@@ -59,6 +61,8 @@ public class User {
     public boolean isCreator() {
         return isCreator;
     }
+
+    public  boolean isAdmin() {return isAdmin;}
 
     // Setters
     public void setUsername(String username) {

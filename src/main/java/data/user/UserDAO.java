@@ -278,7 +278,7 @@ public class UserDAO {
             preparedStatement.setInt(2,userId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating user image for userId " + userId + ": " + e.getMessage());
+            System.err.println("Couldn't set creator for userId " + userId + ": " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
