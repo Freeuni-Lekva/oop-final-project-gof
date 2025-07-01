@@ -1,6 +1,7 @@
 package data.user;
 
 import data.MySqlConnector;
+import data.chat.ChatDAO;
 import model.story.Story;
 import data.story.StoryDAO;
 
@@ -71,4 +72,33 @@ public class HistoryDAO {
         return orderedStories;
     }
 
+    public void deleteReadHistory(int userId, int storyId) throws SQLException {
+        String getChatIdSql = "SELECT chat_id FROM chats WHERE user_id = ? AND story_id = ?";
+        String deleteHistorySql = "DELETE FROM read_history WHERE user_id = ? AND story_id = ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement getChatStmt = conn.prepareStatement(getChatIdSql);
+             PreparedStatement deleteHistoryStmt = conn.prepareStatement(deleteHistorySql)) {
+
+            getChatStmt.setInt(1, userId);
+            getChatStmt.setInt(2, storyId);
+
+            ResultSet rs = getChatStmt.executeQuery();
+            if (rs.next()) {
+                int chatId = rs.getInt("chat_id");
+
+                ChatDAO chatDao = new ChatDAO();
+                chatDao.deleteChat(chatId);
+            }
+
+            deleteHistoryStmt.setInt(1, userId);
+            deleteHistoryStmt.setInt(2, storyId);
+            deleteHistoryStmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting read history and associated chat: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

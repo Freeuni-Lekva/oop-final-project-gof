@@ -7,6 +7,7 @@ import data.user.UserDAO;
 import junit.framework.TestCase;
 import model.User;
 import model.media.Post;
+import model.story.Story;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -93,11 +94,15 @@ public class PostDaoTest extends TestCase {
 
         Post postBeforeDelete = postDao.getPostById(3);
         assertNotNull("Post with ID 3 should exist before deletion", postBeforeDelete);
+        int story_id = postBeforeDelete.getStoryId();
+        assertNotNull("Story for a post exists",story_id);
 
         postDao.deletePost(3);
+        Story story = storyDao.getStory(story_id);
 
         Post postAfterDelete = postDao.getPostById(3);
         assertNull("Post with ID 3 should be null after deletion", postAfterDelete);
+        assertNull("Story also got deleted",story);
 
         Post otherPost = postDao.getPostById(4); // The second post from initPosts()
         assertNotNull("Post with ID 4 should still exist", otherPost);

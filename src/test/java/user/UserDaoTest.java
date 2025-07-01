@@ -37,7 +37,7 @@ public class UserDaoTest extends TestCase {
         User newUser = new User(0, "newUser", "new_hash", 33, null, false, "image1.jpg");
         userDao.saveUser(newUser);
 
-        User foundUser = userDao.findUserById(3);
+        User foundUser = userDao.findUserById(4);
         assertNotNull(foundUser);
         assertEquals("newUser", foundUser.getUsername());
         assertEquals(33, foundUser.getAge());
@@ -169,6 +169,14 @@ public class UserDaoTest extends TestCase {
 
         assertEquals("Image name should have been updated", newImageName, updatedUser.getImageName());
         assertEquals("Username should remain unchanged", "lsana", updatedUser.getUsername());
+    }
+
+    public void testIsCreator() throws SQLException {
+        User initialUser = userDao.findUserById(3);
+        assertFalse(initialUser.isCreator());
+
+        userDao.SetCreator(initialUser.getUserId());
+        assertTrue(userDao.findUserById(3).isCreator());
     }
 
     @Override

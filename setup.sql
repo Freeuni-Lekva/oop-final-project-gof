@@ -135,7 +135,8 @@ CREATE TABLE messages (
 INSERT INTO users (username, password_hash, age, is_creator, active, image_name)
 VALUES
     ('lsana', 'hash_tikaluka2', 21, TRUE, TRUE, 'image1.jpg'),
-    ('chichia', 'hash_kitketa', 20, TRUE, TRUE, 'image2.jpg');
+    ('chichia', 'hash_kitketa', 20, TRUE, TRUE, 'image2.jpg'),
+    ('ffff','123',23,false,TRUE,'image2.jpg');
 
 -- Insert stories for creators
 INSERT INTO stories (creator_id, title, prompt, description)
