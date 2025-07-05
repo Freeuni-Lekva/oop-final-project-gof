@@ -57,8 +57,8 @@
                         }
                     }
                 %>
-                <a href="<%= request.getContextPath() %>/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="<%= request.getContextPath() %>/profile" class="flex items-center space-x-2 text-black hover:text-indigo-400 font-medium">
+                <a href="<%= request.getContextPath() %>/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
+                <a href="<%= request.getContextPath() %>/profile" class="flex items-center space-x-2 text-gray-300 hover:text-indigo-400 font-medium">
                     <%
                         String profilePicUrl;
                         if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
@@ -67,10 +67,10 @@
                             profilePicUrl = "https://placehold.co/40x40/4F46E5/FFFFFF?text=" + username.toUpperCase().charAt(0);
                         }
                     %>
-                    <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
+                    <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover">
                     <span><%= username %></span>
                 </a>
-                <a href="<%= request.getContextPath() %>/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
+                <a href="<%= request.getContextPath() %>/logout" class="bg-teal-600 hover:bg-teal-700 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
                 <% } else { %>
                 <a href="<%= request.getContextPath() %>/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
                 <a href="<%= request.getContextPath() %>/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
@@ -95,7 +95,7 @@
                 <option value="tag" <%= "tag".equals(searchType) ? "selected" : "" %>>Tag</option>
             </select>
             <input id="search-query-input" type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
-            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-black font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
+            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-gray-300 font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
         </form>
 
         <div class="flex flex-wrap justify-center gap-2 mt-4">
