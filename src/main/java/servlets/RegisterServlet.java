@@ -27,7 +27,7 @@ public class RegisterServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
         if (session != null && session.getAttribute("user") != null) {
-            res.sendRedirect(req.getContextPath() + "/home.jsp");
+            res.sendRedirect(req.getContextPath() + "/home");
             return;
         }
         req.getRequestDispatcher("/register.jsp").forward(req, res);
@@ -103,6 +103,6 @@ public class RegisterServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         session.setAttribute("user", user.getUsername());
-        res.sendRedirect(req.getContextPath() + "/home.jsp");
+        res.sendRedirect(req.getContextPath() + "/home");
     }
 }
