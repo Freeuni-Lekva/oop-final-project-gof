@@ -99,17 +99,23 @@ public class StoryCreationServlet extends HttpServlet {
         PromptBuilder builder = new PromptBuilder(characters, worldInfo);
         String firstPrompt = builder.build();
 
-        int newStoryId = 0;
+        int newStoryId;
         try {
             newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, description, userId);
-            if (!isCreator) userDAO.SetCreator(userId);
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServletException("Error creating story.", e);
+        }
+        if (newStoryId != -1 && !isCreator) {
+            try {
+                userDAO.SetCreator(userId);
+            } catch (SQLException e) {
+                System.err.println("Story was created, but failed to update creator status for user." + userId);
+                e.printStackTrace();
+            }
         }
 
         if (newStoryId == -1) {
-            System.err.println("Failed to create a new story for user " + userId);
+            System.err.println("Failed to create a new story for user." + userId);
             res.sendRedirect(req.getContextPath() + "/create-post.jsp?error=creationFailed");
             return;
         }
