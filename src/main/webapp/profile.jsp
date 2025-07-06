@@ -126,7 +126,7 @@
                     int storyId = (story != null) ? story.getStoryId() : -1;
                 %>
                 <div class="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg overflow-hidden h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-purple-500/40 group">
-                    <a href="post.jsp?id=<%= storyId %>" class="block h-full">
+                    <a href="<%= request.getContextPath() %>/post?id=<%= storyId %>" class="block h-full">
                         <img src="<%= imageUrl %>" alt="Post art" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105">
                         <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 12rem);">
                             <div>
@@ -163,7 +163,7 @@
                 <div class="space-y-3">
                     <% for (Story story : readingHistory) { %>
                     <div class="group flex items-center justify-between bg-white/10 p-3 rounded-lg hover:bg-white/20 transition-colors duration-300">
-                        <a href="post.jsp?id=<%= story.getStoryId() %>" class="font-semibold text-white group-hover:text-purple-300 flex-grow"><%= story.getTitle() %></a>
+                        <a href="<%= request.getContextPath() %>/post?id=<%= story.getStoryId() %>" class="font-semibold text-white group-hover:text-purple-300 flex-grow"><%= story.getTitle() %></a>
                         <form action="<%= request.getContextPath() %>/profile" method="post" class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity" onsubmit="return confirm('Are you sure you want to remove this item from your reading history?');">
                             <input type="hidden" name="action" value="deleteHistory">
                             <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
@@ -189,7 +189,7 @@
                     <% PostDAO postDao = (PostDAO) application.getAttribute("postDao");
                         for (Story story : bookmarkedStories) {
                             Post coverPost = postDao.getFirstPostForStory(story.getStoryId());
-                            String linkUrl = (coverPost != null) ? request.getContextPath() + "/post.jsp?id=" + coverPost.getPostId() : "#";
+                            String linkUrl = (coverPost != null) ? request.getContextPath() + "/post?id=" + coverPost.getPostId() : "#";
                     %>
                     <div class="group flex items-center justify-between bg-white/10 p-3 rounded-lg hover:bg-white/20 transition-colors duration-300">
                         <a href="<%= linkUrl %>" class="font-semibold text-white group-hover:text-purple-300 flex-grow"><%= story.getTitle() %></a>

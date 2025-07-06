@@ -180,7 +180,7 @@
                         : "https://placehold.co/600x400/111827/374151?text=Saga";
             %>
             <div class="story-card">
-                <a href="<%= request.getContextPath() %>/post.jsp?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
+                <a href="<%= request.getContextPath() %>/post?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
                     <img src="<%= imageUrl %>" alt="Story Art for <%= story.getTitle() %>" class="w-full h-40 object-cover">
                     <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
                         <div>
