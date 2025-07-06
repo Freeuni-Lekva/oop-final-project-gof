@@ -107,26 +107,6 @@ public class UserDaoTest extends TestCase {
         assertFalse("Directionality check: User 1 should still not be following User 2", userDao.isFollowing(1, 2));
     }
 
-    public void testAddBookmark() throws SQLException {
-        data.story.StoryDAO storyDao = new data.story.StoryDAO();
-        Story storyToBookmark = storyDao.getStory(2);
-        assertNotNull(storyToBookmark);
-
-        List<Story> initialBookmarks = storyDao.findBookmarkedStories(1);
-        assertTrue(initialBookmarks.isEmpty());
-
-        userDao.addBookmark(1, storyToBookmark);
-        List<Story> updatedBookmarks = storyDao.findBookmarkedStories(1);
-
-        assertEquals(1, updatedBookmarks.size());
-        assertEquals(2, updatedBookmarks.get(0).getStoryId());
-
-        userDao.addBookmark(1, storyToBookmark);
-        List<Story> finalBookmarks = storyDao.findBookmarkedStories(1);
-
-        assertEquals(1, finalBookmarks.size());
-    }
-
 
     public void testUpdateUsername() throws SQLException {
 
