@@ -1,5 +1,7 @@
 package servlets;
 
+import data.media.CommentsDAO;
+import data.media.LikesDAO;
 import data.story.StoryDAO;
 import data.user.UserDAO;
 import jakarta.servlet.ServletContext;
@@ -30,9 +32,11 @@ public class PostServlet extends HttpServlet {
         ServletContext context = getServletContext();
         StoryDAO storyDAO = (StoryDAO) context.getAttribute("storyDao");
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
+        LikesDAO likesDAO = (LikesDAO) context.getAttribute("likeDao");
+        CommentsDAO commentsDAO = (CommentsDAO) context.getAttribute("commentDao");
 
         if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login.jsp?redirect=post.jsp?id=" + storyIdStr);
             return;
         }
         if (action == null || storyIdStr == null) {
@@ -40,31 +44,63 @@ public class PostServlet extends HttpServlet {
             return;
         }
 
-
         try {
             User user = userDAO.findUser(username);
             int userId = user.getUserId();
             int storyId = Integer.parseInt(storyIdStr);
-            Story story = storyDAO.getStory(storyId);
+
+            String redirectUrl = req.getContextPath() + "/post.jsp?id=" + storyId;
 
             switch (action) {
                 case "bookmark":
-
-                    userDAO.addBookmark(userId,story);
-                    res.sendRedirect(req.getContextPath() + "/post.jsp?id=" + storyId);
+                    Story story = storyDAO.getStory(storyId);
+                    userDAO.addBookmark(userId, story);
                     break;
 
                 case "start_story":
                     res.sendRedirect(req.getContextPath() + "/AIchat.jsp?storyId=" + storyId);
+                    return;
+
+                case "like_post": {
+                    int postId = Integer.parseInt(req.getParameter("postId"));
+                    likesDAO.addLikeToPost(postId, userId);
                     break;
+                }
+
+                case "unlike_post": {
+                    int postId = Integer.parseInt(req.getParameter("postId"));
+                    likesDAO.removeLikePost(postId, userId);
+                    break;
+                }
+
+                case "add_comment": {
+                    int postId = Integer.parseInt(req.getParameter("postId"));
+                    String commentText = req.getParameter("commentText");
+                    if (commentText != null && !commentText.trim().isEmpty()) {
+                        commentsDAO.addComment(commentText, userId, postId);
+                    }
+                    break;
+                }
+
+                case "delete_comment": {
+                    int commentId = Integer.parseInt(req.getParameter("commentId"));
+                    int authorId = commentsDAO.getAuthorId(commentId);
+                    if (authorId == userId) {
+                        commentsDAO.deleteComment(commentId);
+                    }
+                    break;
+                }
 
                 default:
                     res.sendRedirect(req.getContextPath() + "/home");
-                    break;
+                    return;
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            res.sendRedirect(redirectUrl);
+
+        } catch (SQLException | NumberFormatException e) {
+            e.printStackTrace();
+            res.sendRedirect(req.getContextPath() + "/post.jsp?id=" + storyIdStr + "&error=true");
         }
     }
 
