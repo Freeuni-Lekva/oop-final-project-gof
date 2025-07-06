@@ -204,7 +204,7 @@
 
                         <%-- Delete Comment Form --%>
                         <% if (loggedInUser != null && loggedInUser.getUserId() == comment.getAuthorId()) { %>
-                        <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
+                        <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this comment?');" >
                             <input type="hidden" name="action" value="delete_comment">
                             <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
                             <input type="hidden" name="commentId" value="<%= comment.getCommentId() %>">
