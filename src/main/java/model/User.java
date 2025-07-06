@@ -9,9 +9,10 @@ public class User {
     private int age;
     private final LocalDateTime registerTime;
     private boolean isCreator;
+    private boolean isAdmin;
     private String imageName;
 
-    public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
+    public User(int userId, String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator,boolean isAdmin, String imageName) {
         this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
@@ -19,15 +20,17 @@ public class User {
         this.registerTime = registerTime;
         this.isCreator = isCreator;
         this.imageName = imageName;
+        this.isAdmin = isAdmin;
     }
 
-    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator, String imageName) {
+    public User(String username, String passwordHash, int age, LocalDateTime registerTime, boolean isCreator,boolean isAdmin, String imageName) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.age = age;
         this.registerTime = registerTime;
         this.isCreator = isCreator;
         this.imageName = imageName;
+        this.isAdmin = isAdmin;
     }
 
     // Getters
@@ -58,6 +61,8 @@ public class User {
     public boolean isCreator() {
         return isCreator;
     }
+
+    public  boolean isAdmin() {return isAdmin;}
 
     // Setters
     public void setUsername(String username) {
