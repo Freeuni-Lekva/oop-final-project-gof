@@ -129,6 +129,16 @@
             <% if (username != null) { %>
             <div class="flex items-center gap-4 border-t border-gray-700 pt-6">
 
+                <% boolean isBookmarked = (Boolean) request.getAttribute("isBookmarked"); %>
+                <% if (isBookmarked) { %>
+                <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
+                    <input type="hidden" name="action" value="unbookmark">
+                    <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                        Remove from Bookmarks
+                    </button>
+                </form>
+                <% } else { %>
                 <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
                     <input type="hidden" name="action" value="bookmark">
                     <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
@@ -136,6 +146,7 @@
                         Add to Bookmarks
                     </button>
                 </form>
+                <% } %>
 
                 <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
                     <input type="hidden" name="action" value="start_story">

@@ -33,6 +33,7 @@ public class PostServlet extends HttpServlet {
             ServletContext context = getServletContext();
             StoryDAO storyDAO = (StoryDAO) context.getAttribute("storyDao");
             PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
+            UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
             CommentsDAO commentsDAO = (CommentsDAO) context.getAttribute("commentDao");
 
             Story story = storyDAO.getStory(storyId);
@@ -47,6 +48,16 @@ public class PostServlet extends HttpServlet {
             req.setAttribute("story", story);
             req.setAttribute("post", post);
             req.setAttribute("comments", comments);
+
+            boolean isBookmarked = false;
+            String loggedInUsername = (String) req.getSession().getAttribute("user");
+            if (loggedInUsername != null) {
+                User loggedInUser = userDAO.findUser(loggedInUsername);
+                if (loggedInUser != null) {
+                    isBookmarked = storyDAO.isBookmarked(loggedInUser.getUserId(), storyId);
+                }
+            }
+            req.setAttribute("isBookmarked", isBookmarked);
 
             req.getRequestDispatcher("/post.jsp").forward(req, res);
 
@@ -85,8 +96,12 @@ public class PostServlet extends HttpServlet {
 
             switch (action) {
                 case "bookmark":
+                    storyDAO.addBookmark(userId, storyId);
+                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    break;
 
-                    userDAO.addBookmark(userId,story);
+                case "unbookmark":
+                    storyDAO.removeBookmark(userId, storyId);
                     res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
                     break;
 
