@@ -284,4 +284,55 @@ public class UserDAO {
         }
     }
 
+    public int getTotalUserCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting total user count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public int getAdminCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users WHERE is_admin = TRUE";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting admin count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public int getCreatorCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users WHERE is_creator = TRUE";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting creator count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
 }
