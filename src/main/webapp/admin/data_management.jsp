@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Management - Admin Dashboard</title>
+    <title>Data Management - Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,18 +51,18 @@
     <main>
         <div class="mb-8 flex space-x-2 border-b-2 border-gray-800 pb-2">
             <a href="<%= request.getContextPath() %>/admin/dashboard.jsp"
-               class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">
+               class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">
                 User Management
             </a>
             <a href="<%= request.getContextPath() %>/admin/data_management.jsp"
-               class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">
+               class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">
                 Data Management
             </a>
         </div>
 
-\        <div id="user-content">
-            <div class="bg-gray-800/50 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md">
-                <p class="font-bold">User Management Area</p>
+        <div id="data-content">
+            <div class="bg-gray-800/50 border-l-4 border-pink-500 text-gray-300 p-4 rounded-md">
+                <p class="font-bold">Data Management Area</p>
 
             </div>
         </div>

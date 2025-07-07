@@ -25,6 +25,7 @@ public class AdminServlet extends HttpServlet {
 
         if (session != null) {
             loggedInUser = (String) session.getAttribute("user");
+            System.out.println("loggedInUser: " + loggedInUser);
         }
 
 
