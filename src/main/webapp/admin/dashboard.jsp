@@ -23,6 +23,16 @@
 <%
     String loggedInUser = (String) session.getAttribute("user");
     if (loggedInUser == null) { loggedInUser = "Admin"; }
+
+    Integer totalUsers = (Integer) request.getAttribute("totalUsers");
+    Integer adminCount = (Integer) request.getAttribute("adminCount");
+    Integer creatorCount = (Integer) request.getAttribute("creatorCount");
+    if (totalUsers == null) totalUsers = 0;
+    if (adminCount == null) adminCount = 0;
+    if (creatorCount == null) creatorCount = 0;
+
+    String message = request.getParameter("message");
+    String error = request.getParameter("error");
 %>
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -41,32 +51,55 @@
                 <a href="<%= request.getContextPath() %>/home.jsp" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
                     ← Back to Site
                 </a>
-                <a href="<%= request.getContextPath() %>/logout" title="Logout" class="text-gray-400 hover:text-white transition-transform duration-300 hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
-                </a>
             </div>
         </div>
     </header>
 
     <main>
         <div class="mb-8 flex space-x-2 border-b-2 border-gray-800 pb-2">
-            <a href="<%= request.getContextPath() %>/admin/dashboard.jsp"
-               class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">
-                User Management
-            </a>
-            <a href="<%= request.getContextPath() %>/admin/data_management.jsp"
-               class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">
-                Data Management
-            </a>
+            <a href="<%= request.getContextPath() %>/admin/dashboard.jsp" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">User Management</a>
+            <a href="<%= request.getContextPath() %>/admin/data_management.jsp" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">Data Management</a>
         </div>
 
-\        <div id="user-content">
-            <div class="bg-gray-800/50 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md">
-                <p class="font-bold">User Management Area</p>
+        <% if (message != null) { %><div id="success-alert" class="relative flex items-center justify-between bg-green-800/50 border-l-4 border-green-400 text-white p-4 rounded-md mb-6" role="alert"><p><%= message %></p><button type="button" class="dismiss-btn" data-dismiss-target="#success-alert" aria-label="Close"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button></div><% } %>
+        <% if (error != null) { %><div id="error-alert" class="relative flex items-center justify-between bg-red-800/50 border-l-4 border-red-400 text-white p-4 rounded-md mb-6" role="alert"><p><%= error %></p><button type="button" class="dismiss-btn" data-dismiss-target="#error-alert" aria-label="Close"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button></div><% } %>
 
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white/10 p-6 rounded-lg border-l-4 border-purple-500"><p class="text-sm font-medium text-gray-400 uppercase">Total Users</p><p class="mt-1 text-4xl font-semibold text-white"><%= totalUsers %></p></div>
+            <div class="bg-white/10 p-6 rounded-lg border-l-4 border-pink-500"><p class="text-sm font-medium text-gray-400 uppercase">Admins</p><p class="mt-1 text-4xl font-semibold text-white"><%= adminCount %></p></div>
+            <div class="bg-white/10 p-6 rounded-lg border-l-4 border-teal-500"><p class="text-sm font-medium text-gray-400 uppercase">Creators</p><p class="mt-1 text-4xl font-semibold text-white"><%= creatorCount %></p></div>
         </div>
+
+        <div class="bg-white/5 p-6 rounded-lg border border-white/20 mb-8">
+            <h3 class="text-xl font-semibold text-white mb-4">User Actions</h3>
+            <form action="<%= request.getContextPath() %>/dashboard" method="POST" class="flex flex-col sm:flex-row items-center gap-4">
+                <div class="w-full sm:w-1/2">
+                    <label for="username" class="sr-only">Username</label>
+                    <input type="text" name="username" id="username" class="bg-gray-900/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5" placeholder="Enter username..." required>
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit" name="action" value="toggleAdmin" class="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors">Make/Remove Admin</button>
+                    <button type="submit" name="action" value="deleteUser" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors">Delete User</button>
+                </div>
+            </form>
+        </div>
+
+
     </main>
 </div>
+
+<script>
+    const dismissButtons = document.querySelectorAll('.dismiss-btn');
+    dismissButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-dismiss-target');
+            const alertToDismiss = document.querySelector(targetId);
+            if (alertToDismiss) {
+                alertToDismiss.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

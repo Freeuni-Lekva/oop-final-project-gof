@@ -335,4 +335,36 @@ public class UserDAO {
         return 0;
     }
 
+    public void updateAdminStatus(int userId, boolean isAdmin) throws SQLException {
+        String sql = "UPDATE users SET is_admin = ? WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setBoolean(1, isAdmin);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error updating admin status for userId " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    public void deleteUser(int userId) throws SQLException {
+        String sql = "DELETE FROM users WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting user with ID " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }
