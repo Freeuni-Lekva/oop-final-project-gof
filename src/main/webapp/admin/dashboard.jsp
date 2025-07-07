@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="model.User" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,6 +36,9 @@
 
     String message = request.getParameter("message");
     String error = request.getParameter("error");
+    List<User> recentUsers = (List<User>) request.getAttribute("recentUsers");
+    Integer currentLimit = (Integer) request.getAttribute("currentLimit");
+    if (currentLimit == null) currentLimit = 5;
 %>
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -84,6 +90,49 @@
             </form>
         </div>
 
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-white">Recently Joined Users</h3>
+
+                <form action="<%= request.getContextPath() %>/dashboard" method="GET" class="flex items-center gap-2 mt-4 sm:mt-0">
+                    <label for="limit" class="text-sm text-gray-400">Show:</label>
+                    <input type="number" name="limit" id="limit"
+                           value="<%= currentLimit %>"
+                           class="w-20 bg-gray-900/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2"
+                           min="1" max="50">
+                    <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">Update</button>
+                </form>
+            </div>
+
+            <% if (recentUsers != null && !recentUsers.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy"); %>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <% for (User user : recentUsers) { %>
+
+                <a href="<%= request.getContextPath() %>/user?username=<%= user.getUsername() %>"
+                   class="block text-center bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-6 transform transition-transform duration-300 hover:-translate-y-2"
+                   title="View <%= user.getUsername() %>'s public profile">
+
+                    <img src="<%= request.getContextPath() %>/images/profiles/<%= user.getImageName() %>"
+                         alt="Profile of <%= user.getUsername() %>"
+                         class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-gray-700 object-cover">
+
+                    <h3 class="font-bold text-xl text-white truncate"><%= user.getUsername() %></h3>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        Joined <%= sdf.format(java.sql.Timestamp.valueOf(user.getRegisterTime())) %>
+                    </p>
+                </a>
+                <% } %>
+            </div>
+
+            <% } else { %>
+            <div class="bg-gray-800/50 border-l-4 border-gray-500 text-gray-300 p-4 rounded-md">
+                <p>No recent user registrations to display.</p>
+            </div>
+            <% } %>
+        </div>
 
     </main>
 </div>

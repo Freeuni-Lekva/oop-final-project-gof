@@ -1,9 +1,7 @@
 package servlets;
 
-import data.story.StoryDAO;
 import data.user.UserDAO;
 import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,14 +9,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
-import model.story.Story;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet(name="admins", value="/dashboard")
 public class AdminServlet extends HttpServlet {
     private UserDAO userDAO;
+
+    private static final int DEFAULT_RECENT_USER_LIMIT = 5;
+    private static final int MAX_RECENT_USER_LIMIT = 50;
 
     @Override
     public void init() {
@@ -28,11 +29,8 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        String loggedInUsername = null;
+        String loggedInUsername = (session != null) ? (String) session.getAttribute("user") : null;
 
-        if (session != null) {
-            loggedInUsername = (String) session.getAttribute("user");
-        }
         if (loggedInUsername == null) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
@@ -40,21 +38,34 @@ public class AdminServlet extends HttpServlet {
 
         try {
             User loggedInUser = userDAO.findUser(loggedInUsername);
-
             if (loggedInUser == null || !loggedInUser.isAdmin()) {
-                request.setAttribute("errorMessage", "You do not have permission to access this page.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-                dispatcher.forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/home.jsp");
                 return;
             }
 
-            int totalUsers = userDAO.getTotalUserCount();
-            int adminCount = userDAO.getAdminCount();
-            int creatorCount = userDAO.getCreatorCount();
+            request.setAttribute("totalUsers", userDAO.getTotalUserCount());
+            request.setAttribute("adminCount", userDAO.getAdminCount());
+            request.setAttribute("creatorCount", userDAO.getCreatorCount());
 
-            request.setAttribute("totalUsers", totalUsers);
-            request.setAttribute("adminCount", adminCount);
-            request.setAttribute("creatorCount", creatorCount);
+            int limit = DEFAULT_RECENT_USER_LIMIT;
+            String limitParam = request.getParameter("limit");
+
+            if (limitParam != null && !limitParam.isEmpty()) {
+                try {
+                    int requestedLimit = Integer.parseInt(limitParam);
+                    if (requestedLimit > 0 && requestedLimit <= MAX_RECENT_USER_LIMIT) {
+                        limit = requestedLimit;
+                    } else if (requestedLimit > MAX_RECENT_USER_LIMIT) {
+                        limit = MAX_RECENT_USER_LIMIT;
+                    }
+                } catch (NumberFormatException e) {
+                }
+            }
+
+            List<User> recentUsers = userDAO.getRecentUsers(limit);
+            request.setAttribute("recentUsers", recentUsers);
+            request.setAttribute("currentLimit", limit);
+
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("/admin/dashboard.jsp");
             dispatcher.forward(request, response);
@@ -96,6 +107,9 @@ public class AdminServlet extends HttpServlet {
                 if (targetUser == null) {
                     errorMessage = "User '" + usernameToModify + "' not found.";
                 } else {
+                    if (actingAdmin.getUserId() == targetUser.getUserId()) {
+                        errorMessage = "You cannot modify your own account from this panel.";
+                    } else {
                     switch (action) {
                         case "toggleAdmin":
                             boolean newAdminStatus = !targetUser.isAdmin();
@@ -112,6 +126,7 @@ public class AdminServlet extends HttpServlet {
                             }
                             break;
                     }
+                }
                 }
             }
         } catch (SQLException e) {
