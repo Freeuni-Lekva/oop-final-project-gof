@@ -34,7 +34,7 @@ public class UserDaoTest extends TestCase {
     }
 
     public void testSaveAndFindNewUser() throws SQLException {
-        User newUser = new User(0, "newUser", "new_hash", 33, null, false, "image1.jpg");
+        User newUser = new User(0, "newUser", "new_hash", 33, null, false,false, "image1.jpg");
         userDao.saveUser(newUser);
 
         User foundUser = userDao.findUserById(4);
