@@ -45,7 +45,6 @@ CREATE TABLE stories (
                          prompt TEXT,
                          description TEXT,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                         FOREIGN KEY (creator_id) REFERENCES users(user_id)
                          FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 

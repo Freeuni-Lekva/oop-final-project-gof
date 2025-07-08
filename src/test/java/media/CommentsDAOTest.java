@@ -135,4 +135,58 @@ public class CommentsDAOTest extends TestCase {
         int likeCount = commentsDAO.getLikeCount(32768);
         assertEquals(-1, likeCount);
     }
+
+    public void testGetTotalCommentCount() throws SQLException {
+        assertEquals("Initial count should be 2", 2, commentsDAO.getTotalCommentCount());
+
+        commentsDAO.addComment("A third comment for counting", 1, 1);
+        assertEquals("Count should be 3 after adding one more", 3, commentsDAO.getTotalCommentCount());
+    }
+
+    public void testGetCommentById() throws SQLException {
+        Comment comment = commentsDAO.getCommentById(1);
+        assertNotNull("Comment with ID 1 should be found", comment);
+        assertEquals("Comment content should match fixture data", "Amazing post!", comment.getCommentContents());
+
+        Comment nonExistentComment = commentsDAO.getCommentById(999);
+        assertNull("A non-existent comment ID should return null", nonExistentComment);
+    }
+
+    public void testGetRecentCommentsWithUsername() throws SQLException {
+        List<Comment> comments = commentsDAO.getRecentCommentsWithUsername(5);
+
+        Comment newestComment = comments.get(0);
+        assertEquals("Newest comment ID should be 2", 2, newestComment.getCommentId());
+        assertEquals("Author of newest comment should be lsana", "lsana", newestComment.getAuthorUsername());
+
+        Comment olderComment = comments.get(1);
+        assertEquals("Older comment ID should be 1", 1, olderComment.getCommentId());
+        assertEquals("Author of older comment should be chichia", "chichia", olderComment.getAuthorUsername());
+    }
+
+    public void testDeleteUnengagedComments() throws SQLException {
+        addCommentWithTimestamp("Old and unliked", 0, "2022-01-01 20:00:00");
+        addCommentWithTimestamp("Old but liked", 5, "2022-01-01 20:00:00");
+        commentsDAO.addComment("New and unliked", 1, 1);
+
+        assertEquals("Total comments should be 5 before cleanup", 5, commentsDAO.getTotalCommentCount());
+
+        int deletedCount = commentsDAO.deleteUnengagedComments();
+
+        assertEquals("Exactly 1 unengaged comment should have been deleted", 1, deletedCount);
+        assertEquals("Total comments should be 4 after cleanup", 4, commentsDAO.getTotalCommentCount());
+    }
+
+    private void addCommentWithTimestamp(String text, int likes, String timestamp) throws SQLException {
+        String sql = "INSERT INTO comments (author_id, post_id, comment, like_count, created_at) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, 1);
+            stmt.setInt(2, 1);
+            stmt.setString(3, text);
+            stmt.setInt(4, likes);
+            stmt.setString(5, timestamp);
+            stmt.executeUpdate();
+        }
+    }
 }
