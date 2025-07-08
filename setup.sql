@@ -153,7 +153,7 @@ VALUES
 INSERT INTO posts (story_id, image_name, like_count, comment_count)
 VALUES
     (1, 'image1.jpg', 2, 1),
-    (2, 'image2.jpg', 1, 0);
+    (2, 'image2.jpg', 1, 1);
 
 -- Insert comments from users
 INSERT INTO comments (author_id, post_id, comment, like_count)

@@ -31,7 +31,7 @@
         <p class="text-gray-400 mt-2">Welcome, <%= username %>! Let's build a world together.</p>
     </div>
 
-    <form action="/postcreation" method="POST" enctype="multipart/form-data" class="space-y-8">
+    <form action="<%= request.getContextPath() %>/postcreation" method="POST" enctype="multipart/form-data" class="space-y-8">
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <label for="title" class="block text-xl font-semibold mb-2 text-gray-300">Story Title</label>

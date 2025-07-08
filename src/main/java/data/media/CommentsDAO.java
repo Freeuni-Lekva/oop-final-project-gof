@@ -45,7 +45,7 @@ public class CommentsDAO {
             conn.commit();
 
         } catch (SQLException e) {
-                conn.rollback();
+            conn.rollback();
             throw new SQLException("rolled back", e);
         } finally {
             if(conn != null) {
@@ -121,7 +121,7 @@ public class CommentsDAO {
         String query =  "SELECT author_id FROM comments WHERE comment_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query)){
+             PreparedStatement stmt = conn.prepareStatement(query)){
 
             stmt.setInt(1, commentId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -143,7 +143,7 @@ public class CommentsDAO {
         String query =  "SELECT post_id FROM comments WHERE comment_id = ?";
 
         try(Connection conn = MySqlConnector.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query)) {
+            PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, commentId);
             try (ResultSet rs = stmt.executeQuery()){
@@ -165,7 +165,7 @@ public class CommentsDAO {
         String query =  "SELECT like_count FROM comments WHERE comment_id = ?";
 
         try (Connection conn = MySqlConnector.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query)){
+             PreparedStatement stmt = conn.prepareStatement(query)){
 
             stmt.setInt(1, commentId);
             try (ResultSet rs = stmt.executeQuery()){
@@ -242,5 +242,29 @@ public class CommentsDAO {
             throw e;
         }
         return rowsAffected;
+    }
+
+    public Comment getCommentById(int commentId) throws SQLException {
+        String sql = "SELECT * FROM comments WHERE comment_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, commentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Comment(
+                            rs.getInt("comment_id"),
+                            rs.getInt("post_id"),
+                            rs.getInt("author_id"),
+                            rs.getString("comment"),
+                            rs.getInt("like_count")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
     }
 }

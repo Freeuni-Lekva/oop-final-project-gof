@@ -138,23 +138,6 @@ public class UserDAO {
         }
     }
 
-    public void addBookmark(int userId, Story story) throws SQLException {
-        String sql = "INSERT IGNORE INTO bookmarks (user_id, story_id) VALUES (?, ?)";
-
-        try (Connection conn = MySqlConnector.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, story.getStoryId());
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            System.err.println("Error adding bookmark: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
     public void followUser(int followerId, int followingId) throws SQLException {
         String sql = "INSERT IGNORE INTO followers (follower_id, following_id) VALUES (?, ?)";
 
