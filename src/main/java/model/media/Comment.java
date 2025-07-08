@@ -6,6 +6,7 @@ public class Comment {
     private int authorId;
     private String commentContents;
     private int likesCount;
+    private String authorUsername;
 
     public Comment(int commentId, int postId, int authorId, String commentContents, int likesCount) {
         this.commentId = commentId;
@@ -15,9 +16,11 @@ public class Comment {
         this.likesCount = likesCount;
     }
 
+    public Comment(int commentId, int postId, int authorId, String comment, int likeCount, String authorUsername) {
+        this(commentId, postId, authorId, comment, likeCount); // Calls the other constructor
+        this.authorUsername = authorUsername;
+    }
 
-
-    //getters:
 
     public int getCommentId() {
         return commentId;
@@ -39,7 +42,7 @@ public class Comment {
         return likesCount;
     }
 
-
+    public String getAuthorUsername() { return authorUsername; }
 
     //setters:
 

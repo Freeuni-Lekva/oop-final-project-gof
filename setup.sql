@@ -46,6 +46,7 @@ CREATE TABLE stories (
                          description TEXT,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                          FOREIGN KEY (creator_id) REFERENCES users(user_id)
+                         FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE posts (
@@ -64,6 +65,7 @@ CREATE TABLE comments (
                           post_id INT NOT NULL,
                           comment TEXT NOT NULL,
                           like_count INT DEFAULT 0,
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                           FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE,
                           FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 );
@@ -87,7 +89,7 @@ CREATE TABLE bookmarks (
                            user_id INT,
                            story_id INT,
                            PRIMARY KEY (user_id, story_id),
-                           FOREIGN KEY (user_id) REFERENCES users(user_id),
+                           FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
                            FOREIGN KEY (story_id) REFERENCES stories(story_id) ON DELETE CASCADE
 );
 

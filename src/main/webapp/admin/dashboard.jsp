@@ -63,8 +63,8 @@
 
     <main>
         <div class="mb-8 flex space-x-2 border-b-2 border-gray-800 pb-2">
-            <a href="<%= request.getContextPath() %>/admin/dashboard.jsp" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">User Management</a>
-            <a href="<%= request.getContextPath() %>/admin/data_management.jsp" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">Data Management</a>
+            <a href="<%= request.getContextPath() %>/dashboard" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">User Management</a>
+            <a href="<%= request.getContextPath() %>/admin/data" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">Data Management</a>
         </div>
 
         <% if (message != null) { %><div id="success-alert" class="relative flex items-center justify-between bg-green-800/50 border-l-4 border-green-400 text-white p-4 rounded-md mb-6" role="alert"><p><%= message %></p><button type="button" class="dismiss-btn" data-dismiss-target="#success-alert" aria-label="Close"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button></div><% } %>
@@ -85,7 +85,9 @@
                 </div>
                 <div class="flex gap-4">
                     <button type="submit" name="action" value="toggleAdmin" class="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors">Make/Remove Admin</button>
-                    <button type="submit" name="action" value="deleteUser" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors">Delete User</button>
+                    <button type="submit"
+                            onclick="return confirm('WARNING: DELETING the user can not be undone')"
+                            name="action" value="deleteUser" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors">Delete User</button>
                 </div>
             </form>
         </div>

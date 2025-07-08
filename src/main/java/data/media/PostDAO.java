@@ -197,4 +197,18 @@ public class PostDAO {
         storyDAO.deleteStory(post.getStoryId());
     }
 
+    public int getTotalPostCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM posts";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
 }
