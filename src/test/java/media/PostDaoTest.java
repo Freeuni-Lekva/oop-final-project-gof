@@ -137,4 +137,14 @@ public class PostDaoTest extends TestCase {
 
         return lsanaId;
     }
+
+    public void testGetTotalPostCount() throws SQLException {
+        int initialCount = postDao.getTotalPostCount();
+        assertEquals("Initial post count should be 2 from setup.sql", 2, initialCount);
+
+        postDao.addPost(new Post(0, 1, "a_new_image.jpg", LocalDateTime.now(), 0, 0));
+
+        int newCount = postDao.getTotalPostCount();
+        assertEquals("Count should be 3 after adding one post", 3, newCount);
+    }
 }
