@@ -42,7 +42,6 @@
                 post = postDao.getPostsByStoryId(story.getStoryId());
                 creator = userDao.findUserById(story.getCreatorId());
 
-
                 if (post != null) {
                     comments = commentsDao.getCommentsForPost(post.getPostId());
                     if (loggedInUser != null) {
@@ -71,63 +70,33 @@
 </head>
 <body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img4.jpg');">
 
-<%-- Navbar remains the same --%>
-<nav class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
-    <div class="container mx-auto px-4 md:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="<%= request.getContextPath() %>/home" class="text-2xl font-bold text-white hover:text-indigo-400 transition-colors">StorySaga AI</a>
-            <div class="flex items-center space-x-4">
-                <% if (loggedInUser != null) { %>
-                <a href="<%= request.getContextPath() %>/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-white font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="<%= request.getContextPath() %>/profile" class="flex items-center space-x-2 text-white hover:text-indigo-400 font-medium">
-                    <%
-                        String profilePicUrl = (loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty())
-                                ? request.getContextPath() + "/images/profiles/" + loggedInUser.getImageName()
-                                : "https://placehold.co/40x40/4F46E5/FFFFFF?text=" + username.toUpperCase().charAt(0);
-                    %>
-                    <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
-                    <span><%= username %></span>
-                </a>
-                <a href="<%= request.getContextPath() %>/logout" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
-                <% } else { %>
-                <a href="<%= request.getContextPath() %>/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
-                <a href="<%= request.getContextPath() %>/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
-                <% } %>
-            </div>
-        </div>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/common/navbar.jsp" />
+
 
 <div class="container mx-auto p-4 md:p-8 max-w-4xl">
 
     <% if (story != null && post != null) { %>
     <main class="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-2xl overflow-hidden">
-        <%-- Post Image --%>
         <img src="<%= request.getContextPath() + "/images/posts/" + post.getImageName() %>" alt="Story art" class="w-full h-auto max-h-[60vh] object-cover bg-black">
 
         <div class="p-6 md:p-8">
-            <%-- Post Header --%>
             <header class="mb-6">
                 <h1 class="text-4xl md:text-5xl font-bold text-white mb-2"><%= story.getTitle() %></h1>
                 <p class="text-lg text-gray-400">By <a href="/user?username=<%=creator.getUsername()%>" class="text-indigo-400 hover:underline"><%= creator != null ? creator.getUsername() : "Unknown" %></a></p>
             </header>
 
-            <%-- Post Description --%>
             <div class="story-content mb-8 border-t border-gray-700 pt-6">
                 <p class="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap"><%= story.getDescription() %></p>
             </div>
 
-            <%-- Likes and Comments Count --%>
             <div class="flex items-center gap-6 text-gray-400 mb-6">
                 <span class="flex items-center gap-2"><i class="fas fa-heart"></i> <%= post.getLikeCount() %> Likes</span>
                 <span class="flex items-center gap-2"><i class="fas fa-comment"></i> <%= post.getCommentCount() %> Comments</span>
             </div>
 
-            <%-- Action Buttons --%>
             <% if (loggedInUser != null) { %>
             <div class="flex items-center flex-wrap gap-4 border-t border-gray-700 pt-6">
 
-                <%-- Like/Unlike Form --%>
                 <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
                     <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
                     <input type="hidden" name="postId" value="<%= post.getPostId() %>">
@@ -144,7 +113,16 @@
                     <% } %>
                 </form>
 
-                <%-- Bookmark Form --%>
+                <% boolean isBookmarked = (Boolean) request.getAttribute("isBookmarked"); %>
+                <% if (isBookmarked) { %>
+                <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
+                    <input type="hidden" name="action" value="unbookmark">
+                    <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                        Remove from Bookmarks
+                    </button>
+                </form>
+                <% } else { %>
                 <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
                     <input type="hidden" name="action" value="bookmark">
                     <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
@@ -152,8 +130,8 @@
                         <i class="far fa-bookmark"></i> Add to Bookmarks
                     </button>
                 </form>
+                <% } %>
 
-                <%-- Start Story Form --%>
                 <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0">
                     <input type="hidden" name="action" value="start_story">
                     <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
@@ -170,11 +148,9 @@
         </div>
     </main>
 
-    <%-- Comments Section --%>
     <section class="mt-8 bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-2xl p-6 md:p-8">
         <h2 class="text-2xl font-bold text-white mb-6">Comments</h2>
 
-        <%-- Add Comment Form --%>
         <% if (loggedInUser != null) { %>
         <form action="<%= request.getContextPath() %>/post" method="POST" class="mb-8">
             <input type="hidden" name="action" value="add_comment">
@@ -187,7 +163,6 @@
         </form>
         <% } %>
 
-        <%-- Display Comments --%>
         <div class="space-y-6">
             <% if (comments != null && !comments.isEmpty()) { %>
             <% for (Comment comment : comments) {
@@ -202,7 +177,6 @@
                     <div class="flex items-center justify-between">
                         <p class="font-semibold text-indigo-400"><%= commentAuthor != null ? commentAuthor.getUsername() : "Unknown User" %></p>
 
-                        <%-- Delete Comment Form --%>
                         <% if (loggedInUser != null && loggedInUser.getUserId() == comment.getAuthorId()) { %>
                         <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this comment?');" >
                             <input type="hidden" name="action" value="delete_comment">
@@ -225,7 +199,6 @@
     </section>
 
     <% } else { %>
-    <%-- Story Not Found Block (no changes) --%>
     <div class="text-center py-20 bg-gray-800/50 rounded-lg">
         <h1 class="text-4xl font-bold text-white">Oops! Story Not Found</h1>
         <p class="text-gray-400 mt-4">The saga you're looking for doesn't exist or may have been removed.</p>

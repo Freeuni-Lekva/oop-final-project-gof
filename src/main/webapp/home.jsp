@@ -38,56 +38,7 @@
     String searchType = request.getParameter("type");
 %>
 
-<nav class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
-    <div class="container mx-auto px-4 md:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="/home" class="text-2xl font-bold text-white hover:text-indigo-400 transition-colors">
-                StorySaga AI
-            </a>
-            <div class="flex items-center space-x-4">
-                <% if (username != null) { %>
-                <%
-                    UserDAO userDao = (UserDAO) application.getAttribute("userDao");
-                    User loggedInUser = null;
-                    if (userDao != null) {
-                        try {
-                            loggedInUser = userDao.findUser(username);
-                        } catch (Exception e) {
-                            System.err.println("Could not fetch user details for nav bar: " + e.getMessage());
-                        }
-                    }
-                %>
-                <a href="/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-black font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
-                <a href="/profile" class="flex items-center space-x-2 text-black hover:text-indigo-400 font-medium">
-                    <%
-                        String profilePicUrl;
-                        if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
-                            profilePicUrl = request.getContextPath() + "/images/profiles/" + loggedInUser.getImageName();
-                        } else {
-                            profilePicUrl = "https://placehold.co/40x40/4F46E5/FFFFFF?text=" + username.toUpperCase().charAt(0);
-                        }
-                    %>
-                    <img src="<%= profilePicUrl %>" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover border-2 border-gray-600">
-                    <span><%= username %></span>
-                </a>
-                <%
-                    if (loggedInUser != null && loggedInUser.isAdmin()) {
-                %>
-                <a href="<%= request.getContextPath() %>/dashboard" class="bg-teal-700 hover:bg-teal-600 text-black font-semibold py-2 px-4 rounded-md transition duration-300">
-                    Dashboard
-                </a>
-                <%
-                    }
-                %>
-                <a href="/logout" class="bg-teal-600 hover:bg-teal-700 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
-                <% } else { %>
-                <a href="/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
-                <a href="/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
-                <% } %>
-            </div>
-        </div>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/common/navbar.jsp" />
 
 <div class="container mx-auto p-4 md:p-8">
 
@@ -97,14 +48,14 @@
     </header>
 
     <div class="max-w-2xl mx-auto mb-12">
-        <form action="/search" method="GET" class="flex flex-col sm:flex-row gap-2">
+        <form action="<%= request.getContextPath() %>/search" method="GET" class="flex flex-col sm:flex-row gap-2">
             <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="title" <%= "title".equals(searchType) ? "selected" : "" %>>Title</option>
                 <option value="creator" <%= "creator".equals(searchType) ? "selected" : "" %>>Creator</option>
                 <option value="tag" <%= "tag".equals(searchType) ? "selected" : "" %>>Tag</option>
             </select>
             <input id="search-query-input" type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
-            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-black font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
+            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-gray-300 font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
         </form>
 
         <div class="flex flex-wrap justify-center gap-2 mt-4">
@@ -143,7 +94,7 @@
                     if (username != null && username.equals(user.getUsername())) {
                         profileUrl = request.getContextPath() + "/profile";
                     } else {
-                        profileUrl = request.getContextPath() + "/user" + user.getUsername();
+                        profileUrl = request.getContextPath() + "/user?username=" + user.getUsername();
                     }
                 %>
                 <a href="<%= profileUrl %>" class="block text-center bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-6 transform transition-transform duration-300 hover:-translate-y-2">
@@ -189,7 +140,7 @@
                         : "https://placehold.co/600x400/111827/374151?text=Saga";
             %>
             <div class="story-card">
-                <a href="<%= request.getContextPath() %>/post.jsp?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
+                <a href="<%= request.getContextPath() %>/post?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
                     <img src="<%= imageUrl %>" alt="Story Art for <%= story.getTitle() %>" class="w-full h-40 object-cover">
                     <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
                         <div>
@@ -217,13 +168,13 @@
         <div class="text-center py-20">
             <% if (searchQuery != null && !searchQuery.trim().isEmpty()) { %>
             <p class="text-gray-500">No stories found matching your search for "<%= searchQuery %>".</p>
-            <a href="${pageContext.request.contextPath}/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
+            <a href="<%= request.getContextPath() %>/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="${pageContext.request.contextPath}/create-post" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="<%= request.getContextPath() %>/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
-            <a href="${pageContext.request.contextPath}/login" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
+            <a href="<%= request.getContextPath() %>/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
             <% } %>
         </div>

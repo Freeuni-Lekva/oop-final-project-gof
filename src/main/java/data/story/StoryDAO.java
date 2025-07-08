@@ -290,6 +290,22 @@ public class StoryDAO {
         }
     }
 
+    public boolean isBookmarked(int userId, int storyId) throws SQLException {
+        String sql = "SELECT 1 FROM bookmarks WHERE user_id = ? AND story_id = ? LIMIT 1";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, storyId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        }
+        catch (SQLException e) {
+            System.err.println("Error fetching isBookmarked: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public void addBookmark(int userId, int storyId) throws SQLException {
         /* used insert ignore; if the pair already exists, it will do nothing
          * instead of throwing error */
