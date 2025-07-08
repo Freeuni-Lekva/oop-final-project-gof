@@ -134,7 +134,7 @@ public class AdminServlet extends HttpServlet {
             errorMessage = "A database error occurred. Please try again.";
         }
 
-        String redirectURL = request.getContextPath() + "/dashboard";
+        String redirectURL = request.getContextPath() + "/admin/dashboard";
         if (successMessage != null) {
             redirectURL += "?message=" + java.net.URLEncoder.encode(successMessage, "UTF-8");
         } else if (errorMessage != null) {
