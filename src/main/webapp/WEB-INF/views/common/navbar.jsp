@@ -4,7 +4,19 @@
 
 <%
     String username = (String) session.getAttribute("user");
-    UserDAO userDao = (UserDAO) application.getAttribute("userDao");
+
+    User loggedInUser = null;
+
+    if (username != null) {
+        UserDAO userDao = (UserDAO) application.getAttribute("userDao");
+        if (userDao != null) {
+            try {
+                loggedInUser = userDao.findUser(username);
+            } catch (Exception e) {
+                System.err.println("Navbar Error: Could not fetch user details for '" + username + "': " + e.getMessage());
+            }
+        }
+    }
 %>
 
 <nav class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
@@ -14,22 +26,19 @@
                 StorySaga AI
             </a>
             <div class="flex items-center space-x-4">
-                <% if (username != null) { %>
-                <%
-                    User loggedInUser = null;
-                    if (userDao != null) {
-                        try {
-                            loggedInUser = userDao.findUser(username);
-                        } catch (Exception e) {
-                            System.err.println("Could not fetch user details for nav bar: " + e.getMessage());
-                        }
-                    }
-                %>
+                <% if (loggedInUser != null) { %>
+
+                <% if (loggedInUser.isAdmin()) { %>
+                <a href="<%= request.getContextPath() %>/admin/dashboard" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                    Admin Dashboard
+                </a>
+                <% } %>
+
                 <a href="<%= request.getContextPath() %>/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
                 <a href="<%= request.getContextPath() %>/profile" class="flex items-center space-x-2 text-gray-300 hover:text-indigo-400 font-medium">
                     <%
                         String profilePicUrl;
-                        if (loggedInUser != null && loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
+                        if (loggedInUser.getImageName() != null && !loggedInUser.getImageName().isEmpty()) {
                             profilePicUrl = request.getContextPath() + "/images/profiles/" + loggedInUser.getImageName();
                         } else {
                             profilePicUrl = "https://placehold.co/40x40/4F46E5/FFFFFF?text=" + username.toUpperCase().charAt(0);
@@ -39,6 +48,7 @@
                     <span><%= username %></span>
                 </a>
                 <a href="<%= request.getContextPath() %>/logout" class="bg-teal-600 hover:bg-teal-700 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
+
                 <% } else { %>
                 <a href="<%= request.getContextPath() %>/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
                 <a href="<%= request.getContextPath() %>/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>

@@ -50,7 +50,7 @@
 
     <main>
         <div class="mb-8 flex space-x-2 border-b-2 border-gray-800 pb-2">
-            <a href="<%= request.getContextPath() %>/dashboard"
+            <a href="<%= request.getContextPath() %>/admin/dashboard"
                class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">
                 User Management
             </a>

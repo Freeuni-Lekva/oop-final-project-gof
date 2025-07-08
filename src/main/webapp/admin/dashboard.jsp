@@ -63,7 +63,7 @@
 
     <main>
         <div class="mb-8 flex space-x-2 border-b-2 border-gray-800 pb-2">
-            <a href="<%= request.getContextPath() %>/dashboard" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">User Management</a>
+            <a href="<%= request.getContextPath() %>/admin/dashboard" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50 active">User Management</a>
             <a href="<%= request.getContextPath() %>/admin/data" class="nav-link px-6 py-2 font-semibold text-lg rounded-t-lg transition-colors duration-300 hover:bg-purple-600/50">Data Management</a>
         </div>
 
@@ -78,7 +78,7 @@
 
         <div class="bg-white/5 p-6 rounded-lg border border-white/20 mb-8">
             <h3 class="text-xl font-semibold text-white mb-4">User Actions</h3>
-            <form action="<%= request.getContextPath() %>/dashboard" method="POST" class="flex flex-col sm:flex-row items-center gap-4">
+            <form action="<%= request.getContextPath() %>/admin/dashboard" method="POST" class="flex flex-col sm:flex-row items-center gap-4">
                 <div class="w-full sm:w-1/2">
                     <label for="username" class="sr-only">Username</label>
                     <input type="text" name="username" id="username" class="bg-gray-900/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5" placeholder="Enter username..." required>
@@ -96,7 +96,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-white">Recently Joined Users</h3>
 
-                <form action="<%= request.getContextPath() %>/dashboard" method="GET" class="flex items-center gap-2 mt-4 sm:mt-0">
+                <form action="<%= request.getContextPath() %>/admin/dashboard" method="GET" class="flex items-center gap-2 mt-4 sm:mt-0">
                     <label for="limit" class="text-sm text-gray-400">Show:</label>
                     <input type="number" name="limit" id="limit"
                            value="<%= currentLimit %>"

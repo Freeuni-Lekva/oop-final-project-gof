@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name="admins", value="/dashboard")
+@WebServlet(name="admins", value="/admin/dashboard")
 public class AdminServlet extends HttpServlet {
     private UserDAO userDAO;
 
