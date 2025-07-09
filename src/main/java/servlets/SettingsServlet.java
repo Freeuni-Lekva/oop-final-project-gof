@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
+import util.ValidationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -121,6 +122,11 @@ public class SettingsServlet extends HttpServlet {
         }
         if (!newPassword.equals(confirmPassword)) {
             session.setAttribute("settingsError", "New passwords do not match.");
+            return false;
+        }
+        String validationError = ValidationUtils.validatePassword(newPassword);
+        if(validationError != null) {
+            session.setAttribute("settingsError", validationError);
             return false;
         }
         return true;

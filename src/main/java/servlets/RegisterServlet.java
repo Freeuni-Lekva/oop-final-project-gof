@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
+import util.ValidationUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -58,6 +59,13 @@ public class RegisterServlet extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             req.setAttribute("error", "Please enter a valid age.");
+            reqDispatcher.forward(req, res);
+            return;
+        }
+
+        String validationError = ValidationUtils.validatePassword(password);
+        if (validationError != null) {
+            req.setAttribute("error", validationError);
             reqDispatcher.forward(req, res);
             return;
         }
