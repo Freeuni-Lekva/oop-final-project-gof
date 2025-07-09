@@ -25,7 +25,7 @@
                         }
                     }
                 %>
-                <a href="<%= request.getContextPath() %>/create-post" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
+                <a href="<%= request.getContextPath() %>/create-post.jsp" class="hidden sm:inline-block bg-teal-800 hover:bg-teal-900 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">+ Create Story</a>
                 <a href="<%= request.getContextPath() %>/profile" class="flex items-center space-x-2 text-gray-300 hover:text-indigo-400 font-medium">
                     <%
                         String profilePicUrl;
