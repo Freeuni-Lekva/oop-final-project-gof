@@ -44,6 +44,7 @@
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
                     <input type="text" id="username" name="username" placeholder="Enter your username" required
+                           value="<%= request.getAttribute("prefillUsername") != null ? request.getAttribute("prefillUsername") : "" %>"
                            class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
 

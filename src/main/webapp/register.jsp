@@ -43,11 +43,15 @@
             <form action="register" method="post" class="space-y-6">
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Choose a unique username" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
+                    <input type="text" id="username" name="username" placeholder="Choose a unique username" required
+                           value="<%= request.getAttribute("prefillUsername") != null ? request.getAttribute("prefillUsername") : "" %>"
+                           class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
                 <div>
                     <label for="age" class="block text-sm font-bold mb-2 text-gray-300">Age</label>
-                    <input type="number" id="age" name="age" placeholder="Enter your age" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
+                    <input type="number" id="age" name="age" placeholder="Enter your age" required
+                           value="<%= request.getAttribute("prefillAge") != null ? request.getAttribute("prefillAge") : "" %>"
+                           class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
 
                 <div>
