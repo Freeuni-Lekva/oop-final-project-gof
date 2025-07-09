@@ -26,9 +26,10 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         String username = (String) session.getAttribute("user");
-        UserDAO userDAO = new UserDAO();
-        PostDAO postDAO = new PostDAO();
-        StoryDAO storyDAO = new StoryDAO();
+        ServletContext context = getServletContext();
+        UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
+        PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
+        StoryDAO storyDAO = (StoryDAO) context.getAttribute("storyDao");
 
         try {
             User user = userDAO.findUser(username);

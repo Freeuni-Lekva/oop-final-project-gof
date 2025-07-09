@@ -1,6 +1,7 @@
 package servlets;
 
 import data.user.UserDAO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,7 +26,12 @@ import java.util.UUID;
 @MultipartConfig
 public class SettingsServlet extends HttpServlet {
 
-    private final UserDAO userDAO = new UserDAO();
+    private UserDAO userDAO;
+
+    public void init() throws ServletException {
+        ServletContext context = getServletContext();
+        userDAO = (UserDAO) context.getAttribute("userDao");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
