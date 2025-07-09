@@ -44,6 +44,7 @@
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
                     <input type="text" id="username" name="username" placeholder="Enter your username" required
+                           autofocus tabIndex="1"
                            value="<%= request.getAttribute("prefillUsername") != null ? request.getAttribute("prefillUsername") : "" %>"
                            class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
@@ -51,7 +52,7 @@
                 <div>
                     <label for="password" class="block text-sm font-bold mb-2 text-gray-300">Password</label>
                     <div class="relative">
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required tabIndex="2"
                                class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
                         <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
                             <svg id="eyeIcon" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -61,7 +62,8 @@
                 </div>
 
                 <div>
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500">
+                    <button type="submit" tabIndex="3"
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg hover:shadow-purple-600/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500">
                         Login
                     </button>
                 </div>

@@ -142,7 +142,7 @@
             </div>
             <% } else { %>
             <div class="border-t border-gray-700 pt-6 text-center">
-                <a href="<%= request.getContextPath() %>/login.jsp?redirect=post.jsp?id=<%= storyId %>" class="text-indigo-400 hover:underline">Log in to like, comment, or start this story.</a>
+                <a href="<%= request.getContextPath() %>/login?redirect=post?id=<%= storyId %>" class="text-indigo-400 hover:underline">Log in to like, comment, or start this story.</a>
             </div>
             <% } %>
         </div>
