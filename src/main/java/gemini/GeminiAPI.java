@@ -43,8 +43,8 @@ public class GeminiAPI {
     }
 
     public String generateAnswer(String prompt) throws Exception {
-        GeminiAPI api = new GeminiAPI();
-        return api.generateContent(prompt);
+//        GeminiAPI api = new GeminiAPI();
+        return generateContent(prompt);
     }
 
 }
