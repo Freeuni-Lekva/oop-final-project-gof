@@ -51,6 +51,7 @@ public class LoginServlet extends HttpServlet {
 
         if (user == null || !BCrypt.checkpw(password, user.getPasswordHash())) {
             req.setAttribute("error", "Username or Password is incorrect!");
+            req.setAttribute("prefillUsername", username);
             reqDispatcher.forward(req, res);
             return;
         }

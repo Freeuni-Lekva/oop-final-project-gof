@@ -48,7 +48,7 @@
     </header>
 
     <div class="max-w-2xl mx-auto mb-12">
-        <form action="<%= request.getContextPath() %>/search" method="GET" class="flex flex-col sm:flex-row gap-2">
+        <form id="search-form" action="<%= request.getContextPath() %>/search" method="GET" class="flex flex-col sm:flex-row gap-2">
             <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="title" <%= "title".equals(searchType) ? "selected" : "" %>>Title</option>
                 <option value="creator" <%= "creator".equals(searchType) ? "selected" : "" %>>Creator</option>
@@ -58,13 +58,16 @@
             <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-gray-300 font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
         </form>
 
-        <div class="flex flex-wrap justify-center gap-2 mt-4">
-            <% for (String tag : Tags.getAllTags()) { %>
-            <button type="button" class="tag-button bg-gray-700 hover:bg-indigo-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
-                <%= tag %>
-            </button>
-            <% } %>
-        </div>
+            <div class="flex flex-wrap justify-center gap-2 mt-4">
+                <button type="button" class="tag-button bg-gray-700 hover:bg-teal-600 text-white text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
+                    All
+                </button>
+                <% for (String tag : Tags.getAllTags()) { %>
+                <button type="button" class="tag-button bg-gray-700 hover:bg-indigo-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
+                    <%= tag %>
+                </button>
+                <% } %>
+            </div>
     </div>
 
 
@@ -231,13 +234,19 @@
         const searchInput = document.getElementById('search-query-input');
         const searchTypeSelect = document.getElementById('search-type-select');
         const tagButtons = document.querySelectorAll('.tag-button');
+        const searchForm = document.getElementById('search-form');
 
         tagButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const tagText = this.textContent.trim();
-                searchInput.value = tagText;
-                searchTypeSelect.value = 'tag';
-                this.closest('form').submit();
+                if (tagText === "All") {
+                    searchInput.value = "";
+                    searchTypeSelect.value = "title";
+                } else {
+                    searchInput.value = tagText;
+                    searchTypeSelect.value = "tag";
+                }
+                searchForm.submit();
             });
         });
     });

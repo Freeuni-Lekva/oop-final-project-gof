@@ -50,8 +50,8 @@
                 <a href="<%= request.getContextPath() %>/logout" class="bg-teal-600 hover:bg-teal-700 text-gray-300 font-semibold py-2 px-4 rounded-md transition duration-300">Logout</a>
 
                 <% } else { %>
-                <a href="<%= request.getContextPath() %>/login.jsp" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
-                <a href="<%= request.getContextPath() %>/register.jsp" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
+                <a href="<%= request.getContextPath() %>/login" class="text-gray-300 hover:text-white font-medium transition duration-300">Login</a>
+                <a href="<%= request.getContextPath() %>/register" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">Sign Up</a>
                 <% } %>
             </div>
         </div>
