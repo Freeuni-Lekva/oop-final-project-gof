@@ -184,15 +184,73 @@ public class CommentsDAO {
         return -1;
     }
 
-    public Comment getCommentById(int commentId) throws SQLException {
-        String query = "SELECT comment_id, post_id, author_id, comment, like_count FROM comments WHERE comment_id = ?";
+    public int getTotalCommentCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM comments";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public List<Comment> getRecentCommentsWithUsername(int limit) throws SQLException {
+        List<Comment> comments = new ArrayList<>();
+        String sql = "SELECT c.comment_id, c.post_id, c.author_id, c.comment, c.like_count, u.username " +
+                "FROM comments c " +
+                "JOIN users u ON c.author_id = u.user_id " +
+                "ORDER BY c.comment_id DESC " +
+                "LIMIT ?";
 
         try (Connection conn = MySqlConnector.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Comment com = new Comment(
+                            rs.getInt("comment_id"),
+                            rs.getInt("post_id"),
+                            rs.getInt("author_id"),
+                            rs.getString("comment"),
+                            rs.getInt("like_count"),
+                            rs.getString("username")
+                    );
+                    comments.add(com);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return comments;
+    }
 
-            statement.setInt(1, commentId);
+    public int deleteUnengagedComments() throws SQLException {
+        String sql = "DELETE FROM comments WHERE created_at < DATE_SUB(NOW(), INTERVAL 3 MONTH) AND like_count = 0";
+        int rowsAffected = 0;
 
-            try (ResultSet rs = statement.executeQuery()) {
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            rowsAffected = stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return rowsAffected;
+    }
+
+    public Comment getCommentById(int commentId) throws SQLException {
+        String sql = "SELECT * FROM comments WHERE comment_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, commentId);
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Comment(
                             rs.getInt("comment_id"),
@@ -203,14 +261,10 @@ public class CommentsDAO {
                     );
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         }
-
         return null;
     }
-
-
 }

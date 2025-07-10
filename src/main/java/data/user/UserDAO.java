@@ -239,20 +239,6 @@ public class UserDAO {
         }
     }
 
-    private User populateUser(ResultSet resultSet) throws SQLException {
-        int userId = resultSet.getInt("user_id");
-        String username = resultSet.getString("username");
-        String passwordHash = resultSet.getString("password_hash");
-        int age = resultSet.getInt("age");
-
-        LocalDateTime registerTime = resultSet.getTimestamp("register_time").toLocalDateTime();
-        boolean isCreator = resultSet.getBoolean("is_creator");
-        boolean isAdmin = resultSet.getBoolean("is_admin");
-        String imageName = resultSet.getString("image_name");
-
-        return new User(userId, username, passwordHash, age, registerTime, isCreator, isAdmin,imageName);
-    }
-
     public void SetCreator(int userId) throws SQLException {
         String sql = "UPDATE users SET is_creator = ? WHERE user_id = ?";
         try (Connection conn = MySqlConnector.getConnection();
@@ -265,6 +251,123 @@ public class UserDAO {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    public int getTotalUserCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting total user count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public int getAdminCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users WHERE is_admin = TRUE";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting admin count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public int getCreatorCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users WHERE is_creator = TRUE";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting creator count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public void updateAdminStatus(int userId, boolean isAdmin) throws SQLException {
+        String sql = "UPDATE users SET is_admin = ? WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setBoolean(1, isAdmin);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error updating admin status for userId " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    public void deleteUser(int userId) throws SQLException {
+        String sql = "DELETE FROM users WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting user with ID " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public List<User> getRecentUsers(int limit) throws SQLException {
+        List<User> recentUsers = new ArrayList<>();
+        String sql = "SELECT * FROM users ORDER BY register_time DESC LIMIT ?";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, limit);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                recentUsers.add(populateUser(resultSet));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting recent users: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return recentUsers;
+    }
+
+    private User populateUser(ResultSet resultSet) throws SQLException {
+        int userId = resultSet.getInt("user_id");
+        String username = resultSet.getString("username");
+        String passwordHash = resultSet.getString("password_hash");
+        int age = resultSet.getInt("age");
+
+        LocalDateTime registerTime = resultSet.getTimestamp("register_time").toLocalDateTime();
+        boolean isCreator = resultSet.getBoolean("is_creator");
+        boolean isAdmin = resultSet.getBoolean("is_admin");
+        String imageName = resultSet.getString("image_name");
+
+        return new User(userId, username, passwordHash, age, registerTime, isCreator, isAdmin,imageName);
     }
 
 }

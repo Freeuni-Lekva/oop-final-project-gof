@@ -27,6 +27,11 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         String path = req.getRequestURI().substring(req.getContextPath().length());
 
+        if (path.startsWith("/images/") || path.startsWith("/css/") || path.startsWith("/js/")) {
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         boolean isPublic = PUBLIC_PATHS.stream().anyMatch(path::equals);
         if (isPublic) {
             filterChain.doFilter(req, res);
