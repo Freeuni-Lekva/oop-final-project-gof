@@ -106,7 +106,7 @@
         String title = story.getTitle();
       %>
       <div class="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg overflow-hidden h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-purple-500/40 group">
-        <a href="post.jsp?id=<%= story.getStoryId() %>" class="block h-full">
+        <a href="<%= request.getContextPath() %>/post?id=<%= story.getStoryId() %>" class="block h-full">
           <img src="<%= request.getContextPath() %>/images/posts/<%= post.getImageName() %>" alt="Post art" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105">
           <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 12rem);">
             <div>
