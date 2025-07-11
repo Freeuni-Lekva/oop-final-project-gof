@@ -59,20 +59,26 @@
       <%
         boolean isFollowing = (Boolean) request.getAttribute("isFollowing");
       %>
-      <form action="user" method="post">
-        <input type="hidden" name="profileUsername" value="<%= profileOwner.getUsername() %>">
-        <% if (isFollowing) { %>
-        <input type="hidden" name="action" value="unfollow">
-        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-105">
-          Unfollow
-        </button>
-        <% } else { %>
-        <input type="hidden" name="action" value="follow">
-        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
-          Follow
-        </button>
-        <% } %>
-      </form>
+      <div class="flex items-center space-x-4">
+        <form action="<%= request.getContextPath() %>/user" method="post">
+          <input type="hidden" name="profileUsername" value="<%= profileOwner.getUsername() %>">
+          <% if (isFollowing) { %>
+          <input type="hidden" name="action" value="unfollow">
+          <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-105">
+            Unfollow
+          </button>
+          <% } else { %>
+          <input type="hidden" name="action" value="follow">
+          <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
+            Follow
+          </button>
+          <% } %>
+        </form>
+          <a href="<%= request.getContextPath() %>/home" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
+            ← Back to Home
+          </a>
+      </div>
+
     </div>
   </header>
 
