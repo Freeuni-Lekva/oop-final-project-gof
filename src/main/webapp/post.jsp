@@ -171,7 +171,7 @@
                         ? request.getContextPath() + "/images/profiles/" + commentAuthor.getImageName()
                         : "https://placehold.co/40x40/64748B/FFFFFF?text=" + (commentAuthor != null ? commentAuthor.getUsername().toUpperCase().charAt(0) : "?");
             %>
-            <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+            <div id="comment-<%= comment.getCommentId() %>" class="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
                 <div class="flex items-start gap-4">
                     <%
                         String authorProfileUrl = "#";
@@ -206,6 +206,33 @@
                             <% } %>
                         </div>
                         <p class="text-gray-300 mt-1 whitespace-pre-wrap"><%= comment.getCommentContents() %></p>
+                        <div class="mt-2 flex items-center gap-4 text-gray-400">
+                            <% if (loggedInUser != null) {
+                                boolean hasLiked = likesDao.commentLikeExists(comment.getCommentId(), loggedInUser.getUserId());
+                            %>
+                            <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0 flex items-center gap-2">
+                                <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
+                                <input type="hidden" name="commentId" value="<%= comment.getCommentId() %>">
+                                <% if (hasLiked) { %>
+                                <input type="hidden" name="action" value="unlike_comment">
+                                <button type="submit" class="text-pink-500 hover:text-pink-400 transition-colors" aria-label="Unlike this comment">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <% } else { %>
+                                <input type="hidden" name="action" value="like_comment">
+                                <button type="submit" class="hover:text-pink-500 transition-colors" aria-label="Like this comment">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <% } %>
+                            </form>
+                            <% } else { %>
+                            <i class="far fa-heart text-gray-600"></i>
+                            <% } %>
+
+                            <span class="text-sm">
+                                <%= commentsDao.getLikeCount(comment.getCommentId()) %>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
