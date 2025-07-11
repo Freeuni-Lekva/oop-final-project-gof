@@ -130,6 +130,16 @@ CREATE TABLE messages (
                           FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE
 );
 
+CREATE TABLE shared_chats (
+                              share_id INT PRIMARY KEY AUTO_INCREMENT,
+                              chat_id INT NOT NULL,
+                              user_id INT NOT NULL,  -- The ID of the user who SHARED the chat
+                              shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE,
+                              FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                              UNIQUE (chat_id) -- A chat can only be shared once by its owner
+);
+
 
 -- INSERT INTO TABLES --
 
