@@ -178,6 +178,24 @@ public class LikesDAO {
         }
     }
 
+    public int countLikesMadeByUser(int userId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM likes WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error fetching likes count by user: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
     public boolean hasUserLikedPost(int postId, int userId) throws SQLException {
         return postLikeExists(postId, userId);
     }
