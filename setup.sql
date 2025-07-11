@@ -1,5 +1,5 @@
 -- USE YOUR DATABASE --
-USE `story-ai-db`;
+USE `story`;
 -- story-ai-db for workflow testing
 
 -- DROP UNNECESSARY TABLES --
