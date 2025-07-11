@@ -29,26 +29,27 @@ public class LikesDAO {
         try {
             conn = MySqlConnector.getConnection();
             conn.setAutoCommit(false);
-            try {
-                PreparedStatement stmt = conn.prepareStatement(insertLikeQuery);
-                stmt.setInt(1, userId);
-                stmt.setInt(2, postId);
-                rowsAffected = stmt.executeUpdate();
-            } catch (SQLException ignored) {}
+
+            PreparedStatement stmt = conn.prepareStatement(insertLikeQuery);
+            stmt.setInt(1, userId);
+            stmt.setInt(2, postId);
+            rowsAffected = stmt.executeUpdate();
+            stmt.close();
+
             if (rowsAffected > 0) {
-                try {
-                    PreparedStatement stmt = conn.prepareStatement(updateLikeCountQuery);
-                    stmt.setInt(1, postId);
-                    stmt.executeUpdate();
-                } catch (SQLException ignored) {
-                }
+
+                PreparedStatement updateStmt = conn.prepareStatement(updateLikeCountQuery);
+                updateStmt.setInt(1, postId);
+                updateStmt.executeUpdate();
+                updateStmt.close();
             }
             conn.commit();
         } catch (SQLException e) {
             if(conn != null) conn.rollback();
             throw new SQLException("rolled back");
         } finally {
-            if(conn != null){conn.setAutoCommit(true);
+            if(conn != null){
+                conn.setAutoCommit(true);
                 conn.close();
             }
         }
@@ -70,19 +71,17 @@ public class LikesDAO {
         try {
             conn = MySqlConnector.getConnection();
             conn.setAutoCommit(false);
-            try {
                 PreparedStatement stmt = conn.prepareStatement(insertLikeQuery);
                 stmt.setInt(1, userId);
                 stmt.setInt(2, commentId);
                 rowsAffected = stmt.executeUpdate();
-            } catch (SQLException ignored) {}
+                stmt.close();
+
             if (rowsAffected > 0) {
-                try {
-                    PreparedStatement stmt = conn.prepareStatement(updateLikeCountQuery);
-                    stmt.setInt(1, commentId);
-                    stmt.executeUpdate();
-                } catch (SQLException ignored) {
-                }
+                PreparedStatement updateStmt = conn.prepareStatement(updateLikeCountQuery);
+                updateStmt.setInt(1, commentId);
+                updateStmt.executeUpdate();
+                updateStmt.close();
                 conn.commit();
             }
         } catch (SQLException e) {
@@ -185,7 +184,7 @@ public class LikesDAO {
 
     // ---------- helpers ----------
 
-    private boolean postLikeExists(int postId, int userId) throws SQLException {
+    public boolean postLikeExists(int postId, int userId) throws SQLException {
         String sql = "SELECT EXISTS(SELECT 1 FROM likes WHERE post_id = ? AND user_id = ?)";
 
 
@@ -207,7 +206,7 @@ public class LikesDAO {
         return false;
     }
 
-    private  boolean commentLikeExists(int commentId, int userId) throws SQLException {
+    public boolean commentLikeExists(int commentId, int userId) throws SQLException {
         String sql = "SELECT EXISTS(SELECT 1 FROM likes WHERE comment_id = ? AND user_id = ?)";
 
         try (Connection conn = MySqlConnector.getConnection();
