@@ -51,6 +51,7 @@ public class ChatMessageServlet extends HttpServlet {
                 chatId = chatDAO.createChat(userId, storyId);
                 historyDAO.addReadHistory(userId, storyId);
 
+
                 String startingPrompt = storyDAO.getPrompt(storyId);
                 String AIResponse = ai.generateAnswer(startingPrompt).trim();
 
