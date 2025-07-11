@@ -2,6 +2,7 @@ package servlets;
 
 import data.chat.ChatDAO;
 import data.chat.MessageDAO;
+import data.chat.SharedChatDAO;
 import data.user.UserDAO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -34,13 +35,20 @@ public class ChatServlet extends HttpServlet {
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
         ChatDAO chatDAO = (ChatDAO) context.getAttribute("chatDao");
         MessageDAO messageDAO = (MessageDAO) context.getAttribute("messageDao");
+        SharedChatDAO sharedChatDAO = (SharedChatDAO) context.getAttribute("sharedChatDao");
 
         try {
             int userId = userDAO.findUser(username).getUserId();
             int ownerId = chatDAO.getUserId(chatId);
-            if (ownerId != userId) {
-                res.sendRedirect(req.getContextPath() + "/home");
-                return;
+//            if (ownerId != userId) {
+//                res.sendRedirect(req.getContextPath() + "/home");
+//                return;
+//            }
+
+            boolean isOwner = (ownerId == userId);
+            boolean isShared = false;
+            if (isOwner) {
+                isShared = sharedChatDAO.isChatShared(chatId);
             }
 
             List<Message> messages = messageDAO.getMessages(chatId);
@@ -49,6 +57,8 @@ public class ChatServlet extends HttpServlet {
                     .collect(Collectors.toList());
             req.setAttribute("messages", messages);
             req.setAttribute("chatId", chatId);
+            req.setAttribute("isOwner", isOwner);
+            req.setAttribute("isShared", isShared);
 
         } catch (SQLException e) {
             throw new ServletException("Error loading chat", e);
