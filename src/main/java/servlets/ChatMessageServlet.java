@@ -5,7 +5,7 @@ import data.chat.ChatDAO;
 import data.chat.MessageDAO;
 import data.user.HistoryDAO;
 import data.user.UserDAO;
-import gemini.GeminiAPI;
+import gemini.AiAPI;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -113,8 +113,8 @@ public class ChatMessageServlet extends HttpServlet {
 
             String prompt = promptBuilder.toString().trim();
 
-            GeminiAPI gemini = (GeminiAPI) context.getAttribute("AI_API"); // we can use interface here
-            String AIResponse = gemini.generateAnswer(prompt);
+            AiAPI ai = (AiAPI) context.getAttribute("AI_API");
+            String AIResponse = ai.generateAnswer(prompt);
 
             AIResponse = AIResponse.trim();
 

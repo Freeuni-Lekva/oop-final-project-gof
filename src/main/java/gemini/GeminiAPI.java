@@ -7,7 +7,7 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 
-public class GeminiAPI {
+public class GeminiAPI implements AiAPI {
 
     private final Client geminiClient;
     private static final String DEFAULT_MODEL = "gemini-1.5-flash-latest";
