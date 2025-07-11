@@ -83,7 +83,7 @@ public class PostServlet extends HttpServlet {
         CommentsDAO commentsDAO = (CommentsDAO) context.getAttribute("commentDao");
 
         if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login?redirect=post.jsp?id=" + storyIdStr);
+            res.sendRedirect(req.getContextPath() + "/login?redirect=post?id=" + storyIdStr);
             return;
         }
         if (action == null || storyIdStr == null) {
@@ -95,17 +95,19 @@ public class PostServlet extends HttpServlet {
             User user = userDAO.findUser(username);
             int userId = user.getUserId();
             int storyId = Integer.parseInt(storyIdStr);
+            String redirectUrl = req.getContextPath() + "/post?id=" + storyId;
 
             switch (action) {
                 case "bookmark":
                     storyDAO.addBookmark(userId, storyId);
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    res.sendRedirect(redirectUrl);
                     return;
 
                 case "unbookmark":
                     storyDAO.removeBookmark(userId, storyId);
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    res.sendRedirect(redirectUrl);
                     return;
+
                 case "start_story":
                     res.sendRedirect(req.getContextPath() + "/AIchat.jsp?storyId=" + storyId);
                     return;
@@ -113,14 +115,14 @@ public class PostServlet extends HttpServlet {
                 case "like_post": {
                     int postId = Integer.parseInt(req.getParameter("postId"));
                     likesDAO.addLikeToPost(postId, userId);
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    res.sendRedirect(redirectUrl);
                     return;
                 }
 
                 case "unlike_post": {
                     int postId = Integer.parseInt(req.getParameter("postId"));
                     likesDAO.removeLikePost(postId, userId);
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    res.sendRedirect(redirectUrl);
                     return;
                 }
 
@@ -130,7 +132,7 @@ public class PostServlet extends HttpServlet {
                     if (commentText != null && !commentText.trim().isEmpty()) {
                         commentsDAO.addComment(commentText, userId, postId);
                     }
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    res.sendRedirect(redirectUrl);
                     return;
                 }
 
@@ -140,7 +142,7 @@ public class PostServlet extends HttpServlet {
                     if (authorId == userId) {
                         commentsDAO.deleteComment(commentId);
                     }
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
+                    res.sendRedirect(redirectUrl);
                     return;
                 }
 
@@ -153,5 +155,4 @@ public class PostServlet extends HttpServlet {
             res.sendRedirect(req.getContextPath() + "/post?id=" + storyIdStr + "&error=true");
         }
     }
-
 }
