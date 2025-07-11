@@ -90,8 +90,8 @@
             </div>
 
             <div class="flex items-center gap-6 text-gray-400 mb-6">
-                <span class="flex items-center gap-2"><i class="fas fa-heart"></i> <%= post.getLikeCount() %> Likes</span>
-                <span class="flex items-center gap-2"><i class="fas fa-comment"></i> <%= post.getCommentCount() %> Comments</span>
+                <span class="flex items-center gap-2"><i class="fas fa-heart"></i> <%= post.getLikeCount() %> <%= (post.getLikeCount() == 1) ? "Like" : "Likes" %></span>
+                <span class="flex items-center gap-2"><i class="fas fa-comment"></i> <%= post.getCommentCount() %> <%= (post.getCommentCount() == 1) ? "Comment" : "Comments" %></span>
             </div>
 
             <% if (loggedInUser != null) { %>
