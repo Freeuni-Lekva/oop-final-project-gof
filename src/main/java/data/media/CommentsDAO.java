@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Handles comment operations on posts, including likes.
@@ -266,5 +268,42 @@ public class CommentsDAO {
             throw e;
         }
         return null;
+    }
+
+    public Map<String, Long> getCommentStatsByUser(int userId, String period) throws SQLException {
+        Map<String, Long> stats = new LinkedHashMap<>();
+
+        String dateFunction;
+        switch (period.toLowerCase()) {
+            case "weekly":
+                dateFunction = "DATE(created_at - INTERVAL(WEEKDAY(created_at)) DAY)";
+                break;
+            case "monthly":
+                dateFunction = "DATE_FORMAT(created_at, '%Y-%m-01')";
+                break;
+            case "daily":
+            default:
+                dateFunction = "DATE(created_at)";
+                break;
+        }
+
+        String sql = "SELECT " + dateFunction + " as period_start, COUNT(*) as period_count " +
+                "FROM comments WHERE author_id = ? " +
+                "GROUP BY period_start ORDER BY period_start ASC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stats.put(resultSet.getString("period_start"), resultSet.getLong("period_count"));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error getting comment stats by user: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return stats;
     }
 }
