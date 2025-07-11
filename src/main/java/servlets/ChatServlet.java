@@ -22,7 +22,7 @@ public class ChatServlet extends HttpServlet {
         String username = (session != null) ? (String) session.getAttribute("user") : null;
 
         if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 

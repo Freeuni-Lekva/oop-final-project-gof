@@ -1,5 +1,6 @@
 package servlets;
 
+import com.google.gson.Gson;
 import data.chat.ChatDAO;
 import data.chat.MessageDAO;
 import data.user.HistoryDAO;
@@ -13,7 +14,9 @@ import model.chat.Message;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "ChatMessageServlet", value = "/chat-message")
 public class ChatMessageServlet extends HttpServlet {
@@ -61,9 +64,14 @@ public class ChatMessageServlet extends HttpServlet {
         String username = (session != null) ? (String) session.getAttribute("user") : null;
 
         if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
+
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        Map<String, Object> response = new HashMap<>();
+        Gson gson = new Gson();
 
         int chatId;
         String userMessage = req.getParameter("userMessage");
@@ -79,6 +87,8 @@ public class ChatMessageServlet extends HttpServlet {
             res.sendRedirect(req.getContextPath() + "/chat?chatId=" + chatId);
             return;
         }
+
+        userMessage = userMessage.trim();
 
         ServletContext context = getServletContext();
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
@@ -106,12 +116,23 @@ public class ChatMessageServlet extends HttpServlet {
             GeminiAPI gemini = (GeminiAPI) context.getAttribute("AI_API"); // we can use interface here
             String AIResponse = gemini.generateAnswer(prompt);
 
+            AIResponse = AIResponse.trim();
+
             messageDAO.addMessage(chatId, AIResponse, false);
 
+            response.put("success", true);
+            response.put("aiResponse", AIResponse);
+
+            res.getWriter().write(gson.toJson(response));
+
         } catch (Exception e) {
-            throw new ServletException("Error handling chat message", e);
+            response.put("success", false);
+            response.put("error", e.getMessage());
+
+            res.getWriter().write(gson.toJson(response));
+//            throw new ServletException("Error handling chat message", e);
         }
 
-        res.sendRedirect(req.getContextPath() + "/chat?chatId=" + chatId);
+//        res.sendRedirect(req.getContextPath() + "/chat?chatId=" + chatId);
     }
 }
