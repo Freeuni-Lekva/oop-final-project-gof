@@ -19,7 +19,7 @@
 
         body::before {
             content: '';
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
@@ -49,21 +49,21 @@
 
     <div class="max-w-2xl mx-auto mb-12">
         <form id="search-form" action="<%= request.getContextPath() %>/search" method="GET" class="flex flex-col sm:flex-row gap-2">
-            <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="search-type-select" name="type" class="bg-gray-700 border border-gray-600 text-white rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="title" <%= "title".equals(searchType) ? "selected" : "" %>>Title</option>
                 <option value="creator" <%= "creator".equals(searchType) ? "selected" : "" %>>Creator</option>
                 <option value="tag" <%= "tag".equals(searchType) ? "selected" : "" %>>Tag</option>
             </select>
-            <input id="search-query-input" type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
-            <button type="submit" class="bg-teal-800 hover:bg-teal-900 text-gray-300 font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
+            <input id="search-query-input" type="text" name="query" class="flex-grow w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search for stories..." value="<%= (searchQuery != null) ? searchQuery : "" %>">
+            <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-gray-300 font-bold py-2 px-6 rounded-md transition duration-300">Search</button>
         </form>
 
             <div class="flex flex-wrap justify-center gap-2 mt-4">
-                <button type="button" class="tag-button bg-gray-700 hover:bg-teal-600 text-white text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
+                <button type="button" class="tag-button bg-gray-700 hover:bg-blue-600 text-white text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
                     All
                 </button>
                 <% for (String tag : Tags.getAllTags()) { %>
-                <button type="button" class="tag-button bg-gray-700 hover:bg-indigo-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
+                <button type="button" class="tag-button bg-gray-700 hover:bg-blue-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200">
                     <%= tag %>
                 </button>
                 <% } %>
@@ -143,18 +143,19 @@
                         : "https://placehold.co/600x400/111827/374151?text=Saga";
             %>
             <div class="story-card">
-                <a href="<%= request.getContextPath() %>/post?id=<%= story.getStoryId() %>" class="block bg-gray-800 rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2">
+                <a href="<%= request.getContextPath() %>/post?id=<%= story.getStoryId() %>" class="block rounded-lg shadow-xl overflow-hidden h-full transform transition-transform duration-300 hover:-translate-y-2 group">
                     <img src="<%= imageUrl %>" alt="Story Art for <%= story.getTitle() %>" class="w-full h-40 object-cover">
-                    <div class="p-4 flex flex-col justify-between" style="height: calc(100% - 10rem);">
+
+                    <div class="p-4 flex flex-col justify-between bg-gray-900/70 backdrop-blur-sm border-t border-gray-700/50" style="height: calc(100% - 10rem);">
                         <div>
-                            <h3 class="font-bold text-lg text-white mb-2 truncate" title="<%= story.getTitle() %>">
+                            <h3 class="font-bold text-lg text-white group-hover:text-blue-400 transition-colors duration-300 mb-2 truncate" title="<%= story.getTitle() %>">
                                 <%= story.getTitle() %>
                             </h3>
                             <p class="text-gray-400 text-sm h-20 overflow-hidden">
                                 <%= truncate(story.getDescription(), 120) %>
                             </p>
                         </div>
-                        <div class="mt-4 text-xs text-indigo-400">
+                        <div class="mt-4 text-xs text-blue-400">
                             <% if (!storyTags.isEmpty()) { %>
                             <%= String.join(" · ", storyTags) %>
                             <% } else { %>
@@ -171,13 +172,13 @@
         <div class="text-center py-20">
             <% if (searchQuery != null && !searchQuery.trim().isEmpty()) { %>
             <p class="text-gray-500">No stories found matching your search for "<%= searchQuery %>".</p>
-            <a href="<%= request.getContextPath() %>/home" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300">Clear Search</a>
+            <a href="<%= request.getContextPath() %>/home" class="mt-4 inline-block text-blue-400 hover:text-blue-300">Clear Search</a>
             <% } else { %>
             <p class="text-gray-500">Search for a story, or create your own!</p>
             <% if (username != null) { %>
-            <a href="<%= request.getContextPath() %>/create-post.jsp" class="mt-4 inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
+            <a href="<%= request.getContextPath() %>/create-post.jsp" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create a Story</a>
             <% } else { %>
-            <a href="<%= request.getContextPath() %>/login.jsp" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
+            <a href="<%= request.getContextPath() %>/login.jsp" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login to Create</a>
             <% } %>
             <% } %>
         </div>
@@ -185,7 +186,7 @@
         <% } %>
 
         <div id="show-more-container" class="text-center mt-12">
-            <button id="show-more-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+            <button id="show-more-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
                 Show More
             </button>
         </div>

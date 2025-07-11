@@ -1,13 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List, model.chat.Message" %>
-
 <%
     String username = (String) session.getAttribute("user");
     if (username == null) {
         response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
-
     int chatId = -1;
     try {
         chatId = Integer.parseInt(request.getParameter("chatId"));
@@ -15,133 +13,240 @@
         response.sendRedirect(request.getContextPath() + "/home");
         return;
     }
-
     List<Message> messages = (List<Message>) request.getAttribute("messages");
 %>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Interactive Story - StorySaga AI</title>
+    <title>StorySaga AI - A New Adventure</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        #create-story-btn, #logout-btn {
+            background-color: #5D3FD3;
+            color: white;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+        }
+
+        #create-story-btn:hover, #logout-btn:hover {
+            background-color: #724ae8; /* A slightly lighter purple for hover */
+        }
+    </style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Turret+Road:wght@400;700;800&display=swap');
+
+        :root {
+            --background-color: #000000;
+            --container-bg: rgba(16, 16, 22, 0.8);
+            --border-color: rgba(114, 27, 228, 0.5);
+            --glow-color: rgba(173, 82, 255, 0.7);
+            --user-text-color: #00e5ff;
+            --ai-text-color: #f0f0f0;
+            --accent-color: #721be4;
+            --accent-hover: #9d4bff;
+            --placeholder-color: rgba(240, 240, 240, 0.4);
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Turret Road', monospace;
+            background-color: var(--background-color);
+            color: var(--ai-text-color);
+            background-image: radial-gradient(circle at top right, var(--accent-color) -100%, transparent 40%),
+            radial-gradient(circle at bottom left, var(--user-text-color) -100%, transparent 40%);
+            background-attachment: fixed;
+            font-weight: 700;
         }
+
         .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
+            background: transparent;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #4a5568;
-            border-radius: 20px;
-            border: 3px solid rgba(0,0,0,0);
+            background-color: var(--accent-color);
+            border-radius: 10px;
+            border: 2px solid var(--background-color);
         }
-        .message-box {
-            /*white-space: pre-wrap;*/
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message-base {
+            white-space: pre-wrap;
             word-wrap: break-word;
+            line-height: 1.8;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            max-width: 90%;
+            animation: fadeIn 0.5s ease-in-out;
         }
-        .dot-flashing {
+
+        .message-ai {
+            background-color: rgba(40, 42, 54, 0.5);
+            align-self: flex-start;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message-user {
+            background-color: transparent;
+            color: var(--user-text-color);
+            align-self: flex-end;
+            text-align: right;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+        }
+
+        .message-user::before {
+            content: ' you > ';
+            font-weight: 800;
+            opacity: 0.7;
+        }
+
+        .title-glow {
+            text-shadow: 0 0 8px var(--glow-color), 0 0 20px var(--accent-color);
+            color: white;
+        }
+
+        .chat-input-area {
             position: relative;
-            width: 10px;
-            height: 10px;
-            border-radius: 5px;
-            background-color: #9ca3af;
-            color: #9ca3af;
-            animation: dotFlashing 1s infinite linear alternate;
-            animation-delay: .5s;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(114, 27, 228, 0.0);
         }
-        .dot-flashing::before, .dot-flashing::after {
-            content: '';
+
+        .chat-input-area:focus-within {
+            border-color: var(--accent-hover);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        #userMessage {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            outline: none;
+            resize: none;
+            width: 100%;
+            color: var(--ai-text-color);
+            font-family: 'Turret Road', monospace;
+            font-weight: 700;
+            caret-color: var(--user-text-color);
+        }
+
+        #userMessage::placeholder {
+            color: var(--placeholder-color);
+            font-weight: 400;
+        }
+
+        .send-button {
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+            color: white;
+            font-weight: 800;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--glow-color);
+            border: none;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .send-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #typing-indicator {
+            align-self: flex-start;
+        }
+
+        #typing-cursor {
             display: inline-block;
-            position: absolute;
-            top: 0;
-        }
-        .dot-flashing::before {
-            left: -15px;
             width: 10px;
-            height: 10px;
-            border-radius: 5px;
-            background-color: #9ca3af;
-            color: #9ca3af;
-            animation: dotFlashing 1s infinite alternate;
-            animation-delay: 0s;
+            height: 1.2rem;
+            background-color: var(--ai-text-color);
+            animation: blink 1s step-end infinite;
+            margin-left: 5px;
         }
-        .dot-flashing::after {
-            left: 15px;
-            width: 10px;
-            height: 10px;
-            border-radius: 5px;
-            background-color: #9ca3af;
-            color: #9ca3af;
-            animation: dotFlashing 1s infinite alternate;
-            animation-delay: 1s;
-        }
-        @keyframes dotFlashing {
-            0% {
-                background-color: #9ca3af;
-            } 50%, 100% {background-color: rgba(156, 163, 175, 0.2); }
+
+        @keyframes blink {
+            from, to { background-color: transparent }
+            50% { background-color: var(--ai-text-color); }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
+<body class="bg-black text-gray-200">
 
 <jsp:include page="/WEB-INF/views/common/navbar.jsp" />
 
-<div class="container mx-auto p-4 md:p-8 max-w-3xl">
-    <div class="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-2xl p-6 flex flex-col h-[85vh]">
-
-        <h1 class="text-3xl font-bold text-white mb-4 flex-shrink-0">Story Chat</h1>
-
-        <div id="chat-window" class="flex-grow space-y-4 overflow-y-auto border border-gray-700 rounded-lg p-4 bg-black/10 custom-scrollbar">
-            <%
-                if (messages == null || messages.isEmpty()) {
-            %>
-            <p class="text-gray-400">The story begins... what will you do?</p>
-            <%
-            } else {
-                for (Message m : messages) {
-                    if (m.isUser()) {
-            %>
-            <div class="flex justify-end items-end gap-3">
-                <div class="max-w-[75%] rounded-lg px-4 py-3 bg-indigo-600 message-box">
+<div class="container mx-auto p-4 md:p-8 max-w-4xl">
+    <div class="bg-container-bg backdrop-blur-md rounded-xl shadow-2xl p-6 flex flex-col h-[85vh] border border-border-color"
+         style="box-shadow: 0 0 30px var(--glow-color);">
+        <h1 class="text-4xl font-extrabold mb-4 flex-shrink-0 text-center title-glow">
+            📜 StorySaga AI 🔮
+        </h1>
+        <div id="chat-window" class="flex-grow overflow-y-auto p-4 md:p-6 custom-scrollbar">
+            <div id="message-container" class="message-container">
+                <%
+                    if (messages == null || messages.isEmpty()) {
+                %>
+                <div class="message-base message-ai">
+                    <p>The veil of reality thins... A new story awaits your command. What is your first action?</p>
+                </div>
+                <%
+                } else {
+                    for (Message m : messages) {
+                        if (m.isUser()) {
+                %>
+                <div class="message-base message-user">
                     <p><%= m.getMessage().trim() %></p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-indigo-800 flex items-center justify-center font-bold text-lg flex-shrink-0" title="<%= username %>">
-                    <%= Character.toUpperCase(username.charAt(0)) %>
-                </div>
-            </div>
-            <%
-            } else {
-            %>
-            <div class="flex justify-start items-end gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-800 flex items-center justify-center font-bold text-lg flex-shrink-0" title="StorySaga AI">
-                    AI
-                </div>
-                <div class="max-w-[75%] rounded-lg px-4 py-3 bg-gray-700 message-box">
+                <%
+                } else {
+                %>
+                <div class="message-base message-ai">
                     <p><%= m.getMessage().trim() %></p>
                 </div>
-            </div>
-            <%
+                <%
+                            }
                         }
                     }
-                }
-            %>
+                %>
+            </div>
         </div>
 
-        <form id="chat-form" class="mt-6 flex-shrink-0">
+        <form id="chat-form" class="mt-4 flex-shrink-0 pt-4">
             <input type="hidden" id="chatId" value="<%= chatId %>">
-            <textarea id="userMessage" name="userMessage" rows="3" required
-                      placeholder="What do you do next?"
-                      class="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"></textarea>
-            <div class="flex justify-between items-center mt-3">
-                <p class="text-xs text-gray-500">Shift+Enter for new line</p>
-                <button id="send-button" type="submit"
-                        class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-md transition duration-300 disabled:bg-gray-500 disabled:cursor-not-allowed">
-                    Send
+            <div class="chat-input-area">
+                <textarea id="userMessage" name="userMessage" rows="1" required
+                          placeholder="Declare your next move..."
+                          class="text-lg"></textarea>
+            </div>
+            <div class="flex justify-end items-center mt-3">
+                <button id="send-button" type="submit" class="send-button">
+                    <span>SEND</span>
                 </button>
             </div>
         </form>
@@ -149,6 +254,7 @@
 </div>
 
 <script>
+    const messageContainer = document.getElementById('message-container');
     const chatWindow = document.getElementById('chat-window');
     const chatForm = document.getElementById('chat-form');
     const messageInput = document.getElementById('userMessage');
@@ -160,61 +266,69 @@
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    function appendMessage(text, isUser) {
-        const messageContainer = document.createElement('div');
-        messageContainer.className = `flex items-end gap-3 ${isUser ? 'justify-end' : 'justify-start'}`;
-        const avatarInitial = isUser ? username[0].toUpperCase() : 'AI';
-        const avatarTitle = isUser ? username : 'StorySaga AI';
-        const avatarColor = isUser ? 'bg-indigo-800' : 'bg-teal-800';
-        const bubbleColor = isUser ? 'bg-indigo-600' : 'bg-gray-700';
-        const p = document.createElement('p');
-        p.appendChild(document.createTextNode(text));
-        const messageBubble = document.createElement('div');
-        messageBubble.className = `max-w-[75%] rounded-lg px-4 py-3 ${bubbleColor} message-box`;
-        messageBubble.appendChild(p);
-        const avatar = document.createElement('div');
-        avatar.className = `w-10 h-10 rounded-full ${avatarColor} flex items-center justify-center font-bold text-lg flex-shrink-0`;
-        avatar.title = avatarTitle;
-        avatar.textContent = avatarInitial;
-        if (isUser) {
-            messageContainer.appendChild(messageBubble);
-            messageContainer.appendChild(avatar);
-        } else {
-            messageContainer.appendChild(avatar);
-            messageContainer.appendChild(messageBubble);
+    function typeWriter(element, text, onComplete) {
+        let i = 0;
+        element.innerHTML = "";
+        const typingIndicator = document.createElement('span');
+        typingIndicator.id = 'typing-cursor';
+
+        function type() {
+            if (i < text.length) {
+                element.innerHTML = text.substring(0, i + 1);
+                element.appendChild(typingIndicator);
+                i++;
+                setTimeout(type, 30);
+                scrollToBottom();
+            } else {
+                typingIndicator.remove();
+                if (onComplete) {
+                    onComplete();
+                }
+            }
         }
-        chatWindow.appendChild(messageContainer);
+        type();
+    }
+
+    function appendUserMessage(text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message-base message-user';
+        const p = document.createElement('p');
+        p.textContent = text.trim();
+        messageDiv.appendChild(p);
+        messageContainer.appendChild(messageDiv);
         scrollToBottom();
     }
 
-    function toggleLoadingIndicator(show) {
-        let indicator = document.getElementById('loading-indicator');
-        if (show && !indicator) {
-            indicator = document.createElement('div');
-            indicator.id = 'loading-indicator';
-            indicator.className = 'flex justify-start items-end gap-3';
-            indicator.innerHTML = `<div class="w-10 h-10 rounded-full bg-teal-800 flex items-center justify-center font-bold text-lg flex-shrink-0"
-                                        title="StorySaga AI">AI</div>
-                                    <div class="max-w-[75%] rounded-lg px-4 py-3 bg-gray-700 flex items-center">
-                                        <div class="dot-flashing"></div>
-                                    </div>`;
-            chatWindow.appendChild(indicator);
-            scrollToBottom();
-        } else if (!show && indicator) {
-            indicator.remove();
-        }
+    function appendAndAnimateAiMessage(text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message-base message-ai';
+        const p = document.createElement('p');
+        messageDiv.appendChild(p);
+        messageContainer.appendChild(messageDiv);
+
+        typeWriter(p, text, () => {
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        });
     }
 
-    document.addEventListener('DOMContentLoaded', scrollToBottom);
+    document.addEventListener('DOMContentLoaded', () => {
+        scrollToBottom();
+        messageInput.focus();
+    });
 
     chatForm.addEventListener('submit', async function(event) {
         event.preventDefault();
         const userMessage = messageInput.value.trim();
         if (!userMessage) return;
-        appendMessage(userMessage, true);
+
+        appendUserMessage(userMessage);
+
         messageInput.value = '';
+        messageInput.style.height = 'auto';
         sendButton.disabled = true;
-        toggleLoadingIndicator(true);
+        messageInput.disabled = true;
 
         try {
             const response = await fetch('<%= request.getContextPath() %>/chat-message', {
@@ -228,31 +342,37 @@
                     'userMessage': userMessage
                 })
             });
-            toggleLoadingIndicator(false);
+
             if (!response.ok) {
                 throw new Error(`Server error: ${response.status}`);
             }
+
             const data = await response.json();
             if(data.success && data.aiResponse) {
-                appendMessage(data.aiResponse, false);
+                appendAndAnimateAiMessage(data.aiResponse);
             } else {
-                appendMessage(data.error || 'An unexpected error occurred.', false);
+                appendAndAnimateAiMessage(data.error || 'An unexpected error occurred.');
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            toggleLoadingIndicator(false);
-            appendMessage('Sorry, there was a problem connecting to the server. Please try again.', false);
-        } finally {
-            sendButton.disabled = false;
-            messageInput.focus();
+            appendAndAnimateAiMessage('// CONNECTION LOST: Unable to reach the story realm. Please try again. //');
         }
     });
 
     messageInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
+            if(!sendButton.disabled) {
+                chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
         }
+    });
+
+    messageInput.addEventListener('input', () => {
+        messageInput.style.height = 'auto';
+        let newHeight = messageInput.scrollHeight;
+        if(newHeight > 200) newHeight = 200;
+        messageInput.style.height = newHeight + 'px';
     });
 </script>
 
