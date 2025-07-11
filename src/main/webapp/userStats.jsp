@@ -36,7 +36,7 @@
     body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 24, 39, 0.7); z-index: -1; }
   </style>
 </head>
-<body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img4.jpg');">
+<body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img5.jpg');">
 
 <jsp:include page="/WEB-INF/views/common/navbar.jsp" />
 
