@@ -14,6 +14,9 @@
         return;
     }
     List<Message> messages = (List<Message>) request.getAttribute("messages");
+
+    boolean isOwner = (Boolean) request.getAttribute("isOwner");
+    boolean isShared = (Boolean) request.getAttribute("isShared");
 %>
 <!DOCTYPE html>
 <html>
@@ -195,6 +198,34 @@
             from, to { background-color: transparent }
             50% { background-color: var(--ai-text-color); }
         }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            font-weight: 800;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            color: white;
+            border: none;
+        }
+        .share-button {
+            background: linear-gradient(45deg, #1f4296, #2d64d8);
+        }
+        .share-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(45, 100, 216, 0.7);
+        }
+        .unshare-button {
+            background: linear-gradient(45deg, #9b2c2c, #e53e3e);
+        }
+        .unshare-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(229, 62, 62, 0.7);
+        }
     </style>
 </head>
 <body class="bg-black text-gray-200">
@@ -237,6 +268,29 @@
             </div>
         </div>
 
+        <% if (isOwner) { %>
+        <div class="mt-4 flex-shrink-0 pt-4 border-t border-[var(--border-color)]">
+            <form action="<%= request.getContextPath() %>/chat-action" method="POST">
+                <input type="hidden" name="chatId" value="<%= chatId %>">
+                <% if (isShared) { %>
+                <input type="hidden" name="action" value="unshare_chat">
+                <button type="submit" class="action-button unshare-button">
+                    <i class="fas fa-eye-slash"></i>
+                    <span>Unshare Chat</span>
+                </button>
+                <% } else { %>
+                <input type="hidden" name="action" value="share_chat">
+                <button type="submit" class="action-button share-button">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share Chat</span>
+                </button>
+                <% } %>
+            </form>
+        </div>
+        <% } %>
+
+
+        <% if (isOwner) { %>
         <form id="chat-form" class="mt-4 flex-shrink-0 pt-4">
             <input type="hidden" id="chatId" value="<%= chatId %>">
             <div class="chat-input-area">
@@ -250,6 +304,11 @@
                 </button>
             </div>
         </form>
+        <% } else { %>
+        <div class="mt-4 flex-shrink-0 pt-4 border-t border-[var(--border-color)] text-center text-gray-400">
+            <p>You are viewing a shared chat. Only the owner can continue the story.</p>
+        </div>
+        <% } %>
     </div>
 </div>
 
