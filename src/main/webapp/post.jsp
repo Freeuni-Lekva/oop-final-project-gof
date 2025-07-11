@@ -232,6 +232,7 @@
                             <span class="text-sm">
                                 <%= commentsDao.getLikeCount(comment.getCommentId()) %>
                             </span>
+
                         </div>
                     </div>
                 </div>
