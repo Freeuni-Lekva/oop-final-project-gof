@@ -3,9 +3,7 @@ package servlets;
 import data.media.CommentsDAO;
 import data.media.LikesDAO;
 import data.story.StoryDAO;
-import data.user.HistoryDAO;
 import data.user.UserDAO;
-import data.media.CommentsDAO;
 import data.media.PostDAO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -82,7 +80,6 @@ public class PostServlet extends HttpServlet {
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
         LikesDAO likesDAO = (LikesDAO) context.getAttribute("likeDao");
         CommentsDAO commentsDAO = (CommentsDAO) context.getAttribute("commentDao");
-        HistoryDAO historyDAO = (HistoryDAO) context.getAttribute("historyDao");
 
         if (username == null) {
             res.sendRedirect(req.getContextPath() + "/login?redirect=post?id=" + storyIdStr);
@@ -111,7 +108,6 @@ public class PostServlet extends HttpServlet {
                     return;
 
                 case "start_story":
-                    historyDAO.addReadHistory(userId, storyId);
                     res.sendRedirect(req.getContextPath() + "/chat-message?storyId=" + storyId);
                     return;
 
