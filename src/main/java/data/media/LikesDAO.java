@@ -178,6 +178,10 @@ public class LikesDAO {
         }
     }
 
+    public boolean hasUserLikedPost(int postId, int userId) throws SQLException {
+        return postLikeExists(postId, userId);
+    }
+
     // ---------- helpers ----------
 
     public boolean postLikeExists(int postId, int userId) throws SQLException {

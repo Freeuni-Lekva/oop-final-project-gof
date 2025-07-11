@@ -19,7 +19,7 @@
 <%
     String username = (String) session.getAttribute("user");
     if (username == null) {
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
 %>
@@ -31,11 +31,12 @@
         <p class="text-gray-400 mt-2">Welcome, <%= username %>! Let's build a world together.</p>
     </div>
 
-    <form action="/postcreation" method="POST" enctype="multipart/form-data" class="space-y-8">
+    <form action="<%= request.getContextPath() %>/postcreation" method="POST" enctype="multipart/form-data" class="space-y-8">
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <label for="title" class="block text-xl font-semibold mb-2 text-gray-300">Story Title</label>
             <input type="text" id="title" name="title" required
+                   autofocus tabIndex="1"
                    class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                    placeholder="e.g., The Last Dragon of Eldoria">
         </div>
@@ -43,11 +44,18 @@
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <label for="coverImage" class="block text-xl font-semibold mb-2 text-gray-300">Cover Image</label>
             <p class="text-gray-400 mb-4 text-sm">Choose a compelling image to represent your story. (Required)</p>
-            <input type="file" id="coverImage" name="coverImage" required accept="image/png, image/jpeg, image/webp"
+            <input type="file" id="coverImage" name="coverImage" required accept="image/png, image/jpeg, image/webp" tabIndex="2"
                    class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4
                           file:rounded-md file:border-0 file:text-sm file:font-semibold
                           file:bg-indigo-600 file:text-white hover:file:bg-indigo-700
                           cursor-pointer"/>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <label for="description" class="block text-xl font-semibold mb-2 text-gray-300">Story Description</label>
+            <p class="text-gray-400 mb-4 text-sm">A brief, enticing summary.</p>
+            <textarea id="description" name="description" rows="3" required tabIndex="3"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., A young hero must find the legendary Sunstone in a realm shrouded in perpetual twilight..."></textarea>
         </div>
 
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -63,7 +71,7 @@
             <div class="flex flex-wrap gap-4">
                 <% for (String tag : Tags.getAllTags()) { %>
                 <div>
-                    <input type="checkbox" id="tag-<%= tag %>" name="storyTags" value="<%= tag %>"
+                    <input type="checkbox" id="tag-<%= tag %>" name="storyTags" value="<%= tag %>" tabIndex="4"
                            class="form-checkbox h-5 w-5 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500">
                     <label for="tag-<%= tag %>" class="ml-2 text-gray-300"><%= tag %></label>
                 </div>
@@ -85,7 +93,7 @@
 
 
         <div class="text-center">
-            <button type="submit"
+            <button type="submit" tabIndex="10"
                     class="w-full md:w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 shadow-xl">
                 Begin Your Adventure!
             </button>
@@ -102,23 +110,28 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-400">Name</label>
-                <input type="text" name="characterName" required class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <input type="text" name="characterName" required tabIndex="5"
+                       class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-400">Age</label>
-                <input type="number" name="characterAge" required class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <input type="number" name="characterAge" required tabIndex="6"
+                       class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-400">Gender</label>
-                <input type="text" name="characterGender" required class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <input type="text" name="characterGender" required tabIndex="7"
+                       class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-400">Species</label>
-                <input type="text" name="characterSpecies" required class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <input type="text" name="characterSpecies" required tabIndex="8"
+                       class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-400">Description</label>
-                <textarea name="characterDescription" rows="3" required class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+                <textarea name="characterDescription" rows="3" required tabindex="9"
+                          class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
             </div>
         </div>
     </div>

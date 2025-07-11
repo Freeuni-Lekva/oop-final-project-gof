@@ -34,10 +34,10 @@ public class UserDaoTest extends TestCase {
     }
 
     public void testSaveAndFindNewUser() throws SQLException {
-        User newUser = new User(0, "newUser", "new_hash", 33, null, false, "image1.jpg");
+        User newUser = new User(0, "newUser", "new_hash", 33, null, false,false, "image1.jpg");
         userDao.saveUser(newUser);
 
-        User foundUser = userDao.findUserById(3);
+        User foundUser = userDao.findUserById(4);
         assertNotNull(foundUser);
         assertEquals("newUser", foundUser.getUsername());
         assertEquals(33, foundUser.getAge());
@@ -107,24 +107,56 @@ public class UserDaoTest extends TestCase {
         assertFalse("Directionality check: User 1 should still not be following User 2", userDao.isFollowing(1, 2));
     }
 
-    public void testAddBookmark() throws SQLException {
-        data.story.StoryDAO storyDao = new data.story.StoryDAO();
-        Story storyToBookmark = storyDao.getStory(2);
-        assertNotNull(storyToBookmark);
 
-        List<Story> initialBookmarks = storyDao.findBookmarkedStories(1);
-        assertTrue(initialBookmarks.isEmpty());
+    public void testUpdateUsername() throws SQLException {
 
-        userDao.addBookmark(1, storyToBookmark);
-        List<Story> updatedBookmarks = storyDao.findBookmarkedStories(1);
+        User initialUser = userDao.findUserById(1);
+        assertEquals("Initial username should be 'lsana'", "lsana", initialUser.getUsername());
 
-        assertEquals(1, updatedBookmarks.size());
-        assertEquals(2, updatedBookmarks.get(0).getStoryId());
+        String newUsername = "luka";
 
-        userDao.addBookmark(1, storyToBookmark);
-        List<Story> finalBookmarks = storyDao.findBookmarkedStories(1);
+        userDao.updateUsername(1, newUsername);
+        User updatedUser = userDao.findUserById(1);
+        assertEquals("Username should have been updated", newUsername, updatedUser.getUsername());
+        assertEquals("Password hash should remain unchanged", initialUser.getPasswordHash(), updatedUser.getPasswordHash());
+    }
 
-        assertEquals(1, finalBookmarks.size());
+
+    public void testUpdateUserPassword() throws SQLException {
+        User initialUser = userDao.findUserById(1);
+        String initialHash = initialUser.getPasswordHash();
+
+        String newHashedPassword = "abcdefg12345";
+        userDao.updateUserPassword(1, newHashedPassword);
+
+        User updatedUser = userDao.findUserById(1);
+
+        assertEquals("Password hash should have been updated", newHashedPassword, updatedUser.getPasswordHash());
+        assertNotSame("The new hash should be different from the old one", initialHash, updatedUser.getPasswordHash());
+        assertEquals("Username should remain unchanged", "lsana", updatedUser.getUsername());
+    }
+
+
+    public void testUpdateUserImage() throws SQLException {
+        User initialUser = userDao.findUserById(1);
+        assertEquals("Initial image name should be 'image1.jpg'", "image1.jpg", initialUser.getImageName());
+
+        String newImageName = "coolPic.jpg";
+
+        userDao.updateUserImage(1, newImageName);
+
+        User updatedUser = userDao.findUserById(1);
+
+        assertEquals("Image name should have been updated", newImageName, updatedUser.getImageName());
+        assertEquals("Username should remain unchanged", "lsana", updatedUser.getUsername());
+    }
+
+    public void testIsCreator() throws SQLException {
+        User initialUser = userDao.findUserById(3);
+        assertFalse(initialUser.isCreator());
+
+        userDao.SetCreator(initialUser.getUserId());
+        assertTrue(userDao.findUserById(3).isCreator());
     }
 
     @Override

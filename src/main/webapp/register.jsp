@@ -43,17 +43,23 @@
             <form action="register" method="post" class="space-y-6">
                 <div>
                     <label for="username" class="block text-sm font-bold mb-2 text-gray-300">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Choose a unique username" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
+                    <input type="text" id="username" name="username" placeholder="Choose a unique username" required
+                           autofocus tabIndex="1"
+                           value="<%= request.getAttribute("prefillUsername") != null ? request.getAttribute("prefillUsername") : "" %>"
+                           class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
                 <div>
                     <label for="age" class="block text-sm font-bold mb-2 text-gray-300">Age</label>
-                    <input type="number" id="age" name="age" placeholder="Enter your age" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
+                    <input type="number" id="age" name="age" placeholder="Enter your age" required tabIndex="2"
+                           value="<%= request.getAttribute("prefillAge") != null ? request.getAttribute("prefillAge") : "" %>"
+                           class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300">
                 </div>
 
                 <div>
                     <label for="password" class="block text-sm font-bold mb-2 text-gray-300">Password</label>
                     <div class="relative">
-                        <input type="password" id="password" name="password" placeholder="Create a strong password" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required tabIndex="3"
+                               class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
                         <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
                             <svg id="eyeIcon1" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             <svg id="eyeSlashIcon1" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
@@ -75,7 +81,8 @@
                 <div>
                     <label for="confirm_password" class="block text-sm font-bold mb-2 text-gray-300">Confirm Password</label>
                     <div class="relative">
-                        <input type="password" id="confirm_password" name="confirmPassword" placeholder="Confirm your password" required class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
+                        <input type="password" id="confirm_password" name="confirmPassword" placeholder="Confirm your password" required tabIndex="4"
+                               class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-300 pr-10">
                         <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200">
                             <svg id="eyeIcon2" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             <svg id="eyeSlashIcon2" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
@@ -84,7 +91,7 @@
                 </div>
 
                 <div>
-                    <button type="submit" id="register-button" disabled
+                    <button type="submit" id="register-button" disabled tabindex="5"
                             class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-md shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-purple-500 disabled:bg-gray-600 disabled:shadow-none disabled:cursor-not-allowed">
                         Create Account
                     </button>

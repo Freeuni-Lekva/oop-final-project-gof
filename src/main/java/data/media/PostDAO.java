@@ -1,6 +1,7 @@
 package data.media;
 
-import model.media.Comment;
+
+import data.story.StoryDAO;
 import model.media.Post;
 import data.MySqlConnector;
 import java.sql.Connection;
@@ -180,6 +181,8 @@ public class PostDAO {
 
     public void deletePost(int postId) throws SQLException {
         String sql = "DELETE FROM posts WHERE post_id = ?";
+        Post post = getPostById(postId);
+        int story_id = post.getStoryId();
 
         try (Connection conn = MySqlConnector.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -189,5 +192,23 @@ public class PostDAO {
             e.printStackTrace();
             throw e;
         }
+
+        StoryDAO storyDAO = new StoryDAO();
+        storyDAO.deleteStory(post.getStoryId());
+    }
+
+    public int getTotalPostCount() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM posts";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
     }
 }

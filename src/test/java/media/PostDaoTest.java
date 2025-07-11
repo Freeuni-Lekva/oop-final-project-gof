@@ -7,6 +7,7 @@ import data.user.UserDAO;
 import junit.framework.TestCase;
 import model.User;
 import model.media.Post;
+import model.story.Story;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -76,10 +77,8 @@ public class PostDaoTest extends TestCase {
         assertNotNull("User 'chichia' should exist from setup.sql", chichia);
         int chichiaId = chichia.getUserId();
 
-        // ACT: Call the method we want to test for both users.
         List<Post> postsForLsana = postDao.getPostsByCreatorId(lsanaId);
         List<Post> postsForChichia = postDao.getPostsByCreatorId(chichiaId);
-
 
         assertNotNull("List for 'lsana' should not be null", postsForLsana);
         assertEquals("Lsana should have 3 posts (1 original + 2 new)", 3, postsForLsana.size());
@@ -95,11 +94,15 @@ public class PostDaoTest extends TestCase {
 
         Post postBeforeDelete = postDao.getPostById(3);
         assertNotNull("Post with ID 3 should exist before deletion", postBeforeDelete);
+        int story_id = postBeforeDelete.getStoryId();
+        assertNotNull("Story for a post exists",story_id);
 
         postDao.deletePost(3);
+        Story story = storyDao.getStory(story_id);
 
         Post postAfterDelete = postDao.getPostById(3);
         assertNull("Post with ID 3 should be null after deletion", postAfterDelete);
+        assertNull("Story also got deleted",story);
 
         Post otherPost = postDao.getPostById(4); // The second post from initPosts()
         assertNotNull("Post with ID 4 should still exist", otherPost);
@@ -113,29 +116,35 @@ public class PostDaoTest extends TestCase {
 
     // --------- Helper method ---------
     private void initPosts() throws SQLException {
-        // Use dummy postId values; actual DB will auto-increment if set up that way
         postDao.addPost(new Post(3, 1, "src/main/webapp/images/posts/image1.jpg", LocalDateTime.now(), 0, 0));
         postDao.addPost(new Post(4, 2, "src/main/webapp/images/posts/image2.jpg", LocalDateTime.now(), 0, 0));
     }
 
     private int addPostsForUsers() throws SQLException {
-        // --- 1. Find the existing user from setup.sql ---
         User lsana = userDao.findUser("lsana");
         if (lsana == null) {
             throw new IllegalStateException("Test setup failed: User 'lsana' not found. Please ensure setup.sql has been run.");
         }
         int lsanaId = lsana.getUserId();
 
-        // --- 2. Create new stories for 'lsana' using StoryDAO ---
-        int newStoryId1 = storyDao.createStoryAndGetId("A New Adventure for Lsana", "A new prompt.", lsanaId);
-        int newStoryId2 = storyDao.createStoryAndGetId("Another Tale by Lsana", "Another prompt.", lsanaId);
+        int newStoryId1 = storyDao.createStoryAndGetId("A New Adventure for Lsana",
+                "A new prompt.", "A new description.", lsanaId);
+        int newStoryId2 = storyDao.createStoryAndGetId("Another Tale by Lsana",
+                "Another prompt.", "Another description.", lsanaId);
 
-        // --- 3. Create new posts using the correct Post constructor ---
-        // We provide dummy values (0, now(), 0, 0) for fields that are not used by the addPost method.
-        // This matches the style in your initPosts() helper.
         postDao.addPost(new Post(0, newStoryId1, "image1.jpg", LocalDateTime.now(), 0, 0));
         postDao.addPost(new Post(0, newStoryId2, "image2.jpg", LocalDateTime.now(), 0, 0));
 
         return lsanaId;
+    }
+
+    public void testGetTotalPostCount() throws SQLException {
+        int initialCount = postDao.getTotalPostCount();
+        assertEquals("Initial post count should be 2 from setup.sql", 2, initialCount);
+
+        postDao.addPost(new Post(0, 1, "a_new_image.jpg", LocalDateTime.now(), 0, 0));
+
+        int newCount = postDao.getTotalPostCount();
+        assertEquals("Count should be 3 after adding one post", 3, newCount);
     }
 }

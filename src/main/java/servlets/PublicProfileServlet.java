@@ -80,7 +80,7 @@ public class PublicProfileServlet extends HttpServlet {
         String viewerUsername = (session != null) ? (String) session.getAttribute("user") : null;
 
         if (viewerUsername == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -95,7 +95,7 @@ public class PublicProfileServlet extends HttpServlet {
             User profileOwner = userDAO.findUser(profileOwnerUsername);
 
             if (viewer == null || profileOwner == null || action == null) {
-                response.sendRedirect("home.jsp");
+                response.sendRedirect(request.getContextPath() + "/home");
                 return;
             }
 

@@ -26,6 +26,7 @@ CREATE TABLE users (
                        active BOOLEAN DEFAULT TRUE,
                        last_login DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                        is_creator BOOLEAN DEFAULT FALSE,
+                       is_admin BOOLEAN DEFAULT FALSE,
                        image_name VARCHAR(256)
 );
 
@@ -42,8 +43,9 @@ CREATE TABLE stories (
                          creator_id INT NOT NULL,
                          title VARCHAR(200) NOT NULL,
                          prompt TEXT,
+                         description TEXT,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                         FOREIGN KEY (creator_id) REFERENCES users(user_id)
+                         FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE posts (
@@ -62,6 +64,7 @@ CREATE TABLE comments (
                           post_id INT NOT NULL,
                           comment TEXT NOT NULL,
                           like_count INT DEFAULT 0,
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                           FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE,
                           FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 );
@@ -85,7 +88,7 @@ CREATE TABLE bookmarks (
                            user_id INT,
                            story_id INT,
                            PRIMARY KEY (user_id, story_id),
-                           FOREIGN KEY (user_id) REFERENCES users(user_id),
+                           FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
                            FOREIGN KEY (story_id) REFERENCES stories(story_id) ON DELETE CASCADE
 );
 
@@ -134,19 +137,22 @@ CREATE TABLE messages (
 INSERT INTO users (username, password_hash, age, is_creator, active, image_name)
 VALUES
     ('lsana', 'hash_tikaluka2', 21, TRUE, TRUE, 'image1.jpg'),
-    ('chichia', 'hash_kitketa', 20, TRUE, TRUE, 'image2.jpg');
+    ('chichia', 'hash_kitketa', 20, TRUE, TRUE, 'image2.jpg'),
+    ('ffff','123',23,false,TRUE,'image2.jpg');
 
 -- Insert stories for creators
-INSERT INTO stories (creator_id, title, prompt)
+INSERT INTO stories (creator_id, title, prompt, description)
 VALUES
-    (1, 'The Mystery of the Lost Artifact', 'A suspenseful journey to uncover hidden secrets.'),
-    (2, 'Adventures in the Digital Age', 'Exploring the vast world of cyberspace.');
+    (1, 'The Mystery of the Lost Artifact', 'A suspenseful journey to uncover hidden secrets.',
+     'A really cool description for a really cool story'),
+    (2, 'Adventures in the Digital Age', 'Exploring the vast world of cyberspace.',
+     'A really uncool description for a really uncool story');
 
 -- Insert posts for stories
 INSERT INTO posts (story_id, image_name, like_count, comment_count)
 VALUES
     (1, 'image1.jpg', 2, 1),
-    (2, 'image2.jpg', 1, 0);
+    (2, 'image2.jpg', 1, 1);
 
 -- Insert comments from users
 INSERT INTO comments (author_id, post_id, comment, like_count)

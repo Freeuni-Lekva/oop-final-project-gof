@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import model.User;
 import model.media.Post;
 import model.story.Character;
 import model.story.PromptBuilder;
@@ -35,12 +36,6 @@ public class StoryCreationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
-
-        if(session == null || session.getAttribute("user") == null) {
-            res.sendRedirect(req.getContextPath() + "/login");
-            return;
-        }
-
         req.getRequestDispatcher("/create-post.jsp").forward(req, res);
     }
 
@@ -58,13 +53,18 @@ public class StoryCreationServlet extends HttpServlet {
         UserDAO userDAO = (UserDAO) context.getAttribute("userDao");
         PostDAO postDAO = (PostDAO) context.getAttribute("postDao");
         String username = (String) session.getAttribute("user");
+
         int userId = 0;
+        boolean isCreator = false;
         try {
-            userId = userDAO.findUser(username).getUserId();
+            User user = userDAO.findUser(username);
+            userId = user.getUserId();
+            isCreator = user.isCreator();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+        String description = req.getParameter("description");
         String title = req.getParameter("title");
         String worldInfo = req.getParameter("worldInfo");
 
@@ -99,16 +99,24 @@ public class StoryCreationServlet extends HttpServlet {
         PromptBuilder builder = new PromptBuilder(characters, worldInfo);
         String firstPrompt = builder.build();
 
-        int newStoryId = 0;
+        int newStoryId;
         try {
-            newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, userId);
+            newStoryId = storyDAO.createStoryAndGetId(title, firstPrompt, description, userId);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServletException("Error creating story.", e);
+        }
+        if (newStoryId != -1 && !isCreator) {
+            try {
+                userDAO.SetCreator(userId);
+            } catch (SQLException e) {
+                System.err.println("Story was created, but failed to update creator status for user." + userId);
+                e.printStackTrace();
+            }
         }
 
         if (newStoryId == -1) {
-            System.err.println("Failed to create a new story for user " + userId);
-            res.sendRedirect(req.getContextPath() + "/create-post.jsp?error=creationFailed");
+            System.err.println("Failed to create a new story for user." + userId);
+            res.sendRedirect(req.getContextPath() + "/create-post?error=creationFailed");
             return;
         }
 
