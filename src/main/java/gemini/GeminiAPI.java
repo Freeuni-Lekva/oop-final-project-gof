@@ -10,7 +10,7 @@ import com.google.genai.types.Part;
 public class GeminiAPI {
 
     private final Client geminiClient;
-    private static final String DEFAULT_MODEL = "gemini-1.5-flash";
+    private static final String DEFAULT_MODEL = "gemini-1.5-flash-latest";
 
 
     public GeminiAPI() {
@@ -25,7 +25,7 @@ public class GeminiAPI {
 
         GenerateContentConfig config = GenerateContentConfig.builder()
                 .systemInstruction(Content.fromParts(
-                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(0.5F)
+                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(0.8F)
 
                 .build();
 
