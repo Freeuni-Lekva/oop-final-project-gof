@@ -7,10 +7,10 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 
-public class GeminiAPI {
+public class GeminiAPI implements AiAPI {
 
     private final Client geminiClient;
-    private static final String DEFAULT_MODEL = "gemini-1.5-flash";
+    private static final String DEFAULT_MODEL = "gemini-1.5-flash-latest";
 
 
     public GeminiAPI() {
@@ -25,7 +25,7 @@ public class GeminiAPI {
 
         GenerateContentConfig config = GenerateContentConfig.builder()
                 .systemInstruction(Content.fromParts(
-                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(0.5F)
+                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(0.8F)
 
                 .build();
 
@@ -43,8 +43,8 @@ public class GeminiAPI {
     }
 
     public String generateAnswer(String prompt) throws Exception {
-        GeminiAPI api = new GeminiAPI();
-        return api.generateContent(prompt);
+//        GeminiAPI api = new GeminiAPI();
+        return generateContent(prompt);
     }
 
 }

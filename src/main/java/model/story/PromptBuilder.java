@@ -7,6 +7,7 @@ public class PromptBuilder {
 
     private List<Character> characters;
     private String worldInfo;
+    private String description = "";
 
     /**
      * Constructs a new PromptBuilder with the given characters and world information.
@@ -14,9 +15,10 @@ public class PromptBuilder {
      * @param characters List of Character objects to include in the prompt.
      * @param worldInfo  Description of the world/setting for the story.
      */
-    public PromptBuilder(List<Character> characters, String worldInfo) {
+    public PromptBuilder(List<Character> characters, String worldInfo, String description) {
         this.characters = characters;
         this.worldInfo = worldInfo;
+        this.description = description;
     }
 
 
@@ -50,6 +52,10 @@ public class PromptBuilder {
                 .append(worldInfo)
                 .append("\n\n");
 
+        prompt.append("Story description:\n")
+                .append(description)
+                .append("\n\n");
+
         prompt.append("Characters:\n");
         for (Character character : characters) {
             prompt.append("- ")
@@ -64,6 +70,14 @@ public class PromptBuilder {
                     .append(character.getDescription())
                     .append("\n");
         }
+
+        prompt.append("\n\n");
+
+        prompt.append("Now, begin the story.\n")
+                .append("DO NOT list the description, world info, or characters. DO NOT say 'Welcome' or 'Here is the story'.\n")
+                .append("Instead, write an engaging and immersive opening paragraph that immediately drops the player into the scene.\n")
+                .append("Your opening message should set the tone and atmosphere.\n")
+                .append("End your opening message with a clear question to the player, asking them what they want to do next.\n");
 
         return prompt.toString();
     }
