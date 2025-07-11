@@ -21,11 +21,6 @@ public class ChatServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
         String username = (session != null) ? (String) session.getAttribute("user") : null;
 
-        if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login");
-            return;
-        }
-
         int chatId;
         try {
             chatId = Integer.parseInt(req.getParameter("chatId"));

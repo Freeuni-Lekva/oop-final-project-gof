@@ -3,6 +3,7 @@ package servlets;
 import com.google.gson.Gson;
 import data.chat.ChatDAO;
 import data.chat.MessageDAO;
+import data.story.StoryDAO;
 import data.user.HistoryDAO;
 import data.user.UserDAO;
 import gemini.AiAPI;
@@ -11,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.chat.Message;
+import model.story.Story;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,12 +26,6 @@ public class ChatMessageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         String username = (session != null) ? (String) session.getAttribute("user") : null;
-
-        if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login");
-            return;
-        }
-
         int storyId;
         try {
             storyId = Integer.parseInt(req.getParameter("storyId"));
@@ -43,6 +39,10 @@ public class ChatMessageServlet extends HttpServlet {
         ChatDAO chatDAO = (ChatDAO) context.getAttribute("chatDao");
         HistoryDAO historyDAO = (HistoryDAO) context.getAttribute("historyDao");
 
+        MessageDAO messageDAO = (MessageDAO) context.getAttribute("messageDao");
+        StoryDAO storyDAO = (StoryDAO) context.getAttribute("storyDao");
+        AiAPI ai = (AiAPI) context.getAttribute("AI_API");
+
         try {
             int userId = userDAO.findUser(username).getUserId();
             int chatId = chatDAO.getChatId(userId, storyId);
@@ -50,11 +50,18 @@ public class ChatMessageServlet extends HttpServlet {
             if (chatId == -1) {
                 chatId = chatDAO.createChat(userId, storyId);
                 historyDAO.addReadHistory(userId, storyId);
+
+                String startingPrompt = storyDAO.getPrompt(storyId);
+                String AIResponse = ai.generateAnswer(startingPrompt).trim();
+
+                messageDAO.addMessage(chatId, AIResponse, false);
             }
 
             res.sendRedirect(req.getContextPath() + "/chat?chatId=" + chatId);
         } catch (SQLException e) {
             throw new ServletException("Failed to create or get chat", e);
+        } catch (Exception e) {
+            throw new ServletException("Failed to generate AI response", e);
         }
     }
 
@@ -130,9 +137,6 @@ public class ChatMessageServlet extends HttpServlet {
             response.put("error", e.getMessage());
 
             res.getWriter().write(gson.toJson(response));
-//            throw new ServletException("Error handling chat message", e);
         }
-
-//        res.sendRedirect(req.getContextPath() + "/chat?chatId=" + chatId);
     }
 }
