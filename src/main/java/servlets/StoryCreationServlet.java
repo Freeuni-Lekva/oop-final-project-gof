@@ -96,7 +96,7 @@ public class StoryCreationServlet extends HttpServlet {
         String[] selectedTags = req.getParameterValues("storyTags");
         List<String> tagList = (selectedTags != null) ? Arrays.asList(selectedTags) : new ArrayList<>();
 
-        PromptBuilder builder = new PromptBuilder(characters, worldInfo);
+        PromptBuilder builder = new PromptBuilder(characters, worldInfo, description);
         String firstPrompt = builder.build();
 
         int newStoryId;
