@@ -83,7 +83,7 @@ public class PostServlet extends HttpServlet {
         CommentsDAO commentsDAO = (CommentsDAO) context.getAttribute("commentDao");
 
         if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp?redirect=post.jsp?id=" + storyIdStr);
+            res.sendRedirect(req.getContextPath() + "/login.jsp?redirect=post?id=" + storyIdStr);
             return;
         }
         if (action == null || storyIdStr == null) {
@@ -96,17 +96,15 @@ public class PostServlet extends HttpServlet {
             int userId = user.getUserId();
             int storyId = Integer.parseInt(storyIdStr);
 
-            String redirectUrl = req.getContextPath() + "/post.jsp?id=" + storyId;
+            String redirectUrl = req.getContextPath() + "/post?id=" + storyId;
 
             switch (action) {
                 case "bookmark":
                     storyDAO.addBookmark(userId, storyId);
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
                     break;
 
                 case "unbookmark":
                     storyDAO.removeBookmark(userId, storyId);
-                    res.sendRedirect(req.getContextPath() + "/post?id=" + storyId);
                     break;
                 case "start_story":
                     res.sendRedirect(req.getContextPath() + "/AIchat.jsp?storyId=" + storyId);
@@ -151,7 +149,7 @@ public class PostServlet extends HttpServlet {
 
         } catch (SQLException | NumberFormatException e) {
             e.printStackTrace();
-            res.sendRedirect(req.getContextPath() + "/post.jsp?id=" + storyIdStr + "&error=true");
+            res.sendRedirect(req.getContextPath() + "/post?id=" + storyIdStr + "&error=true");
         }
     }
 
