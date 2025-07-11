@@ -5,6 +5,7 @@ import data.media.*;
 import data.story.*;
 import data.user.HistoryDAO;
 import data.user.UserDAO;
+import gemini.GeminiAPI;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -31,6 +32,8 @@ public class AppInitializer implements ServletContextListener, HttpSessionListen
         context.setAttribute("tagDao", new TagsDAO());
 
         context.setAttribute("mySqlConnector", mySqlConnector);
+
+        context.setAttribute("AI_API", new GeminiAPI());
     }
 
     @Override

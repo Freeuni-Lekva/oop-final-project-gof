@@ -112,7 +112,7 @@ public class PostServlet extends HttpServlet {
 
                 case "start_story":
                     historyDAO.addReadHistory(userId, storyId);
-                    res.sendRedirect(req.getContextPath() + "/AIchat.jsp?storyId=" + storyId);
+                    res.sendRedirect(req.getContextPath() + "/chat-message?storyId=" + storyId);
                     return;
 
                 case "like_post": {
