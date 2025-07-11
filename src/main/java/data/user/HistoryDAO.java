@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -100,5 +101,60 @@ public class HistoryDAO {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    public int countStoriesReadByUser(int userId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM read_history WHERE user_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            System.err.println("Error counting read history: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public Map<String, Long> getReadStatsByUser(int userId, String period) throws SQLException {
+        Map<String, Long> stats = new LinkedHashMap<>();
+
+        String dateFunction;
+        switch (period.toLowerCase()) {
+            case "weekly":
+                dateFunction = "DATE(last_read_at - INTERVAL(WEEKDAY(last_read_at)) DAY)";
+                break;
+            case "monthly":
+                dateFunction = "DATE_FORMAT(last_read_at, '%Y-%m-01')";
+                break;
+            case "daily":
+            default:
+                dateFunction = "DATE(last_read_at)";
+                break;
+        }
+
+        String sql = "SELECT " + dateFunction + " as period_start, COUNT(*) as period_count " +
+                "FROM read_history WHERE user_id = ? " +
+                "GROUP BY period_start ORDER BY period_start ASC";
+
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                stats.put(resultSet.getString("period_start"), resultSet.getLong("period_count"));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error fetching read history stats: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return stats;
     }
 }
