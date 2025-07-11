@@ -81,14 +81,14 @@ public class CommentsDAOTest extends TestCase {
         assertEquals(2, comments.size());
 
         Comment comment = comments.get(0);
-        assertEquals(2, comment.getCommentId());
-        assertEquals("Great insights on the topic!", comment.getCommentContents());
-        assertEquals(1, comment.getLikesCount());
-
-        comment = comments.get(1);
         assertEquals(3, comment.getCommentId());
         assertEquals("This is test comment", comment.getCommentContents());
         assertEquals(0, comment.getLikesCount());
+
+        comment = comments.get(1);
+        assertEquals(2, comment.getCommentId());
+        assertEquals("Great insights on the topic!", comment.getCommentContents());
+        assertEquals(1, comment.getLikesCount());
     }
 
     public void testGetAuthorId() throws SQLException {

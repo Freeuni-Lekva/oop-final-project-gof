@@ -145,6 +145,30 @@ public class PostServlet extends HttpServlet {
                     return;
                 }
 
+                case "like_comment": {
+                    int commentId = Integer.parseInt(req.getParameter("commentId"));
+                    boolean isLiked = likesDAO.commentLikeExists(commentId, userId);
+                    if (!isLiked) {
+                        likesDAO.addLikeToComment(commentId, userId);
+                    }
+
+                    String redirectUrlToComment = redirectUrl + "#comment-" + commentId;
+                    res.sendRedirect(redirectUrlToComment);
+                    return;
+                }
+
+                case "unlike_comment": {
+                    int commentId = Integer.parseInt(req.getParameter("commentId"));
+                    boolean isLiked = likesDAO.commentLikeExists(commentId, userId);
+                    if (isLiked) {
+                        likesDAO.removeLikeComment(commentId, userId);
+                    }
+
+                    String redirectUrlToComment = redirectUrl + "#comment-" + commentId;
+                    res.sendRedirect(redirectUrlToComment);
+                    return;
+                }
+
                 default:
                     res.sendRedirect(req.getContextPath() + "/home");
             }

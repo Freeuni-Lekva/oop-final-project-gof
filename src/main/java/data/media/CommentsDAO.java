@@ -91,7 +91,7 @@ public class CommentsDAO {
     public List<Comment> getCommentsForPost(int postId) throws SQLException {
         List<Comment> comments = new ArrayList<>();
         String query = "SELECT comment_id, post_id, author_id, comment, like_count" +
-                " FROM comments  WHERE post_id = ? ORDER BY comment_id";
+                " FROM comments  WHERE post_id = ? ORDER BY comment_id DESC";
 
         try(Connection conn = MySqlConnector.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)){
