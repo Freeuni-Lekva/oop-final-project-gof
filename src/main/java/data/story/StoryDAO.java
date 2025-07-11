@@ -107,29 +107,6 @@ public class StoryDAO {
         return stories;
     }
 
-    public List<Story> searchStoriesByCreatorName(String query) throws SQLException {
-        List<Story> stories = new ArrayList<>();
-
-        String sql = "SELECT s.* FROM stories s JOIN users u ON s.creator_id = u.user_id " +
-                "WHERE u.username LIKE ? ORDER BY s.created_at DESC";
-
-        try (Connection conn = MySqlConnector.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, "%" + query + "%");
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                stories.add(populateStory(resultSet));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error searching stories by creator: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-        return stories;
-    }
-
     public String getPrompt(int storyId) throws SQLException {
         String sql = "SELECT prompt FROM stories WHERE story_id = ?";
         String prompt = null;
@@ -149,6 +126,24 @@ public class StoryDAO {
             throw e;
         }
         return prompt;
+    }
+
+    public int countStoriesByCreator(int creatorId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM stories WHERE creator_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, creatorId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        }
+        catch (SQLException e){
+            System.out.println("Error fetching stories count by creator: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
     }
 
     public List<Story> getStoriesList(int creatorId) throws SQLException {

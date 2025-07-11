@@ -117,6 +117,40 @@ public class UserDAO {
         return following;
     }
 
+    public int countFollowers(int userId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM followers WHERE following_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding follower count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
+    public int countFollowing(int userId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM followers WHERE follower_id = ?";
+        try (Connection conn = MySqlConnector.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding following count: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return 0;
+    }
+
     public void saveUser(User user) throws SQLException {
         String sql = "INSERT INTO users (username, password_hash, age, register_time, is_creator, image_name) VALUES (?, ?, ?, ?, ?, ?)";
 
