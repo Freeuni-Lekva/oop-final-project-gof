@@ -83,7 +83,7 @@ public class PostServlet extends HttpServlet {
         CommentsDAO commentsDAO = (CommentsDAO) context.getAttribute("commentDao");
 
         if (username == null) {
-            res.sendRedirect(req.getContextPath() + "/login.jsp?redirect=post?id=" + storyIdStr);
+            res.sendRedirect(req.getContextPath() + "/login?redirect=post?id=" + storyIdStr);
             return;
         }
         if (action == null || storyIdStr == null) {
