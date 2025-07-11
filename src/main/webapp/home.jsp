@@ -30,7 +30,7 @@
 
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img4.jpg');">
+<body class="bg-gray-900 text-gray-200 font-sans bg-cover bg-center bg-fixed" style="background-image: url('<%= request.getContextPath() %>/images/design/img5.jpg');">
 
 <%
     String username = (String) session.getAttribute("user");
