@@ -173,13 +173,29 @@
             %>
             <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
                 <div class="flex items-start gap-4">
-                    <img src="<%= authorProfilePic %>" alt="Author" class="h-10 w-10 rounded-full object-cover">
+                    <%
+                        String authorProfileUrl = "#";
+                        if (commentAuthor != null) {
+                            if (loggedInUser != null && loggedInUser.getUserId() == commentAuthor.getUserId()) {
+                                authorProfileUrl = request.getContextPath() + "/profile";
+                            } else {
+                                authorProfileUrl = request.getContextPath() + "/user?username=" + commentAuthor.getUsername();
+                            }
+                        }
+                    %>
+
+                    <a href="<%= authorProfileUrl %>">
+                        <img src="<%= authorProfilePic %>" alt="Author" class="h-10 w-10 rounded-full object-cover transition-transform duration-200 hover:scale-110">
+                    </a>
+
                     <div class="flex-1">
                         <div class="flex items-center justify-between">
-                            <p class="font-semibold text-indigo-400"><%= commentAuthor != null ? commentAuthor.getUsername() : "Unknown User" %></p>
+                            <a href="<%= authorProfileUrl %>" class="font-semibold text-indigo-400 hover:underline">
+                                <%= commentAuthor != null ? commentAuthor.getUsername() : "Unknown User" %>
+                            </a>
 
                             <% if (loggedInUser != null && loggedInUser.getUserId() == comment.getAuthorId()) { %>
-                            <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this comment?');" >
+                            <form action="<%= request.getContextPath() %>/post" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this comment?');">
                                 <input type="hidden" name="action" value="delete_comment">
                                 <input type="hidden" name="storyId" value="<%= story.getStoryId() %>">
                                 <input type="hidden" name="commentId" value="<%= comment.getCommentId() %>">
