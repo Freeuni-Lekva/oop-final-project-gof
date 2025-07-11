@@ -116,7 +116,7 @@ public class StoryCreationServlet extends HttpServlet {
 
         if (newStoryId == -1) {
             System.err.println("Failed to create a new story for user." + userId);
-            res.sendRedirect(req.getContextPath() + "/create-post.jsp?error=creationFailed");
+            res.sendRedirect(req.getContextPath() + "/create-post?error=creationFailed");
             return;
         }
 

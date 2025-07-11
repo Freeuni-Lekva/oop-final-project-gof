@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
+import util.ValidationUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -45,6 +46,8 @@ public class RegisterServlet extends HttpServlet {
 
         if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
             req.setAttribute("error", "Username and password cannot be empty.");
+            req.setAttribute("prefillUsername", username);
+            req.setAttribute("prefillAge", req.getParameter("age"));
             reqDispatcher.forward(req, res);
             return;
         }
@@ -53,17 +56,30 @@ public class RegisterServlet extends HttpServlet {
             age = Integer.parseInt(req.getParameter("age"));
             if (age < 16) {
                 req.setAttribute("error", "You must be at least 16 years old to register.");
+                req.setAttribute("prefillUsername", username);
                 reqDispatcher.forward(req, res);
                 return;
             }
         } catch (NumberFormatException e) {
             req.setAttribute("error", "Please enter a valid age.");
+            req.setAttribute("prefillUsername", username);
+            reqDispatcher.forward(req, res);
+            return;
+        }
+
+        String validationError = ValidationUtils.validatePassword(password);
+        if (validationError != null) {
+            req.setAttribute("error", validationError);
+            req.setAttribute("prefillUsername", username);
+            req.setAttribute("prefillAge", req.getParameter("age"));
             reqDispatcher.forward(req, res);
             return;
         }
 
         if(!password.equals(confirmPassword)) {
             req.setAttribute("error", "Passwords do not match!");
+            req.setAttribute("prefillUsername", username);
+            req.setAttribute("prefillAge", req.getParameter("age"));
             reqDispatcher.forward(req, res);
             return;
         }
@@ -90,6 +106,7 @@ public class RegisterServlet extends HttpServlet {
         try {
             if(userDAO.findUser(user.getUsername()) != null) {
                 req.setAttribute("error", "Username is already taken.");
+                req.setAttribute("prefillAge", req.getParameter("age"));
                 reqDispatcher.forward(req, res);
                 return;
             }

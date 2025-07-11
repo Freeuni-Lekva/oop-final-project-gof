@@ -1,6 +1,7 @@
 package servlets;
 
 import data.user.UserDAO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
+import util.ValidationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,12 @@ import java.util.UUID;
 @MultipartConfig
 public class SettingsServlet extends HttpServlet {
 
-    private final UserDAO userDAO = new UserDAO();
+    private UserDAO userDAO;
+
+    public void init() throws ServletException {
+        ServletContext context = getServletContext();
+        userDAO = (UserDAO) context.getAttribute("userDao");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -121,6 +128,11 @@ public class SettingsServlet extends HttpServlet {
         }
         if (!newPassword.equals(confirmPassword)) {
             session.setAttribute("settingsError", "New passwords do not match.");
+            return false;
+        }
+        String validationError = ValidationUtils.validatePassword(newPassword);
+        if(validationError != null) {
+            session.setAttribute("settingsError", validationError);
             return false;
         }
         return true;

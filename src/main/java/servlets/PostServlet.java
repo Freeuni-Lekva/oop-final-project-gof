@@ -95,17 +95,19 @@ public class PostServlet extends HttpServlet {
             User user = userDAO.findUser(username);
             int userId = user.getUserId();
             int storyId = Integer.parseInt(storyIdStr);
-
             String redirectUrl = req.getContextPath() + "/post?id=" + storyId;
 
             switch (action) {
                 case "bookmark":
                     storyDAO.addBookmark(userId, storyId);
-                    break;
+                    res.sendRedirect(redirectUrl);
+                    return;
 
                 case "unbookmark":
                     storyDAO.removeBookmark(userId, storyId);
-                    break;
+                    res.sendRedirect(redirectUrl);
+                    return;
+
                 case "start_story":
                     res.sendRedirect(req.getContextPath() + "/AIchat.jsp?storyId=" + storyId);
                     return;
@@ -113,13 +115,15 @@ public class PostServlet extends HttpServlet {
                 case "like_post": {
                     int postId = Integer.parseInt(req.getParameter("postId"));
                     likesDAO.addLikeToPost(postId, userId);
-                    break;
+                    res.sendRedirect(redirectUrl);
+                    return;
                 }
 
                 case "unlike_post": {
                     int postId = Integer.parseInt(req.getParameter("postId"));
                     likesDAO.removeLikePost(postId, userId);
-                    break;
+                    res.sendRedirect(redirectUrl);
+                    return;
                 }
 
                 case "add_comment": {
@@ -128,7 +132,8 @@ public class PostServlet extends HttpServlet {
                     if (commentText != null && !commentText.trim().isEmpty()) {
                         commentsDAO.addComment(commentText, userId, postId);
                     }
-                    break;
+                    res.sendRedirect(redirectUrl);
+                    return;
                 }
 
                 case "delete_comment": {
@@ -137,20 +142,17 @@ public class PostServlet extends HttpServlet {
                     if (authorId == userId) {
                         commentsDAO.deleteComment(commentId);
                     }
-                    break;
+                    res.sendRedirect(redirectUrl);
+                    return;
                 }
 
                 default:
                     res.sendRedirect(req.getContextPath() + "/home");
-                    return;
             }
-
-            res.sendRedirect(redirectUrl);
 
         } catch (SQLException | NumberFormatException e) {
             e.printStackTrace();
             res.sendRedirect(req.getContextPath() + "/post?id=" + storyIdStr + "&error=true");
         }
     }
-
 }

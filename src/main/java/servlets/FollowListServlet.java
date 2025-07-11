@@ -65,7 +65,7 @@ public class FollowListServlet extends HttpServlet {
                     pageTitle = "Following";
                     break;
                 default:
-                    response.sendRedirect("home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/home");
                     return;
             }
 
