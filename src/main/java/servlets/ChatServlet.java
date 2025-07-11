@@ -13,6 +13,7 @@ import model.chat.Message;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "ChatServlet", value = "/chat")
 public class ChatServlet extends HttpServlet {
@@ -43,6 +44,9 @@ public class ChatServlet extends HttpServlet {
             }
 
             List<Message> messages = messageDAO.getMessages(chatId);
+            messages = messages.stream()
+                    .filter(message -> !message.isPrompt())
+                    .collect(Collectors.toList());
             req.setAttribute("messages", messages);
             req.setAttribute("chatId", chatId);
 

@@ -3,6 +3,7 @@ package servlets;
 import data.media.CommentsDAO;
 import data.media.PostDAO;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -29,9 +30,10 @@ public class DataManagementServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.postDAO = new PostDAO();
-        this.commentsDAO = new CommentsDAO();
-        this.userDAO = new UserDAO();
+        ServletContext context = getServletContext();
+        this.postDAO = (PostDAO) context.getAttribute("postDao");
+        this.commentsDAO = (CommentsDAO) context.getAttribute("commentsDao");
+        this.userDAO = (UserDAO) context.getAttribute("userDao");
     }
 
     @Override
