@@ -1,9 +1,10 @@
 -- USE YOUR DATABASE --
-USE `story-ai-db`;
+USE qreizi_ambebi;
 -- story-ai-db for workflow testing
 
 -- DROP UNNECESSARY TABLES --
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS shared_chats;
 DROP TABLE IF EXISTS chats;
 DROP TABLE IF EXISTS story_tags;
 DROP TABLE IF EXISTS tags;
@@ -133,11 +134,11 @@ CREATE TABLE messages (
 CREATE TABLE shared_chats (
                               share_id INT PRIMARY KEY AUTO_INCREMENT,
                               chat_id INT NOT NULL,
-                              user_id INT NOT NULL,  -- The ID of the user who SHARED the chat
+                              user_id INT NOT NULL,
                               shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE,
                               FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-                              UNIQUE (chat_id) -- A chat can only be shared once by its owner
+                              UNIQUE (chat_id)
 );
 
 
