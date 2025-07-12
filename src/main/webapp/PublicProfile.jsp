@@ -9,6 +9,7 @@
 <%@ page import="java.util.List, java.util.ArrayList, model.User, model.media.Post, model.story.Story, data.story.StoryDAO, data.story.TagsDAO" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="jakarta.servlet.ServletException" %>
+<%@ page import="model.chat.SharedChat" %>
 
 <%!
   String truncate(String text, int length) {
@@ -130,6 +131,33 @@
       <p class="font-bold">No Posts Yet</p><p>This user hasn't published any stories.</p>
     </div>
     <% } %>
+
+    <section id="shared-chats" class="mt-12">
+      <h2 class="text-3xl font-semibold gradient-text pb-2 mb-6 border-b-2 border-gray-800">Shared Chats</h2>
+      <%
+        List<SharedChat> userSharedChats = (List<SharedChat>) request.getAttribute("userSharedChats");
+        if (userSharedChats != null && !userSharedChats.isEmpty()) {
+      %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <% for (SharedChat chat : userSharedChats) { %>
+        <div class="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-purple-500/40 group">
+          <a href="<%= request.getContextPath() %>/chat?chatId=<%= chat.getChatId() %>" class="block p-4 h-full">
+            <h3 class="font-bold text-lg text-white group-hover:text-purple-300 transition-colors duration-300 truncate" title="<%= chat.getStoryTitle() %>">
+              <%= chat.getStoryTitle() %>
+            </h3>
+            <p class="text-sm text-gray-400 mt-2">
+              Shared on: <%= new java.text.SimpleDateFormat("MMM dd, yyyy").format(chat.getSharedAt()) %>
+            </p>
+          </a>
+        </div>
+        <% } %>
+      </div>
+      <% } else { %>
+      <div class="bg-gray-800/50 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
+        <p class="font-bold">No Shared Chats</p><p>This user haven't shared any of the story chats yet.</p>
+      </div>
+      <% } %>
+    </section>
   </main>
 
 </div>

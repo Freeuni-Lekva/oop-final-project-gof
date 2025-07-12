@@ -71,35 +71,6 @@
         </div>
     </div>
 
-    <%
-        List<SharedChat> sharedChatsFeed = (List<SharedChat>) request.getAttribute("sharedChatsFeed");
-        if (sharedChatsFeed != null && !sharedChatsFeed.isEmpty()) {
-    %>
-    <section class="mb-12">
-        <h2 class="text-3xl font-bold text-white mb-6 border-b-2 border-blue-800 pb-2">
-            From People You Follow
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <% for (SharedChat shared : sharedChatsFeed) {
-                String userProfilePic = (shared.getUserImage() != null && !shared.getUserImage().isEmpty())
-                        ? request.getContextPath() + "/images/profiles/" + shared.getUserImage()
-                        : "https://placehold.co/40x40/1F2937/FFFFFF?text=" + shared.getUsername().toUpperCase().charAt(0);
-            %>
-            <a href="<%= request.getContextPath() %>/chat?chatId=<%= shared.getChatId() %>"
-               class="block bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-4 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/20 group">
-                <h3 class="font-bold text-lg text-white group-hover:text-blue-400 transition-colors duration-300 truncate" title="<%= shared.getStoryTitle() %>">
-                    <%= shared.getStoryTitle() %>
-                </h3>
-                <div class="flex items-center gap-3 mt-3 text-sm text-gray-400 border-t border-gray-700 pt-3">
-                    <img src="<%= userProfilePic %>" alt="Profile of <%= shared.getUsername() %>" class="h-8 w-8 rounded-full object-cover">
-                    <span class="truncate">Shared by <span class="font-semibold text-gray-300"><%= shared.getUsername() %></span></span>
-                </div>
-            </a>
-            <% } %>
-        </div>
-    </section>
-    <% } %>
-
 
     <%!
         String truncate(String text, int length) {
@@ -220,6 +191,36 @@
                 Show More
             </button>
         </div>
+
+        <%
+            List<SharedChat> sharedChatsFeed = (List<SharedChat>) request.getAttribute("sharedChatsFeed");
+            if (sharedChatsFeed != null && !sharedChatsFeed.isEmpty()) {
+        %>
+        <br><br>
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-6 border-b-2 border-blue-800 pb-2">
+                Completed stories from people you follow
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <% for (SharedChat shared : sharedChatsFeed) {
+                    String userProfilePic = (shared.getUserImage() != null && !shared.getUserImage().isEmpty())
+                            ? request.getContextPath() + "/images/profiles/" + shared.getUserImage()
+                            : "https://placehold.co/40x40/1F2937/FFFFFF?text=" + shared.getUsername().toUpperCase().charAt(0);
+                %>
+                <a href="<%= request.getContextPath() %>/chat?chatId=<%= shared.getChatId() %>"
+                   class="block bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-4 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/20 group">
+                    <h3 class="font-bold text-lg text-white group-hover:text-blue-400 transition-colors duration-300 truncate" title="<%= shared.getStoryTitle() %>">
+                        <%= shared.getStoryTitle() %>
+                    </h3>
+                    <div class="flex items-center gap-3 mt-3 text-sm text-gray-400 border-t border-gray-700 pt-3">
+                        <img src="<%= userProfilePic %>" alt="Profile of <%= shared.getUsername() %>" class="h-8 w-8 rounded-full object-cover">
+                        <span class="truncate">Shared by <span class="font-semibold text-gray-300"><%= shared.getUsername() %></span></span>
+                    </div>
+                </a>
+                <% } %>
+            </div>
+        </section>
+        <% } %>
     </main>
 </div>
 
