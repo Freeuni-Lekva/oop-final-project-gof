@@ -1,5 +1,6 @@
 package servlets;
 
+import data.chat.SharedChatDAO;
 import data.media.PostDAO;
 import data.user.UserDAO;
 import jakarta.servlet.ServletContext;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import model.chat.SharedChat;
 import model.media.Post;
 
 import java.io.IOException;
@@ -60,6 +62,18 @@ public class PublicProfileServlet extends HttpServlet {
             List<User> followersList = userDAO.findFollowers(profileOwner.getUserId());
             List<User> followingList = userDAO.findFollowing(profileOwner.getUserId());
             boolean isFollowing = userDAO.isFollowing(viewer.getUserId(), profileOwner.getUserId());
+
+            try {
+
+                if (profileOwner != null) {
+                    SharedChatDAO sharedChatDao = (SharedChatDAO) getServletContext().getAttribute("sharedChatDao");
+                    List<SharedChat> sharedChats = sharedChatDao.getSharedChatsByUser(profileOwner.getUserId());
+                    request.setAttribute("userSharedChats", sharedChats);
+                }
+            } catch (SQLException e) {
+                System.err.println("Error fetching user's shared chats: " + e.getMessage());
+                e.printStackTrace();
+            }
 
             request.setAttribute("profileOwner", profileOwner);
             request.setAttribute("userPosts", userPosts);

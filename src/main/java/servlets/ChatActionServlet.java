@@ -1,4 +1,4 @@
-package servlets; // Or your preferred package
+package servlets;
 
 import data.chat.ChatDAO;
 import data.chat.SharedChatDAO;
@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * Handles actions related to a chat, such as sharing, unsharing, or deleting.
- * This servlet does not handle the sending of individual messages.
+ * Handles sharing and unsharing chat
  */
 @WebServlet(name = "ChatActionServlet", value = "/chat-action")
 public class ChatActionServlet extends HttpServlet {
@@ -77,15 +76,20 @@ public class ChatActionServlet extends HttpServlet {
                     sharedChatDao.shareChat(chatId, userId);
                     break;
 
-                case "delete_shared_chat":
-                    sharedChatDao.deleteShareChat(chatId);
+                case "unshare_chat":
+                    sharedChatDao.unshareChat(chatId);
                     break;
 
                 default:
                     break;
             }
 
-            response.sendRedirect(request.getContextPath() + "/chat?chatId=" + chatId);
+            String fromProfile = request.getParameter("fromProfile");
+            if(fromProfile == null || fromProfile.trim().isEmpty() || !fromProfile.equals("true") ) {
+                response.sendRedirect(request.getContextPath() + "/chat?chatId=" + chatId);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/profile#shared-chats");
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

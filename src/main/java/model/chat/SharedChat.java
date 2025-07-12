@@ -1,4 +1,3 @@
-// Recommended package: model.chat
 package model.chat;
 
 import java.sql.Timestamp;

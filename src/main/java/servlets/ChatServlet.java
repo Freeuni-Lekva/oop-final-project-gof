@@ -47,8 +47,10 @@ public class ChatServlet extends HttpServlet {
 
             boolean isOwner = (ownerId == userId);
             boolean isShared = false;
-            if (isOwner) {
-                isShared = sharedChatDAO.isChatShared(chatId);
+            isShared = sharedChatDAO.isChatShared(chatId);
+
+            if(!isOwner && !isShared) {
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "You do not have permission to view this chat.");
             }
 
             List<Message> messages = messageDAO.getMessages(chatId);
