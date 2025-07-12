@@ -18,15 +18,21 @@ public class SharedChatDAO {
             ps.setInt(1, chatId);
             ps.setInt(2, userId);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public void deleteShareChat(int chatId) throws SQLException {
+    public void unshareChat(int chatId) throws SQLException {
         String sql = "DELETE FROM shared_chats WHERE chat_id = ?";
         try (Connection connection = MySqlConnector.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chatId);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -40,6 +46,9 @@ public class SharedChatDAO {
                     return rs.getInt(1) > 0;
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
         return false;
     }
@@ -74,7 +83,42 @@ public class SharedChatDAO {
                     feed.add(sharedChat);
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
         return feed;
     }
+
+    public List<SharedChat> getSharedChatsByUser(int userId) throws SQLException {
+        List<SharedChat> sharedChats = new ArrayList<>();
+
+        String sql = "SELECT sc.chat_id, sc.shared_at, s.title AS story_title, s.story_id " +
+                "FROM shared_chats sc " +
+                "JOIN chats c ON sc.chat_id = c.chat_id " +
+                "JOIN stories s ON c.story_id = s.story_id " +
+                "WHERE sc.user_id = ? " +
+                "ORDER BY sc.shared_at DESC";
+
+        try (Connection connection = MySqlConnector.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    SharedChat sharedChat = new SharedChat();
+                    sharedChat.setChatId(rs.getInt("chat_id"));
+                    sharedChat.setUserId(userId);
+                    sharedChat.setStoryTitle(rs.getString("story_title"));
+                    sharedChat.setStoryId(rs.getInt("story_id"));
+                    sharedChat.setSharedAt(rs.getTimestamp("shared_at"));
+                    sharedChats.add(sharedChat);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return sharedChats;
+    }
+
 }
