@@ -1,5 +1,5 @@
 -- USE YOUR DATABASE --
-USE qreizi_ambebi;
+USE `story-ai-db`;
 -- story-ai-db for workflow testing
 
 -- DROP UNNECESSARY TABLES --
