@@ -61,7 +61,7 @@
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <label for="worldInfo" class="block text-xl font-semibold mb-2 text-gray-300">World Information</label>
             <p class="text-gray-400 mb-4 text-sm">Describe the setting, the rules of your world, the general tone, and any important history.</p>
-            <textarea id="worldInfo" name="worldInfo" rows="8" required
+            <textarea id="worldInfo" name="worldInfo" rows="8" required tabIndex="4"
                       class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       placeholder="e.g., A world where magic is fading and technology is on the rise..."></textarea>
         </div>
@@ -71,7 +71,7 @@
             <div class="flex flex-wrap gap-4">
                 <% for (String tag : Tags.getAllTags()) { %>
                 <div>
-                    <input type="checkbox" id="tag-<%= tag %>" name="storyTags" value="<%= tag %>" tabIndex="4"
+                    <input type="checkbox" id="tag-<%= tag %>" name="storyTags" value="<%= tag %>" tabIndex="5"
                            class="form-checkbox h-5 w-5 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500">
                     <label for="tag-<%= tag %>" class="ml-2 text-gray-300"><%= tag %></label>
                 </div>
@@ -93,7 +93,7 @@
 
 
         <div class="text-center">
-            <button type="submit" tabIndex="10"
+            <button type="submit" tabIndex="11"
                     class="w-full md:w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 shadow-xl">
                 Begin Your Adventure!
             </button>
@@ -110,27 +110,27 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-400">Name</label>
-                <input type="text" name="characterName" required tabIndex="5"
+                <input type="text" name="characterName" required tabIndex="6"
                        class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-400">Age</label>
-                <input type="number" name="characterAge" required tabIndex="6"
+                <input type="number" name="characterAge" required tabIndex="7"
                        class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-400">Gender</label>
-                <input type="text" name="characterGender" required tabIndex="7"
+                <input type="text" name="characterGender" required tabIndex="8"
                        class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-400">Species</label>
-                <input type="text" name="characterSpecies" required tabIndex="8"
+                <input type="text" name="characterSpecies" required tabIndex="9"
                        class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-400">Description</label>
-                <textarea name="characterDescription" rows="3" required tabindex="9"
+                <textarea name="characterDescription" rows="3" required tabindex="10"
                           class="mt-1 w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
             </div>
         </div>
