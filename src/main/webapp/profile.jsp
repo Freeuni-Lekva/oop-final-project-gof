@@ -5,6 +5,7 @@
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="data.media.PostDAO" %>
 <%@ page import="model.media.Post" %>
+<%@ page import="model.chat.SharedChat" %>
 
 <%!
     String truncate(String text, int length) {
@@ -154,6 +155,41 @@
             <% } else { %>
             <div class="bg-gray-800/50 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
                 <p class="font-bold">No Posts Yet</p><p>You haven't published any posts. Start creating a story to share your work!</p>
+            </div>
+            <% } %>
+        </section>
+
+        <section id="shared-chats" class="mt-12">
+            <h2 class="text-3xl font-semibold gradient-text pb-2 mb-6 border-b-2 border-gray-800">Your Shared Chats</h2>
+            <%
+                List<SharedChat> userSharedChats = (List<SharedChat>) request.getAttribute("userSharedChats");
+                if (userSharedChats != null && !userSharedChats.isEmpty()) {
+            %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <% for (SharedChat chat : userSharedChats) { %>
+                <div class="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-purple-500/40 group">
+                    <a href="<%= request.getContextPath() %>/chat?chatId=<%= chat.getChatId() %>" class="block p-4 h-full">
+                        <h3 class="font-bold text-lg text-white group-hover:text-purple-300 transition-colors duration-300 truncate" title="<%= chat.getStoryTitle() %>">
+                            <%= chat.getStoryTitle() %>
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-2">
+                            Shared on: <%= new java.text.SimpleDateFormat("MMM dd, yyyy").format(chat.getSharedAt()) %>
+                        </p>
+                    </a>
+                    <form action="<%= request.getContextPath() %>/chat-action" method="post" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" onsubmit="return confirm('Are you sure you want to unshare this chat?');">
+                        <input type="hidden" name="action" value="unshare_chat">
+                        <input type="hidden" name="fromProfile" value="true">
+                        <input type="hidden" name="chatId" value="<%= chat.getChatId() %>">
+                        <button type="submit" class="bg-red-600/80 hover:bg-red-600 p-2 rounded-full transition-all duration-200 transform hover:scale-110" title="Unshare chat">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                        </button>
+                    </form>
+                </div>
+                <% } %>
+            </div>
+            <% } else { %>
+            <div class="bg-gray-800/50 border-l-4 border-purple-500 text-gray-300 p-4 rounded-md" role="alert">
+                <p class="font-bold">No Shared Chats</p><p>You haven't shared any of your story chats yet.</p>
             </div>
             <% } %>
         </section>

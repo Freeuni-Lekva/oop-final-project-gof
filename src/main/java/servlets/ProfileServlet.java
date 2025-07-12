@@ -1,5 +1,6 @@
 package servlets;
 
+import data.chat.SharedChatDAO;
 import data.media.PostDAO;
 import data.story.StoryDAO;
 import data.user.HistoryDAO;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import model.chat.SharedChat;
 import model.media.Post;
 import model.story.Story;
 
@@ -50,6 +52,19 @@ public class ProfileServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new ServletException("Database error when fetching profile data.", e);
+        }
+
+        try {
+            User user = userDAO.findUser(username);
+
+            if (user != null) {
+                SharedChatDAO sharedChatDao = (SharedChatDAO) getServletContext().getAttribute("sharedChatDao");
+                List<SharedChat> sharedChats = sharedChatDao.getSharedChatsByUser(user.getUserId());
+                req.setAttribute("userSharedChats", sharedChats);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching user's shared chats: " + e.getMessage());
+            e.printStackTrace();
         }
 
         req.getRequestDispatcher("/profile.jsp").forward(req, res);

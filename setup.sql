@@ -4,6 +4,7 @@ USE `story-ai-db`;
 
 -- DROP UNNECESSARY TABLES --
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS shared_chats;
 DROP TABLE IF EXISTS chats;
 DROP TABLE IF EXISTS story_tags;
 DROP TABLE IF EXISTS tags;
@@ -128,6 +129,16 @@ CREATE TABLE messages (
                           chat_id INT NOT NULL,
                           is_user BOOLEAN DEFAULT TRUE,
                           FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE
+);
+
+CREATE TABLE shared_chats (
+                              share_id INT PRIMARY KEY AUTO_INCREMENT,
+                              chat_id INT NOT NULL,
+                              user_id INT NOT NULL,
+                              shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE,
+                              FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                              UNIQUE (chat_id)
 );
 
 

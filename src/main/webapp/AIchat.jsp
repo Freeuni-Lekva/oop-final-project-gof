@@ -14,6 +14,9 @@
         return;
     }
     List<Message> messages = (List<Message>) request.getAttribute("messages");
+
+    boolean isOwner = (Boolean) request.getAttribute("isOwner");
+    boolean isShared = (Boolean) request.getAttribute("isShared");
 %>
 <!DOCTYPE html>
 <html>
@@ -195,6 +198,72 @@
             from, to { background-color: transparent }
             50% { background-color: var(--ai-text-color); }
         }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            font-weight: 800;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            color: white;
+            border: none;
+        }
+        .share-button {
+            background: linear-gradient(45deg, #1f4296, #2d64d8);
+        }
+        .share-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(45, 100, 216, 0.7);
+        }
+        .unshare-button {
+            background: linear-gradient(45deg, #9b2c2c, #e53e3e);
+        }
+        .unshare-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(229, 62, 62, 0.7);
+        }
+        .secondary-action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 15px; /* Slightly less horizontal padding */
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            color: #d1d5db; /* A lighter gray for the icon */
+            background-color: rgba(40, 42, 54, 0.5); /* Same as AI message bubble */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .secondary-action-button:hover {
+            color: white;
+            transform: translateY(-1px);
+        }
+        .secondary-action-button.shared {
+            color: #2dd4bf; /* A teal color to show it's active */
+            border-color: rgba(45, 212, 191, 0.3);
+            text-shadow: 0 0 5px rgba(45, 212, 191, 0.5);
+        }
+        .icon-action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; /* fixed width */
+            height: 40px; /* fixed height */
+            border-radius: 9999px; /* circular */
+            transition: all 0.3s ease;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .icon-action-button:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-hover);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
     </style>
 </head>
 <body class="bg-black text-gray-200">
@@ -204,9 +273,39 @@
 <div class="container mx-auto p-4 md:p-8 max-w-4xl">
     <div class="bg-container-bg backdrop-blur-md rounded-xl shadow-2xl p-6 flex flex-col h-[85vh] border border-border-color"
          style="box-shadow: 0 0 30px var(--glow-color);">
-        <h1 class="text-4xl font-extrabold mb-4 flex-shrink-0 text-center title-glow">
-            📜 StorySaga AI 🔮
-        </h1>
+
+        <div class="flex items-center justify-between mb-4 flex-shrink-0">
+            <div class="w-10"></div>
+
+            <h1 class="text-4xl font-extrabold text-center title-glow">
+                📜 StorySaga AI 🔮
+            </h1>
+
+            <% if (isOwner) { %>
+            <form action="<%= request.getContextPath() %>/chat-action" method="POST" class="m-0">
+                <input type="hidden" name="chatId" value="<%= chatId %>">
+                <% if (isShared) { %>
+                <input type="hidden" name="action" value="unshare_chat">
+                <button type="submit" class="unshare-button secondary-action-button" title="Unshare this Chat">
+                    <i class="fas fa-eye-slash text-red-400"></i>
+                    <span>Unshare Chat</span>
+                </button>
+                <% } else { %>
+                <input type="hidden" name="action" value="share_chat">
+                <button type="submit" class="share-button secondary-action-button" title="Share this Chat">
+                    <i class="fas fa-share-alt text-blue-400"></i>
+                    <span>Share Chat</span>
+                </button>
+                <% } %>
+            </form>
+            <% } else { %>
+            <div class="w-10"></div>
+            <% } %>
+        </div>
+
+<%--        <h1 class="text-4xl font-extrabold mb-4 flex-shrink-0 text-center title-glow">--%>
+<%--            📜 StorySaga AI 🔮--%>
+<%--        </h1>--%>
         <div id="chat-window" class="flex-grow overflow-y-auto p-4 md:p-6 custom-scrollbar">
             <div id="message-container" class="message-container">
                 <%
@@ -237,6 +336,29 @@
             </div>
         </div>
 
+<%--        <% if (isOwner) { %>--%>
+<%--        <div class="mt-4 flex-shrink-0 pt-4 border-t border-[var(--border-color)]">--%>
+<%--            <form action="<%= request.getContextPath() %>/chat-action" method="POST">--%>
+<%--                <input type="hidden" name="chatId" value="<%= chatId %>">--%>
+<%--                <% if (isShared) { %>--%>
+<%--                <input type="hidden" name="action" value="unshare_chat">--%>
+<%--                <button type="submit" class="action-button unshare-button">--%>
+<%--                    <i class="fas fa-eye-slash"></i>--%>
+<%--                    <span>Unshare Chat</span>--%>
+<%--                </button>--%>
+<%--                <% } else { %>--%>
+<%--                <input type="hidden" name="action" value="share_chat">--%>
+<%--                <button type="submit" class="action-button share-button">--%>
+<%--                    <i class="fas fa-share-alt"></i>--%>
+<%--                    <span>Share Chat</span>--%>
+<%--                </button>--%>
+<%--                <% } %>--%>
+<%--            </form>--%>
+<%--        </div>--%>
+<%--        <% } %>--%>
+
+
+        <% if (isOwner) { %>
         <form id="chat-form" class="mt-4 flex-shrink-0 pt-4">
             <input type="hidden" id="chatId" value="<%= chatId %>">
             <div class="chat-input-area">
@@ -250,6 +372,11 @@
                 </button>
             </div>
         </form>
+        <% } else { %>
+        <div class="mt-4 flex-shrink-0 pt-4 border-t border-[var(--border-color)] text-center text-gray-400">
+            <p>You are viewing a shared chat. Only the owner can continue the story.</p>
+        </div>
+        <% } %>
     </div>
 </div>
 

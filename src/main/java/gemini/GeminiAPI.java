@@ -25,7 +25,7 @@ public class GeminiAPI implements AiAPI {
 
         GenerateContentConfig config = GenerateContentConfig.builder()
                 .systemInstruction(Content.fromParts(
-                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(0.8F)
+                        Part.fromText(Prompts.SYSTEM_PROMPT))).temperature(1.2F)
 
                 .build();
 
